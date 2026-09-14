@@ -5,18 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
-<title>Asv Timeline Two Days</title>
+<title>Asv Timeline Real Data</title>
 <style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255), rgb(24 24 24))}html,body{margin:0}body{box-sizing:border-box;padding:1rem;background:inherit}iframe{display:block;width:100%;height:calc(100vh - 2rem);margin:0 auto;border:0}</style>
 </head>
 <body>
-<iframe id="codex-visualization" sandbox="allow-scripts" referrerpolicy="no-referrer" title="Asv Timeline Two Days" data-srcdoc="&lt;!doctype html&gt;
+<iframe id="codex-visualization" sandbox="allow-scripts" referrerpolicy="no-referrer" title="Asv Timeline Real Data" data-srcdoc="&lt;!doctype html&gt;
 &lt;html lang=&quot;en&quot; data-visualize-standalone&gt;
 &lt;head&gt;
 &lt;meta charset=&quot;utf-8&quot;&gt;
 &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
 &lt;meta name=&quot;referrer&quot; content=&quot;no-referrer&quot;&gt;
 &lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src &#x27;none&#x27;; script-src &#x27;unsafe-inline&#x27; &#x27;unsafe-eval&#x27; &#x27;wasm-unsafe-eval&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src &#x27;unsafe-inline&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;&quot;&gt;
-&lt;title&gt;Asv Timeline Two Days&lt;/title&gt;
+&lt;title&gt;Asv Timeline Real Data&lt;/title&gt;
 &lt;style&gt;:root {
   color-scheme: light dark;
   background-color: var(
@@ -1353,6 +1353,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     --asv-linked: light-dark(#e5ebe8, #26312e);
     --asv-selected: light-dark(#285bb8, #82aaff);
     --asv-selected-soft: light-dark(#eaf0fb, #253149);
+    --asv-predicted: light-dark(#6f89ad, #8da6ca);
     --asv-now: light-dark(#24272e, #f0f1f3);
     color-scheme: light dark;
     position: relative;
@@ -1656,7 +1657,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     pointer-events: none;
   }
 
-  #asv-real.is-conflict-hover .asv-conflict-task-pin {
+  #asv-real .asv-run.is-conflict-hovered .asv-conflict-task-pin {
     background: var(--asv-conflict-outline);
     box-shadow: 0 0 0 1px var(--asv-conflict-outline);
   }
@@ -1868,6 +1869,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-error { background: var(--asv-error); }
   #asv-real .asv-skipped { background: var(--asv-skip); }
   #asv-real .asv-conflicted { background: var(--asv-conflict); }
+  #asv-real .asv-predicted { background: var(--asv-predicted); }
 
   #asv-real .asv-conflict-layer {
     position: absolute;
@@ -1957,7 +1959,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     transition: box-shadow 120ms ease;
   }
 
-  #asv-real.is-conflict-hover .asv-conflict-bolt-mark {
+  #asv-real .asv-conflict-anchor.is-hovered .asv-conflict-bolt-mark {
     box-shadow: inset 0 0 0 2px var(--asv-conflict-outline);
   }
 
@@ -2415,6 +2417,8 @@ html&gt;body{padding:0}&lt;/style&gt;
     white-space: nowrap;
   }
 
+  #asv-real .asv-task-row-status:empty { display: none; }
+
   #asv-real .asv-task-table {
     width: 100%;
     border-collapse: collapse;
@@ -2502,12 +2506,7 @@ html&gt;body{padding:0}&lt;/style&gt;
           &lt;div class=&quot;asv-grid&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-day-divider&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-lanes&quot;&gt;&lt;/div&gt;
-          &lt;div class=&quot;asv-conflict-layer&quot;&gt;
-            &lt;div class=&quot;asv-conflict-anchor&quot;&gt;
-              &lt;button class=&quot;asv-conflict-bolt&quot; type=&quot;button&quot; data-tooltip=&quot;Конфликт двух задач · 09:00:00&quot; aria-label=&quot;Открыть детали конфликта в 09:00&quot; aria-expanded=&quot;false&quot;&gt;&lt;span class=&quot;asv-conflict-bolt-mark&quot; aria-hidden=&quot;true&quot;&gt;&amp;#9889;&amp;#65038;&lt;/span&gt;&lt;/button&gt;
-              &lt;span class=&quot;asv-conflict-line&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;
-            &lt;/div&gt;
-          &lt;/div&gt;
+          &lt;div class=&quot;asv-conflict-layer&quot;&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-now-layer&quot; aria-hidden=&quot;true&quot;&gt;
             &lt;div class=&quot;asv-now-marker&quot;&gt;
               &lt;span class=&quot;asv-now-label&quot;&gt;Сейчас · 05:00&lt;/span&gt;
@@ -2560,17 +2559,16 @@ html&gt;body{padding:0}&lt;/style&gt;
   const detailMeta = root.querySelector(&quot;.asv-detail-meta&quot;);
   const detailTrack = root.querySelector(&quot;.asv-detail-track&quot;);
   const detailClose = root.querySelector(&quot;.asv-detail-close&quot;);
-  const conflictBolt = root.querySelector(&quot;.asv-conflict-bolt&quot;);
+  const conflictLayer = root.querySelector(&quot;.asv-conflict-layer&quot;);
   const conflictPopover = root.querySelector(&quot;.asv-conflict-popover&quot;);
   const conflictPopoverClose = root.querySelector(&quot;.asv-conflict-popover-close&quot;);
+  const conflictPopoverTitle = root.querySelector(&quot;.asv-conflict-popover-title&quot;);
+  const conflictDate = root.querySelector(&quot;.asv-conflict-date&quot;);
   const conflictCards = root.querySelector(&quot;.asv-conflict-cards&quot;);
-  const conflictLine = root.querySelector(&quot;.asv-conflict-line&quot;);
-  const conflictAnchor = root.querySelector(&quot;.asv-conflict-anchor&quot;);
   const nowMarker = root.querySelector(&quot;.asv-now-marker&quot;);
   const daySeconds = 86400;
   const timelineDays = 2;
   const day = daySeconds * timelineDays;
-  const conflictAt = 32400;
   const currentTime = daySeconds + 5 * 60 * 60;
   const statusClass = value =&gt; &quot;asv-&quot; + value.toLowerCase();
   const zoomLevels = [1, 1.5, 2, 3, 4, 6, 8];
@@ -2578,7 +2576,79 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   const currentTimePercent = currentTime / day * 100;
   nowMarker.style.left = currentTimePercent + &quot;%&quot;;
-  conflictAnchor.style.left = (conflictAt / day * 100) + &quot;%&quot;;
+
+  const historicalConflictAt = 9 * 60 * 60;
+  runs.filter(run =&gt; run.demoConflict).forEach((run, index) =&gt; {
+    run.conflictId = &quot;sep13-0900&quot;;
+    run.conflictAt = historicalConflictAt;
+    run.conflictDate = &quot;13 сен 2026 · 09:00:00&quot;;
+    run.conflictOutcome = index === 0 ? &quot;finished&quot; : &quot;error&quot;;
+    run.tasks.forEach(task =&gt; { task.isConflictTask = true; });
+  });
+
+  const t14 = (hour, minute = 0, second = 0) =&gt; daySeconds + hour * 3600 + minute * 60 + second;
+  const makeRun = (id, name, isTrigger, start, end, taskSpecs, extra = {}) =&gt; ({
+    id, name, isTrigger, firstId: taskSpecs[0].id, start, end,
+    tasks: taskSpecs.map(spec =&gt; ({
+      id: spec.id,
+      trigger: isTrigger ? name : null,
+      task: spec.task,
+      status: spec.status,
+      start: spec.start,
+      end: spec.end,
+      isConflictTask: Boolean(spec.isConflictTask)
+    })),
+    ...extra
+  });
+
+  runs.push(
+    makeRun(&quot;sep14-search&quot;, &quot;searchEngineOptimizeTrigger&quot;, true, t14(0, 20), t14(0, 45), [
+      { id: 2001, task: &quot;searchEngineOptimize&quot;, status: &quot;FINISHED&quot;, start: t14(0, 20), end: t14(0, 45) }
+    ]),
+    makeRun(&quot;sep14-cleanup&quot;, &quot;profilingCleanup&quot;, false, t14(1, 5), t14(1, 5, 1), [
+      { id: 2002, task: &quot;profilingCleanup&quot;, status: &quot;FINISHED&quot;, start: t14(1, 5), end: t14(1, 5, 1) }
+    ]),
+    makeRun(&quot;sep14-increment&quot;, &quot;dailyIncrementTrigger&quot;, true, t14(1, 30), t14(3, 15), [
+      { id: 2003, task: &quot;IncrementPrepare&quot;, status: &quot;FINISHED&quot;, start: t14(1, 30), end: t14(1, 34) },
+      { id: 2004, task: &quot;PhysicalBufferIPC&quot;, status: &quot;FINISHED&quot;, start: t14(1, 34), end: t14(1, 58) },
+      { id: 2005, task: &quot;incrementDuplicatesAndMerge&quot;, status: &quot;FINISHED&quot;, start: t14(1, 58), end: t14(3, 4) },
+      { id: 2006, task: &quot;IncrementMarkup&quot;, status: &quot;FINISHED&quot;, start: t14(3, 4), end: t14(3, 15) }
+    ]),
+    makeRun(&quot;sep14-diagnostic&quot;, &quot;diagnosticMetricsTrigger&quot;, true, t14(4, 10), t14(4, 10, 8), [
+      { id: 2007, task: &quot;diagnosticMetrics&quot;, status: &quot;FINISHED&quot;, start: t14(4, 10), end: t14(4, 10, 8) }
+    ]),
+    makeRun(&quot;sep14-refresh&quot;, &quot;monthlyDataRefreshTrigger&quot;, true, t14(5, 40), t14(6, 25), [
+      { id: 2101, task: &quot;monthlyDataRefresh&quot;, status: &quot;PREDICTED&quot;, start: t14(5, 40), end: t14(6, 25) }
+    ]),
+    makeRun(&quot;sep14-duplicates&quot;, &quot;acceptPhysicalDuplicatesTrigger&quot;, true, t14(7, 15), t14(8, 0), [
+      { id: 2102, task: &quot;loadDuplicateCandidates&quot;, status: &quot;PREDICTED&quot;, start: t14(7, 15), end: t14(7, 25) },
+      { id: 2103, task: &quot;acceptPhysicalDuplicates&quot;, status: &quot;PREDICTED&quot;, start: t14(7, 25), end: t14(7, 55) },
+      { id: 2104, task: &quot;publishDuplicateResult&quot;, status: &quot;PREDICTED&quot;, start: t14(7, 55), end: t14(8, 0) }
+    ]),
+    makeRun(&quot;sep14-tiny-conflict-a&quot;, &quot;cacheWarmupTrigger&quot;, true, t14(8, 36), t14(8, 38), [
+      { id: 2201, task: &quot;cacheWarmup&quot;, status: &quot;CONFLICTED&quot;, start: t14(8, 36), end: t14(8, 38), isConflictTask: true }
+    ], { conflictId: &quot;sep14-0836&quot;, conflictAt: t14(8, 36), conflictDate: &quot;14 сен 2026 · 08:36:00&quot;, conflictPosition: &quot;1/1&quot; }),
+    makeRun(&quot;sep14-tiny-conflict-b&quot;, &quot;cacheInvalidateTrigger&quot;, true, t14(8, 36), t14(8, 36, 6), [
+      { id: 2202, task: &quot;cacheInvalidate&quot;, status: &quot;CONFLICTED&quot;, start: t14(8, 36), end: t14(8, 36, 6), isConflictTask: true }
+    ], { conflictId: &quot;sep14-0836&quot;, conflictAt: t14(8, 36), conflictDate: &quot;14 сен 2026 · 08:36:00&quot;, conflictPosition: &quot;1/1&quot; }),
+    makeRun(&quot;sep14-egr&quot;, &quot;dailyEgrImportTrigger&quot;, true, t14(11, 0), t14(14, 30), [
+      { id: 2301, task: &quot;EfrsbDictionaryImport&quot;, status: &quot;PREDICTED&quot;, start: t14(11, 0), end: t14(11, 35) },
+      { id: 2302, task: &quot;EgrDictionaryImport&quot;, status: &quot;PREDICTED&quot;, start: t14(11, 35), end: t14(14, 5) },
+      { id: 2303, task: &quot;EgrIndexPublish&quot;, status: &quot;PREDICTED&quot;, start: t14(14, 5), end: t14(14, 30) }
+    ]),
+    makeRun(&quot;sep14-standalone&quot;, &quot;actualizeBlacklistCheck&quot;, false, t14(15, 10), t14(15, 10, 1), [
+      { id: 2304, task: &quot;actualizeBlacklistCheck&quot;, status: &quot;PREDICTED&quot;, start: t14(15, 10), end: t14(15, 10, 1) }
+    ]),
+    makeRun(&quot;sep14-conflict-a&quot;, &quot;qualifiedPartiesTrigger&quot;, true, t14(17, 15), t14(17, 35), [
+      { id: 2401, task: &quot;qualifiedPartiesActualize&quot;, status: &quot;CONFLICTED&quot;, start: t14(17, 15), end: t14(17, 35), isConflictTask: true }
+    ], { conflictId: &quot;sep14-1720&quot;, conflictAt: t14(17, 20), conflictDate: &quot;14 сен 2026 · 17:20:00&quot;, conflictPosition: &quot;1/1&quot; }),
+    makeRun(&quot;sep14-conflict-b&quot;, &quot;incrementCacheTrigger&quot;, true, t14(17, 20), t14(17, 20, 5), [
+      { id: 2402, task: &quot;incrementCacheRebuild&quot;, status: &quot;CONFLICTED&quot;, start: t14(17, 20), end: t14(17, 20, 5), isConflictTask: true }
+    ], { conflictId: &quot;sep14-1720&quot;, conflictAt: t14(17, 20), conflictDate: &quot;14 сен 2026 · 17:20:00&quot;, conflictPosition: &quot;1/1&quot; }),
+    makeRun(&quot;sep14-fns&quot;, &quot;fnsInnActualizeTrigger&quot;, true, t14(22, 55), t14(22, 56), [
+      { id: 2501, task: &quot;incrementalFnsInnActualize&quot;, status: &quot;PREDICTED&quot;, start: t14(22, 55), end: t14(22, 56) }
+    ])
+  );
 
   const setZoom = nextIndex =&gt; {
     const clampedIndex = Math.max(0, Math.min(zoomLevels.length - 1, nextIndex));
@@ -2648,10 +2718,15 @@ html&gt;body{padding:0}&lt;/style&gt;
     FINISHED: &quot;Завершено&quot;,
     ERROR: &quot;Ошибка&quot;,
     SKIPPED: &quot;Пропущено&quot;,
-    CONFLICTED: &quot;Конфликт&quot;
+    CONFLICTED: &quot;Конфликт&quot;,
+    PREDICTED: &quot;&quot;
   };
 
+  const isFutureTask = task =&gt; task.start &gt;= currentTime;
+  const taskStatusText = task =&gt; isFutureTask(task) ? &quot;&quot; : (statusLabel[task.status] || task.status);
+
   const taskAttributeProfile = task =&gt; {
+    if (task.isConflictTask) return { conflict: true, resumable: Number(task.id) % 2 === 1 };
     if (task.id === 1001) return { conflict: true, resumable: true };
     if (task.id === 1002) return { conflict: true, resumable: false };
     const numericId = Number(task.id) || 0;
@@ -2697,6 +2772,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   };
 
   const forecastConfidenceMarkup = task =&gt; {
+    if (!isFutureTask(task)) return &quot;&quot;;
     const confidence = forecastConfidenceMeta(task);
     return &#x27;&lt;span class=&quot;asv-forecast-confidence is-&#x27; + confidence.level + &#x27;&quot; data-tooltip=&quot;Уровень уверенности: &#x27; + confidence.label.toLowerCase() + &#x27;&quot;&gt;&#x27; +
       &#x27;&lt;span class=&quot;asv-forecast-bars&quot; aria-hidden=&quot;true&quot;&gt;&lt;span class=&quot;asv-forecast-bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;asv-forecast-bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;asv-forecast-bar&quot;&gt;&lt;/span&gt;&lt;/span&gt;&#x27; +
@@ -2734,36 +2810,51 @@ html&gt;body{padding:0}&lt;/style&gt;
   let selectedRun = null;
   let activeTaskLinker = null;
 
-  const conflictRuns = runs.filter(run =&gt; run.demoConflict).sort((a, b) =&gt; a.start - b.start || a.firstId - b.firstId);
-  conflictRuns.forEach(run =&gt; {
-    const task = run.tasks[0];
-    const attributes = taskAttributeProfile(task);
-    const completedAfterConflict = run.id === &quot;demo-conflict-a&quot;;
-    const outcomeClass = completedAfterConflict ? &quot;is-finished&quot; : &quot;is-error&quot;;
-    const outcomeLabel = completedAfterConflict ? &quot;Завершено&quot; : &quot;Ошибка&quot;;
-    const outcomeText = completedAfterConflict ? &quot;Продолжила работу после конфликта&quot; : &quot;Завершилась с ошибкой сразу после запуска&quot;;
-    const card = document.createElement(&quot;article&quot;);
-    card.className = &quot;asv-conflict-card&quot;;
-    card.innerHTML = &#x27;&lt;div class=&quot;asv-conflict-node text-small&quot;&gt;84.116.108.58&lt;/div&gt;&#x27; +
-      &#x27;&lt;div class=&quot;asv-conflict-task&quot;&gt;&lt;span class=&quot;asv-conflict-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;&#x27; + task.task + &#x27;&lt;/span&gt;&#x27; + taskAttributeIcons(attributes) + &#x27;&lt;/div&gt;&#x27; +
-      &#x27;&lt;div class=&quot;asv-conflict-trigger&quot;&gt;&lt;span class=&quot;asv-conflict-position&quot;&gt;&#x27; + run.conflictPosition + &#x27;&lt;/span&gt; &#x27; + run.name + &#x27;&lt;/div&gt;&#x27; +
-      &#x27;&lt;div class=&quot;asv-conflict-time text-small&quot;&gt;&lt;span&gt;&#x27; + formatClock(run.start) + &#x27;–&#x27; + formatClock(run.end) + &#x27;&lt;/span&gt;&#x27; + forecastConfidenceMarkup(task) + &#x27;&lt;/div&gt;&#x27; +
-      &#x27;&lt;div class=&quot;asv-conflict-outcome&quot;&gt;&lt;span class=&quot;asv-conflict-state &#x27; + outcomeClass + &#x27;&quot;&gt;&#x27; + outcomeLabel + &#x27;&lt;/span&gt;&lt;span&gt;&#x27; + outcomeText + &#x27;&lt;/span&gt;&lt;/div&gt;&#x27;;
-    conflictCards.appendChild(card);
-  });
+  let activeConflictBolt = null;
+
+  const renderConflict = conflict =&gt; {
+    conflictPopoverTitle.textContent = &quot;Параллельная работа конфликтующих задач&quot;;
+    conflictDate.textContent = conflict.date;
+    conflictCards.replaceChildren();
+    conflict.runs.forEach(run =&gt; {
+      const task = run.tasks[0];
+      const attributes = taskAttributeProfile(task);
+      let outcome = &quot;&quot;;
+      if (!isFutureTask(task)) {
+        const completedAfterConflict = run.conflictOutcome === &quot;finished&quot;;
+        const outcomeClass = completedAfterConflict ? &quot;is-finished&quot; : &quot;is-error&quot;;
+        const outcomeLabel = completedAfterConflict ? &quot;Завершено&quot; : &quot;Ошибка&quot;;
+        const outcomeText = completedAfterConflict ? &quot;Продолжила работу после конфликта&quot; : &quot;Завершилась с ошибкой сразу после запуска&quot;;
+        outcome = &#x27;&lt;div class=&quot;asv-conflict-outcome&quot;&gt;&lt;span class=&quot;asv-conflict-state &#x27; + outcomeClass + &#x27;&quot;&gt;&#x27; + outcomeLabel + &#x27;&lt;/span&gt;&lt;span&gt;&#x27; + outcomeText + &#x27;&lt;/span&gt;&lt;/div&gt;&#x27;;
+      }
+      const card = document.createElement(&quot;article&quot;);
+      card.className = &quot;asv-conflict-card&quot;;
+      card.innerHTML = &#x27;&lt;div class=&quot;asv-conflict-node text-small&quot;&gt;84.116.108.58&lt;/div&gt;&#x27; +
+        &#x27;&lt;div class=&quot;asv-conflict-task&quot;&gt;&lt;span class=&quot;asv-conflict-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;&#x27; + task.task + &#x27;&lt;/span&gt;&#x27; + taskAttributeIcons(attributes) + &#x27;&lt;/div&gt;&#x27; +
+        &#x27;&lt;div class=&quot;asv-conflict-trigger&quot;&gt;&lt;span class=&quot;asv-conflict-position&quot;&gt;&#x27; + (run.conflictPosition || &quot;1/1&quot;) + &#x27;&lt;/span&gt; &#x27; + run.name + &#x27;&lt;/div&gt;&#x27; +
+        &#x27;&lt;div class=&quot;asv-conflict-time text-small&quot;&gt;&lt;span&gt;&#x27; + formatClock(run.start) + &#x27;–&#x27; + formatClock(run.end) + &#x27;&lt;/span&gt;&#x27; + forecastConfidenceMarkup(task) + &#x27;&lt;/div&gt;&#x27; + outcome;
+      conflictCards.appendChild(card);
+    });
+  };
 
   const closeConflict = returnFocus =&gt; {
     conflictPopover.classList.remove(&quot;is-open&quot;);
     conflictPopover.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
-    conflictBolt.setAttribute(&quot;aria-expanded&quot;, &quot;false&quot;);
-    if (returnFocus) conflictBolt.focus();
+    if (activeConflictBolt) {
+      activeConflictBolt.setAttribute(&quot;aria-expanded&quot;, &quot;false&quot;);
+      if (returnFocus) activeConflictBolt.focus();
+    }
+    activeConflictBolt = null;
   };
 
-  const openConflict = () =&gt; {
+  const openConflict = (conflict, bolt) =&gt; {
     if (detail.classList.contains(&quot;is-open&quot;)) closeDetail();
+    if (activeConflictBolt &amp;&amp; activeConflictBolt !== bolt) activeConflictBolt.setAttribute(&quot;aria-expanded&quot;, &quot;false&quot;);
+    activeConflictBolt = bolt;
+    renderConflict(conflict);
     conflictPopover.classList.add(&quot;is-open&quot;);
     conflictPopover.setAttribute(&quot;aria-hidden&quot;, &quot;false&quot;);
-    conflictBolt.setAttribute(&quot;aria-expanded&quot;, &quot;true&quot;);
+    bolt.setAttribute(&quot;aria-expanded&quot;, &quot;true&quot;);
   };
 
   const closeDetail = () =&gt; {
@@ -2784,11 +2875,6 @@ html&gt;body{padding:0}&lt;/style&gt;
   };
 
   detailClose.addEventListener(&quot;click&quot;, closeDetail);
-  conflictBolt.addEventListener(&quot;click&quot;, event =&gt; {
-    event.stopPropagation();
-    if (conflictPopover.classList.contains(&quot;is-open&quot;)) closeConflict(false);
-    else openConflict();
-  });
   conflictPopoverClose.addEventListener(&quot;click&quot;, () =&gt; closeConflict(true));
   conflictPopover.addEventListener(&quot;click&quot;, event =&gt; event.stopPropagation());
   root.addEventListener(&quot;click&quot;, () =&gt; {
@@ -2843,13 +2929,11 @@ html&gt;body{padding:0}&lt;/style&gt;
     lanesHost.appendChild(lane);
   });
 
-  const secondConflictRun = runs.find(run =&gt; run.id === &quot;demo-conflict-b&quot;);
-  if (secondConflictRun) conflictLine.style.height = (54 + secondConflictRun.lane * 86 + 21) + &quot;px&quot;;
-
   const buttons = new Map();
   const mainTaskSegments = new Map();
   const triggerCaptions = [];
-  const conflictTaskSegments = [];
+  const conflictTaskSegments = new Map();
+  const conflictRunButtons = new Map();
   runs.forEach(run =&gt; {
     const lane = lanesHost.children[run.lane];
     const button = document.createElement(&quot;button&quot;);
@@ -2861,14 +2945,14 @@ html&gt;body{padding:0}&lt;/style&gt;
     const pointStandalone = !run.isTrigger &amp;&amp; actualDuration &lt; 60;
     const compactTaskCount = Math.min(run.tasks.length, 4);
     button.type = &quot;button&quot;;
-    button.className = &quot;asv-run &quot; + (run.isTrigger ? &quot;is-trigger&quot; : &quot;is-standalone&quot;) + (compactTrigger ? &quot; is-compact-trigger&quot; : &quot;&quot;) + (pointStandalone ? &quot; is-point-run&quot; : &quot;&quot;) + (run.demoConflict ? &quot; is-conflict-demo&quot; : &quot;&quot;);
+    button.className = &quot;asv-run &quot; + (run.isTrigger ? &quot;is-trigger&quot; : &quot;is-standalone&quot;) + (compactTrigger ? &quot; is-compact-trigger&quot; : &quot;&quot;) + (pointStandalone ? &quot; is-point-run&quot; : &quot;&quot;) + (run.conflictId ? &quot; is-conflict-demo&quot; : &quot;&quot;);
     button.style.left = leftPct + &quot;%&quot;;
     button.style.width = widthPct + &quot;%&quot;;
     button.style.setProperty(&quot;--asv-run-width&quot;, widthPct + &quot;%&quot;);
     if (compactTrigger) button.style.setProperty(&quot;--asv-compact-width&quot;, (6 + compactTaskCount * 4) + &quot;px&quot;);
     button.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
     const runType = run.isTrigger ? &quot;Триггер&quot; : &quot;Отдельная задача&quot;;
-    const conflictTaskDescription = run.demoConflict ? &quot;, конфликтующая задача: &quot; + run.tasks[0].task : &quot;&quot;;
+    const conflictTaskDescription = run.conflictId ? &quot;, конфликтующая задача: &quot; + run.tasks[0].task : &quot;&quot;;
     button.setAttribute(&quot;aria-label&quot;, runType + &quot;: &quot; + run.name + conflictTaskDescription + &quot;, &quot; + formatClock(run.start) + &quot;–&quot; + formatClock(run.end) + &quot;, &quot; + run.tasks.length + &quot; задач&quot;);
     if (!run.isTrigger) button.setAttribute(&quot;data-tooltip&quot;, run.name + &quot; · &quot; + formatClock(run.start) + &quot;–&quot; + formatClock(run.end));
 
@@ -2909,32 +2993,26 @@ html&gt;body{padding:0}&lt;/style&gt;
         if (selectedRun?.id !== run.id) selectRun(run);
         if (activeTaskLinker) activeTaskLinker.selectLinkedTask(task.id, true);
       });
-      if (run.demoConflict) conflictTaskSegments.push(segment);
+      if (run.conflictId) {
+        if (!conflictTaskSegments.has(run.conflictId)) conflictTaskSegments.set(run.conflictId, []);
+        conflictTaskSegments.get(run.conflictId).push(segment);
+      }
       segments.appendChild(segment);
     });
     button.appendChild(segments);
 
-    if (run.demoConflict) {
+    if (run.conflictId) {
       const pin = document.createElement(&quot;span&quot;);
       const runDurationForPin = Math.max(run.end - run.start, 1);
-      const pinLeft = Math.max(0, Math.min(100, (conflictAt - run.start) / runDurationForPin * 100));
+      const pinLeft = Math.max(0, Math.min(100, (run.conflictAt - run.start) / runDurationForPin * 100));
       pin.className = &quot;asv-conflict-task-pin&quot;;
       pin.style.left = pinLeft + &quot;%&quot;;
       pin.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
       button.appendChild(pin);
 
-      const taskLabel = document.createElement(&quot;span&quot;);
-      const taskName = run.tasks[0].task;
-      taskLabel.className = &quot;asv-conflict-task-label&quot;;
-      taskLabel.textContent = taskName;
-      taskLabel.style.left = pinLeft + &quot;%&quot;;
-      taskLabel.setAttribute(&quot;data-tooltip&quot;, taskName);
-      taskLabel.setAttribute(&quot;title&quot;, taskName);
-      taskLabel.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
-      button.appendChild(taskLabel);
     }
 
-    if (run.id === &quot;demo-conflict-b&quot;) {
+    if (!isFutureTask(run.tasks[0]) &amp;&amp; run.tasks[0].status === &quot;ERROR&quot; &amp;&amp; run.conflictId) {
       const statusBadge = document.createElement(&quot;span&quot;);
       statusBadge.className = &quot;asv-run-status-badge text-small&quot;;
       statusBadge.textContent = &quot;Ошибка&quot;;
@@ -2943,7 +3021,52 @@ html&gt;body{padding:0}&lt;/style&gt;
 
     button.addEventListener(&quot;click&quot;, () =&gt; selectRun(run));
     buttons.set(run.id, button);
+    if (run.conflictId) conflictRunButtons.set(run.id, button);
     lane.appendChild(button);
+  });
+
+  const conflictGroups = new Map();
+  runs.filter(run =&gt; run.conflictId).forEach(run =&gt; {
+    if (!conflictGroups.has(run.conflictId)) {
+      conflictGroups.set(run.conflictId, { id: run.conflictId, at: run.conflictAt, date: run.conflictDate, runs: [] });
+    }
+    conflictGroups.get(run.conflictId).runs.push(run);
+  });
+
+  conflictGroups.forEach(conflict =&gt; {
+    conflict.runs.sort((a, b) =&gt; a.start - b.start || a.firstId - b.firstId);
+    const anchor = document.createElement(&quot;div&quot;);
+    anchor.className = &quot;asv-conflict-anchor&quot;;
+    anchor.style.left = (conflict.at / day * 100) + &quot;%&quot;;
+    const bolt = document.createElement(&quot;button&quot;);
+    bolt.className = &quot;asv-conflict-bolt&quot;;
+    bolt.type = &quot;button&quot;;
+    bolt.setAttribute(&quot;data-tooltip&quot;, &quot;Конфликт двух задач · &quot; + formatClock(conflict.at));
+    bolt.setAttribute(&quot;aria-label&quot;, &quot;Открыть детали конфликта в &quot; + formatClock(conflict.at));
+    bolt.setAttribute(&quot;aria-expanded&quot;, &quot;false&quot;);
+    bolt.innerHTML = &#x27;&lt;span class=&quot;asv-conflict-bolt-mark&quot; aria-hidden=&quot;true&quot;&gt;&amp;#9889;&amp;#65038;&lt;/span&gt;&#x27;;
+    const line = document.createElement(&quot;span&quot;);
+    line.className = &quot;asv-conflict-line&quot;;
+    line.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
+    const lowerLane = Math.max(...conflict.runs.map(run =&gt; run.lane));
+    line.style.height = (54 + lowerLane * 86 + 21) + &quot;px&quot;;
+    anchor.append(bolt, line);
+    conflictLayer.appendChild(anchor);
+
+    const setHighlight = active =&gt; {
+      anchor.classList.toggle(&quot;is-hovered&quot;, active);
+      (conflictTaskSegments.get(conflict.id) || []).forEach(segment =&gt; segment.classList.toggle(&quot;is-conflict-highlight&quot;, active));
+      conflict.runs.forEach(run =&gt; conflictRunButtons.get(run.id)?.classList.toggle(&quot;is-conflict-hovered&quot;, active));
+    };
+    bolt.addEventListener(&quot;mouseenter&quot;, () =&gt; setHighlight(true));
+    bolt.addEventListener(&quot;mouseleave&quot;, () =&gt; setHighlight(false));
+    bolt.addEventListener(&quot;focus&quot;, () =&gt; setHighlight(true));
+    bolt.addEventListener(&quot;blur&quot;, () =&gt; setHighlight(false));
+    bolt.addEventListener(&quot;click&quot;, event =&gt; {
+      event.stopPropagation();
+      if (conflictPopover.classList.contains(&quot;is-open&quot;) &amp;&amp; activeConflictBolt === bolt) closeConflict(false);
+      else openConflict(conflict, bolt);
+    });
   });
 
   const layoutTriggerCaptions = () =&gt; {
@@ -2953,34 +3076,9 @@ html&gt;body{padding:0}&lt;/style&gt;
       caption.style.setProperty(&quot;--asv-caption-max&quot;, Math.min(156, available) + &quot;px&quot;);
     });
 
-    buttons.forEach((button, runId) =&gt; {
-      const taskLabel = button.querySelector(&quot;.asv-conflict-task-label&quot;);
-      if (!taskLabel) return;
-      const run = runs.find(item =&gt; item.id === runId);
-      const runLeft = run.start / day * laneWidth;
-      const runWidth = Math.max(run.end - run.start, 60) / day * laneWidth;
-      const pinRatio = Math.max(0, Math.min(1, (conflictAt - run.start) / Math.max(run.end - run.start, 1)));
-      const anchorX = runLeft + runWidth * pinRatio;
-      const roomRight = Math.max(84, laneWidth - anchorX - 8);
-      taskLabel.style.setProperty(&quot;--asv-conflict-label-max&quot;, Math.min(220, roomRight) + &quot;px&quot;);
-      if (anchorX &gt; laneWidth - 190) {
-        taskLabel.style.setProperty(&quot;--asv-conflict-label-shift&quot;, &quot;-100%&quot;);
-      } else {
-        taskLabel.style.setProperty(&quot;--asv-conflict-label-shift&quot;, &quot;0&quot;);
-      }
-    });
   };
   layoutTriggerCaptions();
   if (typeof ResizeObserver !== &quot;undefined&quot;) new ResizeObserver(layoutTriggerCaptions).observe(lanesHost);
-
-  const setConflictTaskHighlight = active =&gt; {
-    root.classList.toggle(&quot;is-conflict-hover&quot;, active);
-    conflictTaskSegments.forEach(segment =&gt; segment.classList.toggle(&quot;is-conflict-highlight&quot;, active));
-  };
-  conflictBolt.addEventListener(&quot;mouseenter&quot;, () =&gt; setConflictTaskHighlight(true));
-  conflictBolt.addEventListener(&quot;mouseleave&quot;, () =&gt; setConflictTaskHighlight(false));
-  conflictBolt.addEventListener(&quot;focus&quot;, () =&gt; setConflictTaskHighlight(true));
-  conflictBolt.addEventListener(&quot;blur&quot;, () =&gt; setConflictTaskHighlight(false));
 
   function selectRun(run) {
     closeConflict(false);
@@ -3058,14 +3156,15 @@ html&gt;body{padding:0}&lt;/style&gt;
       const conflictLabel = attributes.conflict ? &quot;Конфликтная&quot; : &quot;Неконфликтная&quot;;
       const resumabilityLabel = attributes.resumable ? &quot;Возобновляемая&quot; : &quot;Невозобновляемая&quot;;
       const confidence = forecastConfidenceMeta(task);
+      const stateDescription = isFutureTask(task) ? &quot;уровень уверенности: &quot; + confidence.label : taskStatusText(task);
       row.type = &quot;button&quot;;
       row.className = &quot;asv-task-row text-small&quot;;
-      row.setAttribute(&quot;aria-label&quot;, (index + 1) + &quot;. &quot; + task.task + &quot;, &quot; + conflictLabel + &quot;, &quot; + resumabilityLabel + &quot;, уровень уверенности: &quot; + confidence.label + &quot;, &quot; + formatDuration(rawDuration) + &quot;, &quot; + (statusLabel[task.status] || task.status));
+      row.setAttribute(&quot;aria-label&quot;, (index + 1) + &quot;. &quot; + task.task + &quot;, &quot; + conflictLabel + &quot;, &quot; + resumabilityLabel + &quot;, &quot; + stateDescription + &quot;, &quot; + formatDuration(rawDuration));
       row.innerHTML = &#x27;&lt;span class=&quot;asv-task-row-line &#x27; + statusClass(task.status) + &#x27;&quot;&gt;&lt;/span&gt;&#x27; +
         taskAttributeIcons(attributes) +
         &#x27;&lt;span class=&quot;asv-task-row-copy&quot;&gt;&lt;span class=&quot;asv-task-row-name&quot;&gt;&#x27; + (index + 1) + &#x27;. &#x27; + task.task + &#x27;&lt;/span&gt;&#x27; +
         &#x27;&lt;span class=&quot;asv-task-row-meta text-small&quot;&gt;&lt;span&gt;&#x27; + formatClock(task.start) + &#x27;–&#x27; + formatClock(task.end) + &#x27; · &#x27; + formatDuration(rawDuration) + &#x27;&lt;/span&gt;&#x27; + forecastConfidenceMarkup(task) + &#x27;&lt;/span&gt;&lt;/span&gt;&#x27; +
-        &#x27;&lt;span class=&quot;asv-task-row-status text-small&quot;&gt;&#x27; + (statusLabel[task.status] || task.status) + &#x27;&lt;/span&gt;&#x27;;
+        &#x27;&lt;span class=&quot;asv-task-row-status text-small&quot;&gt;&#x27; + taskStatusText(task) + &#x27;&lt;/span&gt;&#x27;;
       taskLinks.get(task.id).row = row;
       taskList.appendChild(row);
     });
