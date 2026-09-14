@@ -6,10 +6,10 @@
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>Asv Timeline Real Data</title>
-<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255), rgb(24 24 24))}html,body{margin:0}body{box-sizing:border-box;padding:1rem;background:inherit}iframe{display:block;width:100%;height:calc(100vh - 2rem);margin:0 auto;border:0}</style>
+<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255), rgb(24 24 24))}html,body{margin:0}body{box-sizing:border-box;padding:1rem;background:inherit}iframe{display:block;width:100%;height:calc(100vh - 2rem);margin:0 auto;border:0;overflow:hidden}</style>
 </head>
 <body>
-<iframe id="codex-visualization" sandbox="allow-scripts" referrerpolicy="no-referrer" title="Asv Timeline Real Data" data-srcdoc="&lt;!doctype html&gt;
+<iframe id="codex-visualization" sandbox="allow-scripts" scrolling="no" referrerpolicy="no-referrer" title="Asv Timeline Real Data" data-srcdoc="&lt;!doctype html&gt;
 &lt;html lang=&quot;en&quot; data-visualize-standalone&gt;
 &lt;head&gt;
 &lt;meta charset=&quot;utf-8&quot;&gt;
@@ -1334,7 +1334,8 @@ html&gt;body{padding:0}&lt;/style&gt;
 &lt;style&gt;
   #asv-real {
     --asv-page: light-dark(#ffffff, #17191d);
-    --asv-canvas: light-dark(#f7f8fa, #111317);
+    --asv-canvas: light-dark(#fcfcfd, #15171b);
+    --asv-history: light-dark(#f5f6f8, #111317);
     --asv-text: light-dark(#24272e, #f0f1f3);
     --asv-muted: light-dark(#747983, #a7abb3);
     --asv-rule: light-dark(#e5e7eb, #2d3036);
@@ -1358,9 +1359,10 @@ html&gt;body{padding:0}&lt;/style&gt;
     --asv-predicted: light-dark(#6f89ad, #8da6ca);
     --asv-now: light-dark(#24272e, #f0f1f3);
     color-scheme: light dark;
+    box-sizing: border-box;
     position: relative;
     width: 100%;
-    min-height: 640px;
+    min-height: var(--asv-timeline-height, 640px);
     overflow: hidden;
     border: 1px solid var(--asv-rule);
     border-radius: 12px;
@@ -1373,8 +1375,13 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   #asv-real .asv-layout {
     display: grid;
-    grid-template-columns: 244px minmax(0, 1fr);
-    min-height: 640px;
+    grid-template-columns: 232px minmax(0, 1fr);
+    min-height: var(--asv-timeline-height, 640px);
+  }
+
+  #asv-real .asv-node-stack {
+    min-width: 0;
+    background: var(--asv-page);
   }
 
   #asv-real .asv-node-panel {
@@ -1382,35 +1389,134 @@ html&gt;body{padding:0}&lt;/style&gt;
     position: relative;
     min-height: 640px;
     flex-direction: column;
-    padding: 24px 20px;
+    padding: 18px 16px;
     border-right: 1px solid var(--asv-rule);
     background: var(--asv-page);
   }
 
+  #asv-real .asv-node-panel.is-primary-node {
+    min-height: 0;
+    height: var(--asv-primary-node-height, 374px);
+  }
+
+  #asv-real .asv-node-panel.is-secondary-node,
+  #asv-real .asv-node-panel.is-third-node {
+    min-height: 0;
+    padding-top: 22px;
+    border-top: 1px solid color-mix(in srgb, var(--asv-text) 24%, var(--asv-rule));
+  }
+
+  #asv-real .asv-node-panel.is-secondary-node {
+    height: var(--asv-secondary-node-height, 208px);
+  }
+
+  #asv-real .asv-node-panel.is-third-node {
+    height: var(--asv-third-node-height, 122px);
+  }
+
+  #asv-real .asv-node-panel.is-secondary-node .asv-node-ip,
+  #asv-real .asv-node-panel.is-third-node .asv-node-ip {
+    margin-top: 0;
+  }
+
+  #asv-real .asv-node-collapse {
+    appearance: none;
+    position: absolute;
+    z-index: 3;
+    top: 14px;
+    right: 12px;
+    display: grid;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    place-items: center;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--asv-muted);
+    cursor: pointer;
+  }
+
+  #asv-real .asv-node-collapse:hover,
+  #asv-real .asv-node-collapse:focus-visible {
+    background: var(--asv-group);
+    color: var(--asv-text);
+  }
+
+  #asv-real .asv-node-collapse-chevron {
+    width: 7px;
+    height: 7px;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: translateY(-2px) rotate(45deg);
+    transition: transform 140ms ease;
+  }
+
+  #asv-real .asv-node-collapsed-summary {
+    display: none;
+    min-width: 0;
+    align-items: center;
+    gap: 8px;
+    padding-right: 34px;
+    font-size: 13px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  #asv-real .asv-node-collapsed-summary .asv-node-status-dot.is-support-dot {
+    background: light-dark(#d49a16, #e6b94c);
+  }
+
+  #asv-real .asv-node-panel.is-collapsed {
+    justify-content: center;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  #asv-real .asv-node-panel.is-collapsed &gt; :not(.asv-node-collapse):not(.asv-node-collapsed-summary) {
+    display: none;
+  }
+
+  #asv-real .asv-node-panel.is-collapsed .asv-node-collapsed-summary {
+    display: flex;
+  }
+
+  #asv-real .asv-node-panel.is-collapsed .asv-node-collapse {
+    top: 11px;
+  }
+
+  #asv-real .asv-node-panel.is-collapsed .asv-node-collapse-chevron {
+    transform: translateX(-2px) rotate(-45deg);
+  }
+
   #asv-real .asv-node-tag {
     display: inline-block;
-    padding: 4px 8px;
+    align-self: flex-start;
+    padding: 3px 6px;
     border-radius: 5px;
     background: light-dark(#e8e4ff, #37324f);
+    font-size: 11px;
   }
 
   #asv-real .asv-node-ip {
-    margin-top: 14px;
-    font-size: 18px;
+    margin-top: 8px;
+    font-size: 16px;
     font-weight: 500;
+    line-height: 1.25;
     letter-spacing: .01em;
     font-variant-numeric: tabular-nums;
   }
 
   #asv-real .asv-node-status {
     display: inline-flex;
+    align-self: flex-start;
     align-items: center;
     gap: 7px;
-    margin-top: 14px;
-    padding: 5px 9px;
+    margin-top: 10px;
+    padding: 4px 8px;
     border: 1px solid var(--asv-rule);
     border-radius: 999px;
-    font-size: 12px;
+    font-size: 11px;
   }
 
   #asv-real .asv-node-status-dot {
@@ -1421,9 +1527,19 @@ html&gt;body{padding:0}&lt;/style&gt;
     background: var(--asv-ok);
   }
 
+  #asv-real .asv-node-status.is-support {
+    border-color: light-dark(#ead7a2, #68562c);
+    background: light-dark(#fff9e8, #332d1d);
+    color: light-dark(#765711, #f1cc70);
+  }
+
+  #asv-real .asv-node-status.is-support .asv-node-status-dot {
+    background: light-dark(#d49a16, #e6b94c);
+  }
+
   #asv-real .asv-node-divider {
     height: 1px;
-    margin: 24px 0 20px;
+    margin: 16px 0 14px;
     background: var(--asv-rule);
   }
 
@@ -1454,7 +1570,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     left: 0;
     width: 100%;
     margin: 0;
-    padding: 15px 20px 18px;
+    padding: 12px 16px 14px;
     border: 0;
     border-top: 1px solid var(--asv-rule);
     background: transparent;
@@ -1514,7 +1630,7 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   #asv-real .asv-timeline-scroll {
     width: 100%;
-    height: 640px;
+    height: var(--asv-timeline-height, 640px);
     overflow-x: auto;
     overflow-y: hidden;
   }
@@ -1523,7 +1639,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     position: relative;
     width: 200%;
     min-width: 200%;
-    height: 640px;
+    height: var(--asv-timeline-height, 640px);
     background: var(--asv-canvas);
   }
 
@@ -1571,9 +1687,23 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-axis {
     position: absolute;
     z-index: 2;
-    inset: 0 22px auto 22px;
+    inset: 0 22px auto 0;
     height: 42px;
     border-bottom: 1px solid var(--asv-rule);
+  }
+
+  #asv-real .asv-time-background {
+    position: absolute;
+    z-index: 0;
+    inset: 0 22px 0 0;
+    pointer-events: none;
+  }
+
+  #asv-real .asv-history-zone {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: var(--asv-history);
   }
 
   #asv-real .asv-tick {
@@ -1606,7 +1736,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     z-index: 2;
     top: 0;
     bottom: 0;
-    left: 50%;
+    left: calc((100% - 22px) / 2);
     border-left: 1px solid var(--asv-group-line);
     pointer-events: none;
   }
@@ -1614,27 +1744,56 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-grid {
     position: absolute;
     z-index: 1;
-    inset: 42px 22px 0 22px;
+    inset: 42px 22px 0 0;
     background-image: linear-gradient(to right, var(--asv-grid) 1px, transparent 1px);
     background-size: 4.166667% 100%;
   }
 
+  #asv-real .asv-collapsed-node-zone {
+    position: absolute;
+    z-index: 7;
+    right: 22px;
+    left: 0;
+    background: var(--asv-page);
+    pointer-events: none;
+  }
+
+  #asv-real .asv-collapsed-node-zone[hidden] { display: none; }
+
+  #asv-real .asv-node-boundary {
+    position: absolute;
+    z-index: 8;
+    right: 22px;
+    left: 0;
+    height: 1px;
+    background: color-mix(in srgb, var(--asv-text) 24%, var(--asv-rule));
+    pointer-events: none;
+  }
+
   #asv-real .asv-lane {
     position: absolute;
-    left: 22px;
+    left: 0;
     right: 22px;
     height: 80px;
     border-bottom: 1px solid var(--asv-rule);
+  }
+
+  #asv-real .asv-lane.is-secondary-lane {
+    height: 86px;
+  }
+
+  #asv-real .asv-lane.is-third-lane {
+    height: 86px;
   }
 
   #asv-real .asv-queue-lane {
     position: absolute;
     z-index: 2;
     right: 22px;
-    left: 22px;
-    height: 54px;
+    left: 0;
+    height: 66px;
     border-top: 0;
-    border-bottom: 1px solid var(--asv-rule);
+    border-bottom: 0;
     background: color-mix(in srgb, var(--asv-page) 56%, transparent);
     transition: background 140ms ease;
   }
@@ -1644,10 +1803,10 @@ html&gt;body{padding:0}&lt;/style&gt;
     position: absolute;
     z-index: 3;
     top: 11px;
-    height: 30px;
-    min-width: 34px;
+    height: 34px;
+    min-width: 36px;
     overflow: hidden;
-    padding: 0 7px 0 9px;
+    padding: 0 8px 0 10px;
     border: 1px solid var(--asv-group-line);
     border-radius: 4px;
     background: var(--asv-group);
@@ -1678,13 +1837,22 @@ html&gt;body{padding:0}&lt;/style&gt;
     font-weight: 600;
   }
 
+  #asv-real .asv-queue-task.is-forecast-high {
+    background-color: color-mix(in srgb, var(--asv-predicted) 30%, var(--asv-group));
+  }
+
+  #asv-real .asv-queue-task.is-forecast-low {
+    background-color: color-mix(in srgb, var(--asv-predicted) 17%, var(--asv-group));
+  }
+
   #asv-real .asv-queue-task.is-forecast-question {
     border-style: dashed;
+    border-color: color-mix(in srgb, var(--asv-predicted) 72%, var(--asv-group-line));
     background-color: color-mix(in srgb, var(--asv-predicted) 8%, var(--asv-group));
     background-image: repeating-linear-gradient(
       135deg,
-      color-mix(in srgb, var(--asv-predicted) 16%, transparent) 0 3px,
-      transparent 3px 10px
+      transparent 0 7px,
+      color-mix(in srgb, var(--asv-predicted) 18%, transparent) 7px 8px
     );
   }
 
@@ -1716,7 +1884,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-queue-task-name {
     display: block;
     overflow: hidden;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 500;
     line-height: 1.25;
     text-overflow: ellipsis;
@@ -1728,8 +1896,8 @@ html&gt;body{padding:0}&lt;/style&gt;
     margin-top: 1px;
     overflow: hidden;
     color: var(--asv-muted);
-    font-size: 9px;
-    line-height: 1.05;
+    font-size: 10px;
+    line-height: 1.1;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -1766,7 +1934,12 @@ html&gt;body{padding:0}&lt;/style&gt;
     cursor: pointer;
   }
 
-  #asv-real .asv-run.is-standalone:hover { filter: brightness(.97); }
+  #asv-real .asv-run.is-standalone:hover,
+  #asv-real .asv-run.is-standalone:focus-visible {
+    z-index: 30;
+    overflow: visible;
+    filter: brightness(.97);
+  }
 
   #asv-real .asv-run.is-trigger {
     top: 28px;
@@ -1823,6 +1996,62 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   #asv-real .asv-run.is-standalone .asv-segments { inset: 0; }
   #asv-real .asv-run.is-standalone .asv-segment { border-radius: 2px; }
+
+  #asv-real .asv-standalone-caption {
+    position: absolute;
+    z-index: 20;
+    left: 0;
+    bottom: calc(100% + 4px);
+    display: none;
+    width: max-content;
+    min-width: 72px;
+    max-width: 280px;
+    min-height: 36px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 1px;
+    padding: 4px 7px;
+    overflow: hidden;
+    border: 1px solid var(--asv-group-line);
+    border-radius: 4px;
+    background: var(--asv-page);
+    box-shadow: 0 6px 16px light-dark(rgb(28 31 38 / 10%), rgb(0 0 0 / 28%));
+    color: var(--asv-text);
+    line-height: 1.25;
+    pointer-events: none;
+  }
+
+  #asv-real .asv-run.is-standalone:hover .asv-standalone-caption,
+  #asv-real .asv-run.is-standalone:focus-visible .asv-standalone-caption {
+    display: flex;
+  }
+
+  #asv-real .asv-run.is-standalone[aria-pressed=&quot;true&quot;] .asv-standalone-caption {
+    display: none;
+  }
+
+  #asv-real .asv-run.is-caption-right .asv-standalone-caption {
+    right: 0;
+    left: auto;
+  }
+
+  #asv-real .asv-standalone-caption-name {
+    max-width: 100%;
+    overflow: hidden;
+    font-size: 11px;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #asv-real .asv-standalone-caption-time {
+    color: var(--asv-muted);
+    font-size: 10px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
 
   #asv-real .asv-run.is-conflict-demo {
     overflow: visible;
@@ -2087,6 +2316,10 @@ html&gt;body{padding:0}&lt;/style&gt;
     font-variant-numeric: tabular-nums;
   }
 
+  #asv-real .asv-main-task-tooltip.is-queue-task-tooltip .asv-main-task-tooltip-time &gt; .asv-forecast-confidence {
+    margin-left: auto;
+  }
+
   #asv-real .asv-task-overrun {
     display: inline-flex;
     width: max-content;
@@ -2178,21 +2411,17 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   #asv-real .asv-segment.asv-predicted.is-forecast-low,
   #asv-real .asv-proportional-fill.asv-predicted.is-forecast-low {
-    background-color: color-mix(in srgb, var(--asv-predicted) 72%, var(--asv-page));
-    background-image: repeating-linear-gradient(
-      135deg,
-      transparent 0 4px,
-      color-mix(in srgb, var(--asv-page) 34%, transparent) 4px 7px
-    );
+    background-color: color-mix(in srgb, var(--asv-predicted) 56%, var(--asv-page));
+    background-image: none;
   }
 
   #asv-real .asv-segment.asv-predicted.is-forecast-question,
   #asv-real .asv-proportional-fill.asv-predicted.is-forecast-question {
-    background-color: color-mix(in srgb, var(--asv-predicted) 32%, var(--asv-page));
+    background-color: color-mix(in srgb, var(--asv-predicted) 26%, var(--asv-page));
     background-image: repeating-linear-gradient(
       135deg,
-      color-mix(in srgb, var(--asv-predicted) 48%, transparent) 0 3px,
-      transparent 3px 7px
+      transparent 0 7px,
+      color-mix(in srgb, var(--asv-predicted) 18%, transparent) 7px 8px
     );
     outline: 1px dashed var(--asv-predicted);
     outline-offset: -1px;
@@ -2201,14 +2430,16 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-conflict-layer {
     position: absolute;
     z-index: 2;
-    inset: 0 22px;
+    inset: 0 22px 0 0;
     pointer-events: none;
   }
+
+  #asv-real .asv-conflict-layer.is-node-collapsed { display: none; }
 
   #asv-real .asv-now-layer {
     position: absolute;
     z-index: 6;
-    inset: 0 22px;
+    inset: 0 22px 0 0;
     pointer-events: none;
   }
 
@@ -2525,8 +2756,9 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-detail-track {
     flex: 1 1 auto;
     min-width: 0;
+    overflow-x: hidden;
     overflow-y: auto;
-    padding: 0 18px 20px;
+    padding: 0 10px 20px;
   }
 
   #asv-real .asv-detail-close {
@@ -2556,8 +2788,13 @@ html&gt;body{padding:0}&lt;/style&gt;
     font-variant-numeric: tabular-nums;
   }
 
-  #asv-real .asv-detail-tick:first-child { transform: none; }
-  #asv-real .asv-detail-tick:last-child { transform: translateX(-100%); }
+  #asv-real .asv-detail-tick.is-first { transform: none; }
+  #asv-real .asv-detail-tick.is-last {
+    right: 0;
+    left: auto !important;
+    transform: none;
+    text-align: right;
+  }
 
   #asv-real .asv-proportional-track {
     position: relative;
@@ -2643,11 +2880,11 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-task-row {
     appearance: none;
     display: grid;
-    grid-template-columns: 4px auto minmax(0, 1fr) auto;
+    grid-template-columns: 22px minmax(0, 1fr) auto minmax(96px, auto);
     width: 100%;
     align-items: center;
     gap: 8px;
-    padding: 10px 8px;
+    padding: 12px 4px;
     border: 0;
     border-bottom: 1px solid var(--asv-rule);
     background: transparent;
@@ -2666,10 +2903,17 @@ html&gt;body{padding:0}&lt;/style&gt;
     box-shadow: inset 3px 0 0 var(--asv-selected);
   }
 
-  #asv-real .asv-task-row-line {
-    width: 4px;
-    height: 28px;
-    border-radius: 2px;
+  #asv-real .asv-task-row-index {
+    display: block;
+    width: 22px;
+    height: auto;
+    align-self: start;
+    padding-top: 1px;
+    color: var(--asv-muted);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.35;
+    text-align: right;
   }
 
   #asv-real .asv-task-row-copy {
@@ -2690,6 +2934,10 @@ html&gt;body{padding:0}&lt;/style&gt;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  #asv-real .asv-task-row .asv-task-attributes {
+    justify-self: center;
   }
 
   #asv-real .asv-task-attributes {
@@ -2773,11 +3021,24 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 
   #asv-real .asv-task-row-status {
+    display: flex;
+    min-width: 96px;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 7px;
+    text-align: right;
     color: var(--asv-muted);
     white-space: nowrap;
   }
 
   #asv-real .asv-task-row-status:empty { display: none; }
+
+  #asv-real .asv-task-row-status-dot {
+    width: 9px;
+    height: 9px;
+    flex: 0 0 auto;
+    border-radius: 50%;
+  }
 
   #asv-real .asv-task-table {
     width: 100%;
@@ -2833,8 +3094,13 @@ html&gt;body{padding:0}&lt;/style&gt;
   @media (max-width: 700px) {
     #asv-real { min-height: 760px; }
     #asv-real .asv-layout { grid-template-columns: 1fr; min-height: 760px; }
-    #asv-real .asv-node-panel { min-height: 0; border-right: 0; border-bottom: 1px solid var(--asv-rule); }
-    #asv-real .asv-queue-control { position: static; width: calc(100% + 40px); margin: 20px -20px -24px; }
+    #asv-real .asv-node-stack { display: contents; }
+    #asv-real .asv-node-panel,
+    #asv-real .asv-node-panel.is-primary-node,
+    #asv-real .asv-node-panel.is-secondary-node,
+    #asv-real .asv-node-panel.is-third-node { height: auto; min-height: 0; border-right: 0; border-bottom: 1px solid var(--asv-rule); }
+    #asv-real .asv-node-panel.is-collapsed { height: 50px; }
+    #asv-real .asv-queue-control { position: static; width: calc(100% + 32px); margin: 20px -16px -18px; }
     #asv-real .asv-timeline-scroll { height: 520px; }
     #asv-real .asv-overview { height: 520px; }
     #asv-real .asv-detail { width: 100%; }
@@ -2843,7 +3109,10 @@ html&gt;body{padding:0}&lt;/style&gt;
 
 &lt;section id=&quot;asv-real&quot; aria-label=&quot;Таймлайн запусков задач за сутки&quot;&gt;
   &lt;div class=&quot;asv-layout&quot;&gt;
-    &lt;aside class=&quot;asv-node-panel&quot; aria-label=&quot;Сведения о ноде&quot;&gt;
+    &lt;div class=&quot;asv-node-stack&quot;&gt;
+    &lt;aside class=&quot;asv-node-panel is-primary-node&quot; aria-label=&quot;Сведения о ноде 84.116.108.58&quot;&gt;
+      &lt;button class=&quot;asv-node-collapse&quot; type=&quot;button&quot; data-node-toggle=&quot;primary&quot; aria-expanded=&quot;true&quot; aria-label=&quot;Свернуть ноду 84.116.108.58&quot;&gt;&lt;span class=&quot;asv-node-collapse-chevron&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;/button&gt;
+      &lt;div class=&quot;asv-node-collapsed-summary&quot;&gt;&lt;span class=&quot;asv-node-status-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;84.116.108.58&lt;/span&gt;&lt;/div&gt;
       &lt;div class=&quot;asv-node-tag text-small&quot;&gt;нода для задач&lt;/div&gt;
       &lt;div class=&quot;asv-node-ip&quot;&gt;84.116.108.58&lt;/div&gt;
       &lt;div class=&quot;asv-node-status&quot;&gt;&lt;span class=&quot;asv-node-status-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;Онлайн&lt;/span&gt;&lt;/div&gt;
@@ -2865,6 +3134,25 @@ html&gt;body{padding:0}&lt;/style&gt;
         &lt;/span&gt;
       &lt;/button&gt;
     &lt;/aside&gt;
+    &lt;aside class=&quot;asv-node-panel is-secondary-node&quot; aria-label=&quot;Сведения о ноде 84.116.108.73&quot;&gt;
+      &lt;button class=&quot;asv-node-collapse&quot; type=&quot;button&quot; data-node-toggle=&quot;secondary&quot; aria-expanded=&quot;true&quot; aria-label=&quot;Свернуть ноду 84.116.108.73&quot;&gt;&lt;span class=&quot;asv-node-collapse-chevron&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;/button&gt;
+      &lt;div class=&quot;asv-node-collapsed-summary&quot;&gt;&lt;span class=&quot;asv-node-status-dot is-support-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;84.116.108.73&lt;/span&gt;&lt;/div&gt;
+      &lt;div class=&quot;asv-node-ip&quot;&gt;84.116.108.73&lt;/div&gt;
+      &lt;div class=&quot;asv-node-status is-support&quot;&gt;&lt;span class=&quot;asv-node-status-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;Поддержка&lt;/span&gt;&lt;/div&gt;
+      &lt;div class=&quot;asv-node-divider&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
+      &lt;div class=&quot;asv-frequent-title&quot;&gt;Частые триггеры&lt;/div&gt;
+      &lt;div class=&quot;asv-frequent-list&quot;&gt;
+        &lt;div class=&quot;asv-frequent-item&quot; data-tooltip=&quot;supportDataRefreshTrigger&quot;&gt;supportDataRefreshTrigger&lt;/div&gt;
+        &lt;div class=&quot;asv-frequent-item&quot; data-tooltip=&quot;referenceSyncTrigger&quot;&gt;referenceSyncTrigger&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/aside&gt;
+    &lt;aside class=&quot;asv-node-panel is-third-node&quot; aria-label=&quot;Сведения о ноде 84.116.108.91&quot;&gt;
+      &lt;button class=&quot;asv-node-collapse&quot; type=&quot;button&quot; data-node-toggle=&quot;third&quot; aria-expanded=&quot;true&quot; aria-label=&quot;Свернуть ноду 84.116.108.91&quot;&gt;&lt;span class=&quot;asv-node-collapse-chevron&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;/button&gt;
+      &lt;div class=&quot;asv-node-collapsed-summary&quot;&gt;&lt;span class=&quot;asv-node-status-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;84.116.108.91&lt;/span&gt;&lt;/div&gt;
+      &lt;div class=&quot;asv-node-ip&quot;&gt;84.116.108.91&lt;/div&gt;
+      &lt;div class=&quot;asv-node-status&quot;&gt;&lt;span class=&quot;asv-node-status-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;Онлайн&lt;/span&gt;&lt;/div&gt;
+    &lt;/aside&gt;
+    &lt;/div&gt;
     &lt;main class=&quot;asv-timeline-pane&quot;&gt;
       &lt;div class=&quot;asv-zoom-controls&quot; aria-label=&quot;Масштаб таймлайна&quot;&gt;
         &lt;button class=&quot;asv-zoom-control&quot; type=&quot;button&quot; data-zoom-out aria-label=&quot;Уменьшить масштаб&quot;&gt;−&lt;/button&gt;
@@ -2873,9 +3161,15 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;/div&gt;
       &lt;div class=&quot;asv-timeline-scroll&quot;&gt;
         &lt;div class=&quot;asv-overview&quot; aria-label=&quot;Шкала на двое суток с рабочими дорожками и очередью задач&quot;&gt;
+          &lt;div class=&quot;asv-time-background&quot; aria-hidden=&quot;true&quot;&gt;&lt;span class=&quot;asv-history-zone&quot;&gt;&lt;/span&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-axis&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-grid&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-day-divider&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
+          &lt;div class=&quot;asv-collapsed-node-zone&quot; data-collapsed-zone=&quot;primary&quot; hidden aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
+          &lt;div class=&quot;asv-collapsed-node-zone&quot; data-collapsed-zone=&quot;secondary&quot; hidden aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
+          &lt;div class=&quot;asv-collapsed-node-zone&quot; data-collapsed-zone=&quot;third&quot; hidden aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
+          &lt;div class=&quot;asv-node-boundary&quot; data-node-boundary=&quot;secondary&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
+          &lt;div class=&quot;asv-node-boundary&quot; data-node-boundary=&quot;third&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-lanes&quot;&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-conflict-layer&quot;&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-now-layer&quot; aria-hidden=&quot;true&quot;&gt;
@@ -2943,6 +3237,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   const queueControlState = root.querySelector(&quot;.asv-queue-control-state&quot;);
   const queueCount = root.querySelector(&quot;.asv-queue-count&quot;);
   const queueRemaining = root.querySelector(&quot;.asv-queue-remaining&quot;);
+  const historyZone = root.querySelector(&quot;.asv-history-zone&quot;);
   const daySeconds = 86400;
   const timelineDays = 2;
   const day = daySeconds * timelineDays;
@@ -2952,6 +3247,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   let zoomIndex = 0;
 
   const currentTimePercent = currentTime / day * 100;
+  historyZone.style.width = currentTimePercent + &quot;%&quot;;
   nowMarker.style.left = currentTimePercent + &quot;%&quot;;
 
   const historicalConflictAt = 9 * 60 * 60;
@@ -3042,9 +3338,46 @@ html&gt;body{padding:0}&lt;/style&gt;
     { id: 3002, task: &quot;loadDuplicateCandidates&quot;, status: &quot;FINISHED&quot;, start: t14(-4, 0), end: t14(-1, 30) },
     { id: 3003, task: &quot;matchPhysicalDuplicates&quot;, status: &quot;FINISHED&quot;, start: t14(-1, 30), end: t14(2, 0) },
     { id: 3004, task: &quot;acceptPhysicalDuplicates&quot;, status: &quot;PREDICTED&quot;, start: t14(2, 0), end: t14(6, 30) },
-    { id: 3005, task: &quot;rebuildEgrCheckHashes&quot;, status: &quot;PREDICTED&quot;, start: t14(6, 30), end: t14(9, 45) },
+    { id: 3005, task: &quot;rebuildEgrCheckHashes&quot;, status: &quot;PREDICTED&quot;, forecastConfidence: &quot;low&quot;, start: t14(6, 30), end: t14(9, 45) },
     { id: 3006, task: &quot;clearCache&quot;, status: &quot;PREDICTED&quot;, forecastConfidence: &quot;question&quot;, start: t14(9, 45), end: t14(13, 15) },
     { id: 3007, task: &quot;diagnosticLogsForToday&quot;, status: &quot;PREDICTED&quot;, forecastConfidence: &quot;question&quot;, start: t14(13, 15), end: t14(17, 45) }
+  ];
+  const secondaryRuns = [
+    makeRun(&quot;support-history-refresh&quot;, &quot;supportDataRefreshTrigger&quot;, true, t14(-22, 20), t14(-21, 30), [
+      { id: 4001, task: &quot;prepareSupportDataset&quot;, status: &quot;FINISHED&quot;, start: t14(-22, 20), end: t14(-22, 40) },
+      { id: 4002, task: &quot;refreshSupportDataset&quot;, status: &quot;FINISHED&quot;, start: t14(-22, 40), end: t14(-21, 30) }
+    ], { secondaryLane: 0, nodeIp: &quot;84.116.108.73&quot; }),
+    makeRun(&quot;support-history-sync&quot;, &quot;referenceSyncTrigger&quot;, true, t14(-22, 0), t14(-20, 15), [
+      { id: 4003, task: &quot;loadReferenceChanges&quot;, status: &quot;FINISHED&quot;, start: t14(-22, 0), end: t14(-21, 25) },
+      { id: 4004, task: &quot;applyReferenceChanges&quot;, status: &quot;FINISHED&quot;, start: t14(-21, 25), end: t14(-20, 15) }
+    ], { secondaryLane: 1, nodeIp: &quot;84.116.108.73&quot; }),
+    makeRun(&quot;support-history-check&quot;, &quot;supportIndexCheck&quot;, false, t14(-14, 30), t14(-13, 25), [
+      { id: 4005, task: &quot;supportIndexCheck&quot;, status: &quot;FINISHED&quot;, start: t14(-14, 30), end: t14(-13, 25) }
+    ], { secondaryLane: 0, nodeIp: &quot;84.116.108.73&quot; }),
+    makeRun(&quot;support-future-refresh&quot;, &quot;supportDataRefreshTrigger&quot;, true, t14(7, 20), t14(8, 35), [
+      { id: 4101, task: &quot;prepareSupportDataset&quot;, status: &quot;PREDICTED&quot;, start: t14(7, 20), end: t14(7, 45) },
+      { id: 4102, task: &quot;refreshSupportDataset&quot;, status: &quot;PREDICTED&quot;, start: t14(7, 45), end: t14(8, 35) }
+    ], { secondaryLane: 0, nodeIp: &quot;84.116.108.73&quot; }),
+    makeRun(&quot;support-future-sync&quot;, &quot;referenceSyncTrigger&quot;, true, t14(7, 50), t14(9, 15), [
+      { id: 4103, task: &quot;loadReferenceChanges&quot;, status: &quot;PREDICTED&quot;, start: t14(7, 50), end: t14(8, 20) },
+      { id: 4104, task: &quot;applyReferenceChanges&quot;, status: &quot;PREDICTED&quot;, start: t14(8, 20), end: t14(9, 15) }
+    ], { secondaryLane: 1, nodeIp: &quot;84.116.108.73&quot; }),
+    makeRun(&quot;support-future-cleanup&quot;, &quot;supportCacheCleanup&quot;, false, t14(15, 40), t14(16, 15), [
+      { id: 4105, task: &quot;supportCacheCleanup&quot;, status: &quot;PREDICTED&quot;, start: t14(15, 40), end: t14(16, 15) }
+    ], { secondaryLane: 0, nodeIp: &quot;84.116.108.73&quot; })
+  ];
+  const thirdRuns = [
+    makeRun(&quot;service-history-health&quot;, &quot;systemHealthCheckTrigger&quot;, true, t14(-18, 10), t14(-17, 20), [
+      { id: 5001, task: &quot;collectSystemMetrics&quot;, status: &quot;FINISHED&quot;, start: t14(-18, 10), end: t14(-18, 45) },
+      { id: 5002, task: &quot;publishHealthReport&quot;, status: &quot;FINISHED&quot;, start: t14(-18, 45), end: t14(-17, 20) }
+    ], { thirdLane: 0, nodeIp: &quot;84.116.108.91&quot; }),
+    makeRun(&quot;service-history-cleanup&quot;, &quot;serviceCacheCleanup&quot;, false, t14(-11, 30), t14(-10, 50), [
+      { id: 5003, task: &quot;serviceCacheCleanup&quot;, status: &quot;FINISHED&quot;, start: t14(-11, 30), end: t14(-10, 50) }
+    ], { thirdLane: 0, nodeIp: &quot;84.116.108.91&quot; }),
+    makeRun(&quot;service-future-health&quot;, &quot;systemHealthCheckTrigger&quot;, true, t14(10, 40), t14(12, 0), [
+      { id: 5101, task: &quot;collectSystemMetrics&quot;, status: &quot;PREDICTED&quot;, start: t14(10, 40), end: t14(11, 15) },
+      { id: 5102, task: &quot;publishHealthReport&quot;, status: &quot;PREDICTED&quot;, start: t14(11, 15), end: t14(12, 0) }
+    ], { thirdLane: 0, nodeIp: &quot;84.116.108.91&quot; })
   ];
   const stickyDayLabels = [];
 
@@ -3092,6 +3425,8 @@ html&gt;body{padding:0}&lt;/style&gt;
     const s = safe % 60;
     return String(h).padStart(2, &quot;0&quot;) + &quot;:&quot; + String(m).padStart(2, &quot;0&quot;) + &quot;:&quot; + String(s).padStart(2, &quot;0&quot;);
   };
+
+  const formatClockShort = seconds =&gt; formatClock(seconds).slice(0, 5);
 
   const formatDuration = seconds =&gt; {
     if (seconds &lt; 0) return &quot;0 сек (−&quot; + Math.round(Math.abs(seconds) * 1000) + &quot; мс в данных)&quot;;
@@ -3273,6 +3608,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   const showMainTaskTooltip = (segment, task, run) =&gt; {
     const attributes = taskAttributeProfile(task);
     const configuration = taskConfigurationProfile(task);
+    mainTaskTooltip.classList.toggle(&quot;is-queue-task-tooltip&quot;, Boolean(run.isQueueTask));
     const overridesMarkup = configuration.overrides.length
       ? &#x27;&lt;div class=&quot;asv-main-task-tooltip-overrides&quot;&gt;&#x27; + taskConfigurationRows(configuration.overrides) + &#x27;&lt;/div&gt;&#x27;
       : &quot;&quot;;
@@ -3430,11 +3766,13 @@ html&gt;body{padding:0}&lt;/style&gt;
     laneRuns.forEach((run, index) =&gt; nextRunStart.set(run.id, laneRuns[index + 1]?.start ?? day));
   });
 
+  const primaryLanes = [];
   laneEnds.forEach((_, index) =&gt; {
     const lane = document.createElement(&quot;div&quot;);
-    lane.className = &quot;asv-lane&quot;;
+    lane.className = &quot;asv-lane is-primary-lane&quot;;
     lane.style.top = (54 + index * 86) + &quot;px&quot;;
     lanesHost.appendChild(lane);
+    primaryLanes.push(lane);
   });
 
   const buttons = new Map();
@@ -3443,6 +3781,14 @@ html&gt;body{padding:0}&lt;/style&gt;
   const conflictTaskSegments = new Map();
   const conflictRunButtons = new Map();
   const conflictTaskPins = new Map();
+  const appendStandaloneCaption = (button, run, leftPct) =&gt; {
+    if (leftPct &gt; 78) button.classList.add(&quot;is-caption-right&quot;);
+    const caption = document.createElement(&quot;span&quot;);
+    caption.className = &quot;asv-standalone-caption&quot;;
+    caption.innerHTML = &#x27;&lt;span class=&quot;asv-standalone-caption-name&quot;&gt;&#x27; + run.name + &#x27;&lt;/span&gt;&#x27; +
+      &#x27;&lt;span class=&quot;asv-standalone-caption-time&quot;&gt;&#x27; + formatClock(run.start) + &#x27;–&#x27; + formatClock(run.end) + &#x27;&lt;/span&gt;&#x27;;
+    button.appendChild(caption);
+  };
   runs.forEach(run =&gt; {
     const lane = lanesHost.children[run.lane];
     const button = document.createElement(&quot;button&quot;);
@@ -3463,8 +3809,6 @@ html&gt;body{padding:0}&lt;/style&gt;
     const runType = run.isTrigger ? &quot;Триггер&quot; : &quot;Отдельная задача&quot;;
     const conflictTaskDescription = run.conflictId ? &quot;, конфликтующая задача: &quot; + run.tasks[0].task : &quot;&quot;;
     button.setAttribute(&quot;aria-label&quot;, runType + &quot;: &quot; + run.name + conflictTaskDescription + &quot;, &quot; + formatClock(run.start) + &quot;–&quot; + formatClock(run.end) + &quot;, &quot; + run.tasks.length + &quot; задач&quot;);
-    if (!run.isTrigger) button.setAttribute(&quot;data-tooltip&quot;, run.name + &quot; · &quot; + formatClock(run.start) + &quot;–&quot; + formatClock(run.end));
-
     if (run.isTrigger) {
       if (leftPct &gt; 78) button.classList.add(&quot;is-caption-right&quot;);
       const caption = document.createElement(&quot;span&quot;);
@@ -3473,7 +3817,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         &#x27;&lt;span class=&quot;asv-trigger-caption-time text-small&quot;&gt;&#x27; + formatClock(run.start) + &#x27;–&#x27; + formatClock(run.end) + &#x27;&lt;/span&gt;&#x27;;
       button.appendChild(caption);
       triggerCaptions.push({ caption, run, nextStart: nextRunStart.get(run.id) });
-    }
+    } else appendStandaloneCaption(button, run, leftPct);
 
     const segments = document.createElement(&quot;span&quot;);
     segments.className = &quot;asv-segments&quot;;
@@ -3572,8 +3916,8 @@ html&gt;body{padding:0}&lt;/style&gt;
     const width = Math.max(2.8, (task.end - task.start) / day * 100);
     const currentTask = task.start &lt;= currentTime &amp;&amp; task.end &gt; currentTime;
     item.type = &quot;button&quot;;
-    const questionForecast = task.status === &quot;PREDICTED&quot; &amp;&amp; isFutureTask(task) &amp;&amp; taskForecastConfidence(task) === &quot;question&quot;;
-    item.className = &quot;asv-queue-task&quot; + (task.end &lt;= currentTime ? &quot; is-completed&quot; : &quot;&quot;) + (currentTask ? &quot; is-current&quot; : &quot;&quot;) + (questionForecast ? &quot; is-forecast-question&quot; : &quot;&quot;);
+    const queueForecastLevel = task.status === &quot;PREDICTED&quot; &amp;&amp; isFutureTask(task) ? taskForecastConfidence(task) : null;
+    item.className = &quot;asv-queue-task&quot; + (task.end &lt;= currentTime ? &quot; is-completed&quot; : &quot;&quot;) + (currentTask ? &quot; is-current&quot; : &quot;&quot;) + (queueForecastLevel ? &quot; is-forecast-&quot; + queueForecastLevel : &quot;&quot;);
     item.style.left = left + &quot;%&quot;;
     item.style.width = &quot;calc(&quot; + width + &quot;% - 4px)&quot;;
     item.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
@@ -3613,6 +3957,170 @@ html&gt;body{padding:0}&lt;/style&gt;
     setQueueEnabled(!queueEnabled);
   });
   setQueueEnabled(true);
+
+  const expandedPrimaryHeight = queueTop + 66;
+  const secondaryTop = expandedPrimaryHeight;
+  const secondaryTopInset = 12;
+  const secondaryLaneHeight = 86;
+  const secondaryBottomInset = 24;
+  const expandedSecondaryHeight = secondaryTopInset + secondaryLaneHeight * 2 + secondaryBottomInset;
+  const thirdTop = secondaryTop + expandedSecondaryHeight;
+  const thirdTopInset = 12;
+  const thirdLaneHeight = 86;
+  const thirdBottomInset = 24;
+  const expandedThirdHeight = thirdTopInset + thirdLaneHeight + thirdBottomInset;
+  const timelineHeight = thirdTop + expandedThirdHeight;
+  root.style.setProperty(&quot;--asv-primary-node-height&quot;, secondaryTop + &quot;px&quot;);
+  root.style.setProperty(&quot;--asv-secondary-node-height&quot;, expandedSecondaryHeight + &quot;px&quot;);
+  root.style.setProperty(&quot;--asv-third-node-height&quot;, expandedThirdHeight + &quot;px&quot;);
+  root.style.setProperty(&quot;--asv-timeline-height&quot;, timelineHeight + &quot;px&quot;);
+
+  const secondaryLanes = [0, 1].map(index =&gt; {
+    const lane = document.createElement(&quot;div&quot;);
+    lane.className = &quot;asv-lane is-secondary-lane&quot;;
+    lane.style.top = (secondaryTop + secondaryTopInset + index * secondaryLaneHeight) + &quot;px&quot;;
+    lanesHost.appendChild(lane);
+    return lane;
+  });
+  const secondaryNextStart = new Map();
+  secondaryLanes.forEach((_, laneIndex) =&gt; {
+    const laneRuns = secondaryRuns.filter(run =&gt; run.secondaryLane === laneIndex).sort((a, b) =&gt; a.start - b.start);
+    laneRuns.forEach((run, index) =&gt; secondaryNextStart.set(run.id, laneRuns[index + 1]?.start ?? day));
+  });
+
+  secondaryRuns.forEach(run =&gt; {
+    run.lane = run.secondaryLane;
+    const lane = secondaryLanes[run.secondaryLane];
+    const button = document.createElement(&quot;button&quot;);
+    const span = Math.max(run.end - run.start, 60);
+    const widthPct = span / day * 100;
+    const leftPct = run.start / day * 100;
+    const actualDuration = Math.max(run.end - run.start, 0);
+    const compactTrigger = run.isTrigger &amp;&amp; actualDuration &lt; 1200;
+    const pointStandalone = !run.isTrigger &amp;&amp; actualDuration &lt; 60;
+    button.type = &quot;button&quot;;
+    button.className = &quot;asv-run is-secondary-node-run &quot; + (run.isTrigger ? &quot;is-trigger&quot; : &quot;is-standalone&quot;) + (compactTrigger ? &quot; is-compact-trigger&quot; : &quot;&quot;) + (pointStandalone ? &quot; is-point-run&quot; : &quot;&quot;);
+    button.style.left = leftPct + &quot;%&quot;;
+    button.style.width = widthPct + &quot;%&quot;;
+    button.style.setProperty(&quot;--asv-run-width&quot;, widthPct + &quot;%&quot;);
+    if (compactTrigger) button.style.setProperty(&quot;--asv-compact-width&quot;, (6 + Math.min(run.tasks.length, 4) * 4) + &quot;px&quot;);
+    button.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
+    button.setAttribute(&quot;aria-label&quot;, (run.isTrigger ? &quot;Триггер: &quot; : &quot;Отдельная задача: &quot;) + run.name + &quot;, нода 84.116.108.73, &quot; + formatClock(run.start) + &quot;–&quot; + formatClock(run.end));
+    if (run.isTrigger) {
+      if (leftPct &gt; 78) button.classList.add(&quot;is-caption-right&quot;);
+      const caption = document.createElement(&quot;span&quot;);
+      caption.className = &quot;asv-trigger-caption text-small&quot;;
+      caption.innerHTML = &#x27;&lt;span class=&quot;asv-trigger-caption-title&quot;&gt;&lt;span class=&quot;asv-trigger-caption-prefix&quot;&gt;T:&lt;/span&gt;&lt;span class=&quot;asv-trigger-caption-name&quot;&gt;&#x27; + run.name + &#x27;&lt;/span&gt;&lt;/span&gt;&#x27; +
+        &#x27;&lt;span class=&quot;asv-trigger-caption-time text-small&quot;&gt;&#x27; + formatClock(run.start) + &#x27;–&#x27; + formatClock(run.end) + &#x27;&lt;/span&gt;&#x27;;
+      button.appendChild(caption);
+      triggerCaptions.push({ caption, run, nextStart: secondaryNextStart.get(run.id) });
+    } else appendStandaloneCaption(button, run, leftPct);
+
+    const segments = document.createElement(&quot;span&quot;);
+    segments.className = &quot;asv-segments&quot;;
+    const visibleTasks = compactTrigger ? run.tasks.slice(0, 4) : run.tasks;
+    visibleTasks.forEach(task =&gt; {
+      const segment = document.createElement(&quot;span&quot;);
+      segment.className = &quot;asv-segment &quot; + statusClass(task.status);
+      segment.style.flex = Math.max(task.end - task.start, 1) + &quot; 1 0&quot;;
+      applyForecastConfidenceVisual(segment, run, task);
+      segment.setAttribute(&quot;data-task-id&quot;, String(task.id));
+      mainTaskSegments.set(task.id, segment);
+      segment.addEventListener(&quot;mouseenter&quot;, () =&gt; {
+        if (selectedRun?.id === run.id &amp;&amp; activeTaskLinker) {
+          activeTaskLinker.setLinkedTask(task.id, true);
+          showMainTaskTooltip(segment, task, run);
+        }
+      });
+      segment.addEventListener(&quot;mouseleave&quot;, () =&gt; {
+        if (selectedRun?.id === run.id &amp;&amp; activeTaskLinker) {
+          activeTaskLinker.setLinkedTask(null, false);
+          hideMainTaskTooltip();
+        }
+      });
+      segment.addEventListener(&quot;click&quot;, event =&gt; {
+        event.stopPropagation();
+        if (selectedRun?.id !== run.id) selectRun(run);
+        if (activeTaskLinker) activeTaskLinker.selectLinkedTask(task.id, true);
+        showMainTaskTooltip(segment, task, run);
+      });
+      segments.appendChild(segment);
+    });
+    button.appendChild(segments);
+    button.addEventListener(&quot;click&quot;, () =&gt; selectRun(run));
+    buttons.set(run.id, button);
+    lane.appendChild(button);
+  });
+
+  const thirdLane = document.createElement(&quot;div&quot;);
+  thirdLane.className = &quot;asv-lane is-third-lane&quot;;
+  thirdLane.style.top = (thirdTop + thirdTopInset) + &quot;px&quot;;
+  lanesHost.appendChild(thirdLane);
+  const sortedThirdRuns = [...thirdRuns].sort((a, b) =&gt; a.start - b.start);
+  const thirdNextStart = new Map();
+  sortedThirdRuns.forEach((run, index) =&gt; thirdNextStart.set(run.id, sortedThirdRuns[index + 1]?.start ?? day));
+
+  thirdRuns.forEach(run =&gt; {
+    run.lane = 0;
+    const button = document.createElement(&quot;button&quot;);
+    const span = Math.max(run.end - run.start, 60);
+    const widthPct = span / day * 100;
+    const leftPct = run.start / day * 100;
+    const compactTrigger = run.isTrigger &amp;&amp; (run.end - run.start) &lt; 1200;
+    const pointStandalone = !run.isTrigger &amp;&amp; (run.end - run.start) &lt; 60;
+    button.type = &quot;button&quot;;
+    button.className = &quot;asv-run is-third-node-run &quot; + (run.isTrigger ? &quot;is-trigger&quot; : &quot;is-standalone&quot;) + (compactTrigger ? &quot; is-compact-trigger&quot; : &quot;&quot;) + (pointStandalone ? &quot; is-point-run&quot; : &quot;&quot;);
+    button.style.left = leftPct + &quot;%&quot;;
+    button.style.width = widthPct + &quot;%&quot;;
+    button.style.setProperty(&quot;--asv-run-width&quot;, widthPct + &quot;%&quot;);
+    if (compactTrigger) button.style.setProperty(&quot;--asv-compact-width&quot;, (6 + Math.min(run.tasks.length, 4) * 4) + &quot;px&quot;);
+    button.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
+    button.setAttribute(&quot;aria-label&quot;, (run.isTrigger ? &quot;Триггер: &quot; : &quot;Отдельная задача: &quot;) + run.name + &quot;, нода 84.116.108.91, &quot; + formatClock(run.start) + &quot;–&quot; + formatClock(run.end));
+    if (run.isTrigger) {
+      if (leftPct &gt; 78) button.classList.add(&quot;is-caption-right&quot;);
+      const caption = document.createElement(&quot;span&quot;);
+      caption.className = &quot;asv-trigger-caption text-small&quot;;
+      caption.innerHTML = &#x27;&lt;span class=&quot;asv-trigger-caption-title&quot;&gt;&lt;span class=&quot;asv-trigger-caption-prefix&quot;&gt;T:&lt;/span&gt;&lt;span class=&quot;asv-trigger-caption-name&quot;&gt;&#x27; + run.name + &#x27;&lt;/span&gt;&lt;/span&gt;&#x27; +
+        &#x27;&lt;span class=&quot;asv-trigger-caption-time text-small&quot;&gt;&#x27; + formatClock(run.start) + &#x27;–&#x27; + formatClock(run.end) + &#x27;&lt;/span&gt;&#x27;;
+      button.appendChild(caption);
+      triggerCaptions.push({ caption, run, nextStart: thirdNextStart.get(run.id) });
+    } else appendStandaloneCaption(button, run, leftPct);
+
+    const segments = document.createElement(&quot;span&quot;);
+    segments.className = &quot;asv-segments&quot;;
+    const visibleTasks = compactTrigger ? run.tasks.slice(0, 4) : run.tasks;
+    visibleTasks.forEach(task =&gt; {
+      const segment = document.createElement(&quot;span&quot;);
+      segment.className = &quot;asv-segment &quot; + statusClass(task.status);
+      segment.style.flex = Math.max(task.end - task.start, 1) + &quot; 1 0&quot;;
+      applyForecastConfidenceVisual(segment, run, task);
+      segment.setAttribute(&quot;data-task-id&quot;, String(task.id));
+      mainTaskSegments.set(task.id, segment);
+      segment.addEventListener(&quot;mouseenter&quot;, () =&gt; {
+        if (selectedRun?.id === run.id &amp;&amp; activeTaskLinker) {
+          activeTaskLinker.setLinkedTask(task.id, true);
+          showMainTaskTooltip(segment, task, run);
+        }
+      });
+      segment.addEventListener(&quot;mouseleave&quot;, () =&gt; {
+        if (selectedRun?.id === run.id &amp;&amp; activeTaskLinker) {
+          activeTaskLinker.setLinkedTask(null, false);
+          hideMainTaskTooltip();
+        }
+      });
+      segment.addEventListener(&quot;click&quot;, event =&gt; {
+        event.stopPropagation();
+        if (selectedRun?.id !== run.id) selectRun(run);
+        if (activeTaskLinker) activeTaskLinker.selectLinkedTask(task.id, true);
+        showMainTaskTooltip(segment, task, run);
+      });
+      segments.appendChild(segment);
+    });
+    button.appendChild(segments);
+    button.addEventListener(&quot;click&quot;, () =&gt; selectRun(run));
+    buttons.set(run.id, button);
+    thirdLane.appendChild(button);
+  });
 
   const conflictGroups = new Map();
   runs.filter(run =&gt; run.conflictId).forEach(run =&gt; {
@@ -3662,6 +4170,76 @@ html&gt;body{padding:0}&lt;/style&gt;
     });
   });
 
+  const collapsedNodeHeight = 50;
+  const nodePanels = {
+    primary: root.querySelector(&quot;.is-primary-node&quot;),
+    secondary: root.querySelector(&quot;.is-secondary-node&quot;),
+    third: root.querySelector(&quot;.is-third-node&quot;)
+  };
+  const collapsedZones = {
+    primary: root.querySelector(&quot;[data-collapsed-zone=&#x27;primary&#x27;]&quot;),
+    secondary: root.querySelector(&quot;[data-collapsed-zone=&#x27;secondary&#x27;]&quot;),
+    third: root.querySelector(&quot;[data-collapsed-zone=&#x27;third&#x27;]&quot;)
+  };
+  const secondaryNodeBoundary = root.querySelector(&quot;[data-node-boundary=&#x27;secondary&#x27;]&quot;);
+  const thirdNodeBoundary = root.querySelector(&quot;[data-node-boundary=&#x27;third&#x27;]&quot;);
+  const nodeCollapseState = { primary: false, secondary: false, third: false };
+  const nodeIps = { primary: &quot;84.116.108.58&quot;, secondary: &quot;84.116.108.73&quot;, third: &quot;84.116.108.91&quot; };
+
+  const updateNodeLayout = () =&gt; {
+    let primaryHeight = nodeCollapseState.primary ? collapsedNodeHeight : expandedPrimaryHeight;
+    let secondaryHeight = nodeCollapseState.secondary ? collapsedNodeHeight : expandedSecondaryHeight;
+    let thirdHeight = nodeCollapseState.third ? collapsedNodeHeight : expandedThirdHeight;
+    const totalHeight = primaryHeight + secondaryHeight + thirdHeight;
+    root.style.setProperty(&quot;--asv-primary-node-height&quot;, primaryHeight + &quot;px&quot;);
+    root.style.setProperty(&quot;--asv-secondary-node-height&quot;, secondaryHeight + &quot;px&quot;);
+    root.style.setProperty(&quot;--asv-third-node-height&quot;, thirdHeight + &quot;px&quot;);
+    root.style.setProperty(&quot;--asv-timeline-height&quot;, totalHeight + &quot;px&quot;);
+
+    primaryLanes.forEach(lane =&gt; { lane.hidden = nodeCollapseState.primary; });
+    queueLane.hidden = nodeCollapseState.primary;
+    conflictLayer.classList.toggle(&quot;is-node-collapsed&quot;, nodeCollapseState.primary);
+    secondaryLanes.forEach((lane, index) =&gt; {
+      lane.hidden = nodeCollapseState.secondary;
+      lane.style.top = (primaryHeight + secondaryTopInset + index * secondaryLaneHeight) + &quot;px&quot;;
+    });
+    thirdLane.hidden = nodeCollapseState.third;
+    thirdLane.style.top = (primaryHeight + secondaryHeight + thirdTopInset) + &quot;px&quot;;
+    secondaryNodeBoundary.style.top = primaryHeight + &quot;px&quot;;
+    thirdNodeBoundary.style.top = (primaryHeight + secondaryHeight) + &quot;px&quot;;
+
+    collapsedZones.primary.hidden = !nodeCollapseState.primary;
+    collapsedZones.primary.style.top = &quot;42px&quot;;
+    collapsedZones.primary.style.height = Math.max(0, primaryHeight - 42) + &quot;px&quot;;
+    collapsedZones.secondary.hidden = !nodeCollapseState.secondary;
+    collapsedZones.secondary.style.top = primaryHeight + &quot;px&quot;;
+    collapsedZones.secondary.style.height = secondaryHeight + &quot;px&quot;;
+    collapsedZones.third.hidden = !nodeCollapseState.third;
+    collapsedZones.third.style.top = (primaryHeight + secondaryHeight) + &quot;px&quot;;
+    collapsedZones.third.style.height = thirdHeight + &quot;px&quot;;
+
+    Object.entries(nodePanels).forEach(([key, panel]) =&gt; {
+      const collapsed = nodeCollapseState[key];
+      const toggle = panel.querySelector(&quot;.asv-node-collapse&quot;);
+      panel.classList.toggle(&quot;is-collapsed&quot;, collapsed);
+      toggle.setAttribute(&quot;aria-expanded&quot;, String(!collapsed));
+      toggle.setAttribute(&quot;aria-label&quot;, (collapsed ? &quot;Развернуть ноду &quot; : &quot;Свернуть ноду &quot;) + nodeIps[key]);
+    });
+  };
+
+  root.querySelectorAll(&quot;[data-node-toggle]&quot;).forEach(toggle =&gt; {
+    toggle.addEventListener(&quot;click&quot;, event =&gt; {
+      event.stopPropagation();
+      const key = toggle.getAttribute(&quot;data-node-toggle&quot;);
+      nodeCollapseState[key] = !nodeCollapseState[key];
+      closeDetail();
+      closeConflict(false);
+      hideMainTaskTooltip();
+      updateNodeLayout();
+    });
+  });
+  updateNodeLayout();
+
   const layoutTriggerCaptions = () =&gt; {
     const laneWidth = lanesHost.clientWidth;
     triggerCaptions.forEach(({ caption, run, nextStart }) =&gt; {
@@ -3696,7 +4274,8 @@ html&gt;body{padding:0}&lt;/style&gt;
     selectedRun = run;
     detail.classList.add(&quot;is-open&quot;);
     detail.setAttribute(&quot;aria-hidden&quot;, &quot;false&quot;);
-    const related = runs.filter(item =&gt; item.name === run.name).sort((a, b) =&gt; a.start - b.start || a.firstId - b.firstId);
+    const relatedSource = run.nodeIp === &quot;84.116.108.73&quot; ? secondaryRuns : run.nodeIp === &quot;84.116.108.91&quot; ? thirdRuns : runs;
+    const related = relatedSource.filter(item =&gt; item.name === run.name).sort((a, b) =&gt; a.start - b.start || a.firstId - b.firstId);
     const runNumber = related.findIndex(item =&gt; item.id === run.id) + 1;
     const runSuffix = related.length &gt; 1 ? &quot; · запуск &quot; + runNumber + &quot; из &quot; + related.length : &quot;&quot;;
     const runDuration = Math.max(run.end - run.start, 0);
@@ -3718,8 +4297,10 @@ html&gt;body{padding:0}&lt;/style&gt;
     fractions.forEach(fraction =&gt; {
       const tick = document.createElement(&quot;span&quot;);
       tick.className = &quot;asv-detail-tick text-small&quot;;
+      if (fraction === 0) tick.classList.add(&quot;is-first&quot;);
+      if (fraction === 1) tick.classList.add(&quot;is-last&quot;);
       tick.style.left = (fraction * 100) + &quot;%&quot;;
-      tick.textContent = formatClock(run.start + runDuration * fraction);
+      tick.textContent = formatClockShort(run.start + runDuration * fraction);
       scale.appendChild(tick);
     });
 
@@ -3759,16 +4340,21 @@ html&gt;body{padding:0}&lt;/style&gt;
       const resumabilityLabel = attributes.resumable ? &quot;Возобновляемая&quot; : &quot;Невозобновляемая&quot;;
       const effectiveConfidence = propagatedForecastConfidence(run, task);
       const confidence = forecastConfidenceMeta(task, effectiveConfidence);
+      const confidenceMarkup = forecastConfidenceMarkup(task, effectiveConfidence);
       const stateDescription = isFutureTask(task) ? &quot;уровень уверенности: &quot; + confidence.label : taskStatusText(task);
+      const statusText = taskStatusText(task);
+      const statusMarkup = statusText
+        ? &#x27;&lt;span class=&quot;asv-task-row-status-dot &#x27; + statusClass(task.status) + &#x27;&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;&#x27; + statusText + &#x27;&lt;/span&gt;&#x27;
+        : &quot;&quot;;
       row.type = &quot;button&quot;;
       row.className = &quot;asv-task-row text-small&quot;;
       const overrunDescription = taskOverrunSeconds(task) ? &quot;, дольше прогноза на &quot; + formatDuration(taskOverrunSeconds(task)) : &quot;&quot;;
       row.setAttribute(&quot;aria-label&quot;, (index + 1) + &quot;. &quot; + task.task + &quot;, &quot; + conflictLabel + &quot;, &quot; + resumabilityLabel + &quot;, &quot; + stateDescription + &quot;, &quot; + formatDuration(rawDuration) + overrunDescription);
-      row.innerHTML = &#x27;&lt;span class=&quot;asv-task-row-line &#x27; + statusClass(task.status) + &#x27;&quot;&gt;&lt;/span&gt;&#x27; +
+      row.innerHTML = &#x27;&lt;span class=&quot;asv-task-row-index&quot;&gt;&#x27; + (index + 1) + &#x27;.&lt;/span&gt;&#x27; +
+        &#x27;&lt;span class=&quot;asv-task-row-copy&quot;&gt;&lt;span class=&quot;asv-task-row-name&quot;&gt;&#x27; + task.task + &#x27;&lt;/span&gt;&#x27; +
+        &#x27;&lt;span class=&quot;asv-task-row-meta text-small&quot;&gt;&lt;span&gt;&#x27; + formatDuration(rawDuration) + &#x27;&lt;/span&gt;&#x27; + taskOverrunMarkup(task) + &#x27;&lt;/span&gt;&lt;/span&gt;&#x27; +
         taskAttributeIcons(attributes) +
-        &#x27;&lt;span class=&quot;asv-task-row-copy&quot;&gt;&lt;span class=&quot;asv-task-row-name&quot;&gt;&#x27; + (index + 1) + &#x27;. &#x27; + task.task + &#x27;&lt;/span&gt;&#x27; +
-        &#x27;&lt;span class=&quot;asv-task-row-meta text-small&quot;&gt;&lt;span&gt;&#x27; + formatDuration(rawDuration) + &#x27;&lt;/span&gt;&#x27; + forecastConfidenceMarkup(task, effectiveConfidence) + taskOverrunMarkup(task) + &#x27;&lt;/span&gt;&lt;/span&gt;&#x27; +
-        &#x27;&lt;span class=&quot;asv-task-row-status text-small&quot;&gt;&#x27; + taskStatusText(task) + &#x27;&lt;/span&gt;&#x27;;
+        &#x27;&lt;span class=&quot;asv-task-row-status text-small&quot;&gt;&#x27; + (isFutureTask(task) ? confidenceMarkup : statusMarkup) + &#x27;&lt;/span&gt;&#x27;;
       taskLinks.get(task.id).row = row;
       taskList.appendChild(row);
     });
