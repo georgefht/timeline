@@ -2797,7 +2797,10 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 
   #asv-real .asv-detail-meta {
-    display: none;
+    display: block;
+    margin-top: 2px;
+    color: var(--asv-muted);
+    font-variant-numeric: tabular-nums;
   }
 
   #asv-real .asv-detail-track {
@@ -3072,14 +3075,18 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-task-row-status {
     display: flex;
     min-width: 96px;
-    align-self: end;
+    align-self: center;
     align-items: center;
     justify-content: flex-end;
     gap: 7px;
-    padding-bottom: 1px;
     text-align: right;
     color: var(--asv-muted);
     white-space: nowrap;
+  }
+
+  #asv-real .asv-task-row-status.is-forecast-status {
+    align-self: end;
+    padding-bottom: 1px;
   }
 
   #asv-real .asv-task-row-status:empty { display: none; }
@@ -4434,12 +4441,12 @@ html&gt;body{padding:0}&lt;/style&gt;
     detail.setAttribute(&quot;aria-hidden&quot;, &quot;false&quot;);
     const runDuration = Math.max(run.end - run.start, 0);
     detailKind.textContent = run.isQueueTask
-      ? &quot;Очередь задач · &quot; + run.queuePosition + &quot; из &quot; + queueTasks.length + &quot; · &quot; + formatDuration(runDuration)
+      ? &quot;Очередь задач · &quot; + run.queuePosition + &quot; из &quot; + queueTasks.length
       : run.isTrigger
-        ? &quot;Триггер · &quot; + taskCountLabel(run.tasks.length) + &quot; · &quot; + formatDuration(runDuration)
-        : &quot;Отдельная задача · &quot; + formatDuration(runDuration);
+        ? &quot;Триггер · &quot; + taskCountLabel(run.tasks.length)
+        : &quot;Отдельная задача&quot;;
     detailName.textContent = run.name;
-    detailMeta.textContent = &quot;&quot;;
+    detailMeta.textContent = formatDuration(runDuration);
     detailTrack.replaceChildren();
     detailTrack.scrollTop = 0;
 
@@ -4510,7 +4517,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         taskAttributeIcons(attributes) +
         &#x27;&lt;span class=&quot;asv-task-row-copy&quot;&gt;&lt;span class=&quot;asv-task-row-name&quot;&gt;&#x27; + task.task + &#x27;&lt;/span&gt;&#x27; +
         &#x27;&lt;span class=&quot;asv-task-row-meta text-small&quot;&gt;&lt;span&gt;&#x27; + formatDuration(rawDuration) + &#x27;&lt;/span&gt;&#x27; + taskOverrunMarkup(task) + &#x27;&lt;/span&gt;&lt;/span&gt;&#x27; +
-        &#x27;&lt;span class=&quot;asv-task-row-status text-small&quot;&gt;&#x27; + sidebarConfidenceMarkup + statusMarkup + &#x27;&lt;/span&gt;&#x27;;
+        &#x27;&lt;span class=&quot;asv-task-row-status text-small&#x27; + (isFutureTask(task) ? &#x27; is-forecast-status&#x27; : &#x27;&#x27;) + &#x27;&quot;&gt;&#x27; + sidebarConfidenceMarkup + statusMarkup + &#x27;&lt;/span&gt;&#x27;;
       taskLinks.get(task.id).row = row;
       taskList.appendChild(row);
     });
