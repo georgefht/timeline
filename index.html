@@ -1803,13 +1803,13 @@ html&gt;body{padding:0}&lt;/style&gt;
     appearance: none;
     position: absolute;
     z-index: 3;
-    top: 16px;
-    height: 34px;
-    min-width: 36px;
+    top: 20px;
+    height: 26px;
+    min-width: 5px;
     overflow: hidden;
-    padding: 0 8px 0 10px;
-    border: 1px solid var(--asv-group-line);
-    border-radius: 4px;
+    padding: 0;
+    border: 0;
+    border-radius: 2px;
     background: var(--asv-group);
     color: var(--asv-text);
     text-align: left;
@@ -1818,14 +1818,8 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 
   #asv-real .asv-queue-task::before {
-    content: &quot;&quot;;
-    position: absolute;
-    inset: 0 auto 0 0;
-    width: 3px;
-    background: var(--asv-predicted);
+    content: none;
   }
-
-  #asv-real .asv-queue-task.is-completed::before { background: var(--asv-ok); }
 
   #asv-real .asv-queue-task.is-current {
     border-color: var(--asv-selected);
@@ -1833,28 +1827,23 @@ html&gt;body{padding:0}&lt;/style&gt;
     box-shadow: 0 0 0 2px var(--asv-selected), inset 0 0 0 1px var(--asv-page);
   }
 
-  #asv-real .asv-queue-task.is-current .asv-queue-task-time {
-    color: var(--asv-selected);
-    font-weight: 600;
-  }
-
   #asv-real .asv-queue-task.is-forecast-high {
-    background-color: color-mix(in srgb, var(--asv-predicted) 30%, var(--asv-group));
+    background-color: var(--asv-predicted);
   }
 
   #asv-real .asv-queue-task.is-forecast-low {
-    background-color: color-mix(in srgb, var(--asv-predicted) 17%, var(--asv-group));
+    background-color: color-mix(in srgb, var(--asv-predicted) 56%, var(--asv-page));
   }
 
   #asv-real .asv-queue-task.is-forecast-question {
-    border-style: dashed;
-    border-color: color-mix(in srgb, var(--asv-predicted) 72%, var(--asv-group-line));
-    background-color: color-mix(in srgb, var(--asv-predicted) 8%, var(--asv-group));
+    background-color: color-mix(in srgb, var(--asv-predicted) 26%, var(--asv-page));
     background-image: repeating-linear-gradient(
       135deg,
       transparent 0 7px,
       color-mix(in srgb, var(--asv-predicted) 18%, transparent) 7px 8px
     );
+    outline: 1px dashed var(--asv-predicted);
+    outline-offset: -1px;
   }
 
   #asv-real .asv-queue-task:hover,
@@ -1882,29 +1871,14 @@ html&gt;body{padding:0}&lt;/style&gt;
     box-shadow: inset 0 0 0 2px var(--asv-selected);
   }
 
-  #asv-real .asv-queue-task-name {
-    position: relative;
-    z-index: 4;
-    display: block;
-    overflow: hidden;
-    font-size: 11px;
-    font-weight: 500;
-    line-height: 1.25;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  #asv-real .asv-queue-task.is-current .asv-task-inline-name {
+    color: var(--asv-selected);
+    opacity: .9;
   }
 
-  #asv-real .asv-queue-task-time {
-    position: relative;
-    z-index: 4;
-    display: block;
-    margin-top: 1px;
-    overflow: hidden;
-    color: var(--asv-muted);
-    font-size: 10px;
-    line-height: 1.1;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  #asv-real .asv-queue-task.is-forecast-low .asv-task-inline-name,
+  #asv-real .asv-queue-task.is-forecast-question .asv-task-inline-name {
+    color: var(--asv-text);
   }
 
   #asv-real .asv-queue-lane.is-disabled {
@@ -1914,6 +1888,10 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-queue-lane.is-disabled .asv-queue-task {
     border-color: var(--asv-rule);
     background-color: color-mix(in srgb, var(--asv-group) 82%, var(--asv-page));
+    color: var(--asv-muted);
+  }
+
+  #asv-real .asv-queue-lane.is-disabled .asv-task-inline-name {
     color: var(--asv-muted);
   }
 
@@ -1993,7 +1971,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 
   #asv-real .asv-run.is-standalone {
-    top: 30px;
+    top: 42px;
     height: 26px;
     min-width: 2px;
     border-radius: 3px;
@@ -2254,7 +2232,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     overflow: hidden;
     padding: 0 6px;
     color: light-dark(#ffffff, #111318);
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 500;
     line-height: 1;
     opacity: .78;
@@ -2294,6 +2272,26 @@ html&gt;body{padding:0}&lt;/style&gt;
     border-radius: 0;
     background: var(--asv-overrun-soft);
     pointer-events: none;
+  }
+
+  #asv-real .asv-segment.is-overrun > .asv-task-inline-name,
+  #asv-real .asv-queue-task.is-overrun > .asv-task-inline-name {
+    position: relative;
+    z-index: 4;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  #asv-real .asv-segment.is-overrun > .asv-task-inline-name-overrun,
+  #asv-real .asv-queue-task.is-overrun > .asv-task-inline-name-overrun {
+    position: absolute;
+    z-index: 5;
+    top: 50%;
+    left: 0;
+    color: light-dark(#5f4912, #f4d77f);
+    opacity: .9;
+    clip-path: inset(0 0 0 calc(100% - max(var(--asv-overrun-share), 4px)));
+    transform: translateY(-50%);
   }
 
   #asv-real .asv-run.is-task-inspection-active .asv-segment {
@@ -2358,10 +2356,6 @@ html&gt;body{padding:0}&lt;/style&gt;
     color: var(--asv-muted);
     font-size: 11px;
     font-variant-numeric: tabular-nums;
-  }
-
-  #asv-real .asv-main-task-tooltip.is-queue-task-tooltip .asv-main-task-tooltip-time &gt; .asv-forecast-confidence {
-    margin-left: auto;
   }
 
   #asv-real .asv-task-overrun {
@@ -2759,7 +2753,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     right: 0;
     bottom: 0;
     display: flex;
-    width: min(460px, calc(100% - 24px));
+    width: min(445px, calc(100% - 24px));
     flex-direction: column;
     border-left: 1px solid var(--asv-rule);
     background: var(--asv-page);
@@ -2781,6 +2775,10 @@ html&gt;body{padding:0}&lt;/style&gt;
     border-bottom: 1px solid var(--asv-rule);
   }
 
+  #asv-real .asv-detail-head &gt; div {
+    min-width: 0;
+  }
+
   #asv-real .asv-detail-name {
     margin-top: 4px;
     overflow: hidden;
@@ -2790,13 +2788,16 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 
   #asv-real .asv-detail-kind {
+    display: block;
+    overflow: hidden;
     color: var(--asv-muted);
+    font-variant-numeric: tabular-nums;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   #asv-real .asv-detail-meta {
-    margin-top: 5px;
-    color: var(--asv-muted);
-    font-variant-numeric: tabular-nums;
+    display: none;
   }
 
   #asv-real .asv-detail-track {
@@ -2926,11 +2927,11 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-task-row {
     appearance: none;
     display: grid;
-    grid-template-columns: 22px minmax(0, 1fr) auto minmax(96px, auto);
+    grid-template-columns: 22px auto minmax(0, 1fr) minmax(96px, auto);
     width: 100%;
     align-items: center;
     gap: 8px;
-    padding: 12px 4px;
+    padding: 12px 8px;
     border: 0;
     border-bottom: 1px solid var(--asv-rule);
     background: transparent;
@@ -2959,7 +2960,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     font-size: 12px;
     font-weight: 500;
     line-height: 1.35;
-    text-align: right;
+    text-align: left;
   }
 
   #asv-real .asv-task-row-copy {
@@ -2983,7 +2984,9 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 
   #asv-real .asv-task-row .asv-task-attributes {
+    align-self: start;
     justify-self: center;
+    padding-top: 1px;
   }
 
   #asv-real .asv-task-attributes {
@@ -3069,9 +3072,11 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-task-row-status {
     display: flex;
     min-width: 96px;
+    align-self: end;
     align-items: center;
     justify-content: flex-end;
     gap: 7px;
+    padding-bottom: 1px;
     text-align: right;
     color: var(--asv-muted);
     white-space: nowrap;
@@ -3310,7 +3315,17 @@ html&gt;body{padding:0}&lt;/style&gt;
     });
   });
 
-  const historicalOverruns = new Map([[4, 15 * 60], [8, 15]]);
+  const highlightedHistoricalOverrunRun = runs.find(run =&gt;
+    run.tasks.some(task =&gt; Number(task.id) === 4)
+  );
+  if (highlightedHistoricalOverrunRun) {
+    const highlightedTask = highlightedHistoricalOverrunRun.tasks.find(task =&gt; Number(task.id) === 4);
+    const highlightedEnd = 2 * 3600;
+    highlightedHistoricalOverrunRun.end = highlightedEnd;
+    highlightedTask.end = highlightedEnd;
+  }
+
+  const historicalOverruns = new Map([[4, 30 * 60], [8, 15]]);
   runs.forEach(run =&gt; run.tasks.forEach(task =&gt; {
     const overrunSeconds = historicalOverruns.get(Number(task.id));
     if (overrunSeconds) task.plannedEnd = task.end - overrunSeconds;
@@ -3326,6 +3341,8 @@ html&gt;body{padding:0}&lt;/style&gt;
       status: spec.status,
       start: spec.start,
       end: spec.end,
+      forecastConfidence: spec.forecastConfidence,
+      riskError: Boolean(spec.riskError),
       isConflictTask: Boolean(spec.isConflictTask)
     })),
     ...extra
@@ -3355,11 +3372,11 @@ html&gt;body{padding:0}&lt;/style&gt;
       { id: 2103, task: &quot;acceptPhysicalDuplicates&quot;, status: &quot;PREDICTED&quot;, start: t14(7, 25), end: t14(7, 55) },
       { id: 2104, task: &quot;publishDuplicateResult&quot;, status: &quot;PREDICTED&quot;, start: t14(7, 55), end: t14(8, 0) }
     ]),
-    makeRun(&quot;sep14-tiny-conflict-a&quot;, &quot;cacheWarmupTrigger&quot;, true, t14(8, 36), t14(8, 38), [
-      { id: 2201, task: &quot;cacheWarmup&quot;, status: &quot;PREDICTED&quot;, start: t14(8, 36), end: t14(8, 38), isConflictTask: true }
+    makeRun(&quot;sep14-tiny-conflict-a&quot;, &quot;cacheWarmupTrigger&quot;, true, t14(8, 24), t14(9, 6), [
+      { id: 2201, task: &quot;cacheWarmup&quot;, status: &quot;PREDICTED&quot;, forecastConfidence: &quot;high&quot;, start: t14(8, 24), end: t14(9, 6), isConflictTask: true }
     ], { conflictId: &quot;sep14-0836&quot;, conflictAt: t14(8, 36), conflictDate: &quot;14 сен 2026 · 08:36:00&quot;, conflictPosition: &quot;1/1&quot;, conflictRole: &quot;participant&quot;, conflictOutcome: &quot;predicted-finished&quot; }),
-    makeRun(&quot;sep14-tiny-conflict-b&quot;, &quot;cacheInvalidateTrigger&quot;, true, t14(8, 36), t14(8, 36, 6), [
-      { id: 2202, task: &quot;cacheInvalidate&quot;, status: &quot;ERROR&quot;, start: t14(8, 36), end: t14(8, 36, 6), isConflictTask: true }
+    makeRun(&quot;sep14-tiny-conflict-b&quot;, &quot;cacheInvalidateTrigger&quot;, true, t14(8, 36), t14(9, 2), [
+      { id: 2202, task: &quot;cacheInvalidate&quot;, status: &quot;PREDICTED&quot;, forecastConfidence: &quot;low&quot;, riskError: true, start: t14(8, 36), end: t14(9, 2), isConflictTask: true }
     ], { conflictId: &quot;sep14-0836&quot;, conflictAt: t14(8, 36), conflictDate: &quot;14 сен 2026 · 08:36:00&quot;, conflictPosition: &quot;1/1&quot;, conflictRole: &quot;cause&quot;, conflictOutcome: &quot;predicted-error&quot; }),
     makeRun(&quot;sep14-egr&quot;, &quot;dailyEgrImportTrigger&quot;, true, t14(11, 0), t14(14, 30), [
       { id: 2301, task: &quot;EfrsbDictionaryImport&quot;, status: &quot;PREDICTED&quot;, start: t14(11, 0), end: t14(11, 35) },
@@ -3369,11 +3386,11 @@ html&gt;body{padding:0}&lt;/style&gt;
     makeRun(&quot;sep14-standalone&quot;, &quot;actualizeBlacklistCheck&quot;, false, t14(15, 10), t14(15, 10, 1), [
       { id: 2304, task: &quot;actualizeBlacklistCheck&quot;, status: &quot;PREDICTED&quot;, start: t14(15, 10), end: t14(15, 10, 1) }
     ]),
-    makeRun(&quot;sep14-conflict-a&quot;, &quot;qualifiedPartiesTrigger&quot;, true, t14(17, 15), t14(17, 35), [
-      { id: 2401, task: &quot;qualifiedPartiesActualize&quot;, status: &quot;PREDICTED&quot;, start: t14(17, 15), end: t14(17, 35), isConflictTask: true }
+    makeRun(&quot;sep14-conflict-a&quot;, &quot;qualifiedPartiesTrigger&quot;, true, t14(17, 0), t14(18, 5), [
+      { id: 2401, task: &quot;qualifiedPartiesActualize&quot;, status: &quot;PREDICTED&quot;, forecastConfidence: &quot;high&quot;, start: t14(17, 0), end: t14(18, 5), isConflictTask: true }
     ], { conflictId: &quot;sep14-1720&quot;, conflictAt: t14(17, 20), conflictDate: &quot;14 сен 2026 · 17:20:00&quot;, conflictPosition: &quot;1/1&quot;, conflictRole: &quot;participant&quot;, conflictOutcome: &quot;predicted-finished&quot; }),
-    makeRun(&quot;sep14-conflict-b&quot;, &quot;incrementCacheTrigger&quot;, true, t14(17, 20), t14(17, 20, 5), [
-      { id: 2402, task: &quot;incrementCacheRebuild&quot;, status: &quot;ERROR&quot;, start: t14(17, 20), end: t14(17, 20, 5), isConflictTask: true }
+    makeRun(&quot;sep14-conflict-b&quot;, &quot;incrementCacheTrigger&quot;, true, t14(17, 20), t14(17, 55), [
+      { id: 2402, task: &quot;incrementCacheRebuild&quot;, status: &quot;PREDICTED&quot;, forecastConfidence: &quot;low&quot;, riskError: true, start: t14(17, 20), end: t14(17, 55), isConflictTask: true }
     ], { conflictId: &quot;sep14-1720&quot;, conflictAt: t14(17, 20), conflictDate: &quot;14 сен 2026 · 17:20:00&quot;, conflictPosition: &quot;1/1&quot;, conflictRole: &quot;cause&quot;, conflictOutcome: &quot;predicted-error&quot; }),
     makeRun(&quot;sep14-fns&quot;, &quot;fnsInnActualizeTrigger&quot;, true, t14(22, 55), t14(22, 56), [
       { id: 2501, task: &quot;incrementalFnsInnActualize&quot;, status: &quot;PREDICTED&quot;, start: t14(22, 55), end: t14(22, 56) }
@@ -3508,7 +3525,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   const taskStatusText = task =&gt; task.isQueueTask &amp;&amp; task.start &lt;= currentTime &amp;&amp; task.end &gt; currentTime
     ? &quot;Выполняется&quot;
     : isFutureTask(task)
-      ? (task.status === &quot;ERROR&quot; ? &quot;Риск ошибки&quot; : &quot;&quot;)
+      ? (task.riskError ? &quot;Риск ошибки&quot; : &quot;&quot;)
       : (statusLabel[task.status] || task.status);
 
   const taskOverrunSeconds = task =&gt; !isFutureTask(task) &amp;&amp; Number.isFinite(task.plannedEnd)
@@ -3608,6 +3625,10 @@ html&gt;body{padding:0}&lt;/style&gt;
       &#x27;&lt;span&gt;&#x27; + confidence.label + &#x27;&lt;/span&gt;&lt;/span&gt;&#x27;;
   };
 
+  const sidebarForecastConfidenceMarkup = (task, levelOverride = null) =&gt; {
+    return forecastConfidenceMarkup(task, levelOverride);
+  };
+
   const taskConfigurationProfile = task =&gt; {
     const name = task.task.toLowerCase();
     const numericId = Number(task.id) || 0;
@@ -3661,7 +3682,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       ? &#x27;&lt;div class=&quot;asv-main-task-tooltip-overrides&quot;&gt;&#x27; + taskConfigurationRows(configuration.overrides) + &#x27;&lt;/div&gt;&#x27;
       : &quot;&quot;;
     mainTaskTooltip.innerHTML = &#x27;&lt;div class=&quot;asv-main-task-tooltip-title&quot;&gt;&#x27; + taskAttributeIcons(attributes) + &#x27;&lt;span class=&quot;asv-main-task-tooltip-name&quot;&gt;&#x27; + task.task + &#x27;&lt;/span&gt;&lt;/div&gt;&#x27; +
-      &#x27;&lt;div class=&quot;asv-main-task-tooltip-time&quot;&gt;&lt;span&gt;&#x27; + formatClock(task.start) + &#x27;–&#x27; + formatClock(task.end) + &#x27;&lt;/span&gt;&#x27; + forecastConfidenceMarkup(task, propagatedForecastConfidence(run, task)) + taskOverrunMarkup(task) + &#x27;&lt;/div&gt;&#x27; +
+      &#x27;&lt;div class=&quot;asv-main-task-tooltip-time&quot;&gt;&lt;span&gt;&#x27; + formatDuration(task.end - task.start) + &#x27;&lt;/span&gt;&#x27; + forecastConfidenceMarkup(task, propagatedForecastConfidence(run, task)) + taskOverrunMarkup(task) + &#x27;&lt;/div&gt;&#x27; +
       &#x27;&lt;div class=&quot;asv-main-task-tooltip-config&#x27; + (configuration.overrides.length ? &#x27; has-overrides&#x27; : &#x27;&#x27;) + &#x27;&quot;&gt;&#x27; + overridesMarkup +
       &#x27;&lt;div class=&quot;asv-main-task-tooltip-default-title&quot;&gt;Параметры по умолчанию&lt;/div&gt;&#x27; +
       &#x27;&lt;div class=&quot;asv-main-task-tooltip-defaults&quot;&gt;&#x27; + taskConfigurationRows(configuration.defaults) + &#x27;&lt;/div&gt;&lt;/div&gt;&#x27;;
@@ -3710,7 +3731,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       card.innerHTML = &#x27;&lt;div class=&quot;asv-conflict-node text-small&quot;&gt;84.116.108.58&lt;/div&gt;&#x27; +
         &#x27;&lt;div class=&quot;asv-conflict-task&quot;&gt;&lt;span class=&quot;asv-conflict-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;&#x27; + task.task + &#x27;&lt;/span&gt;&#x27; + taskAttributeIcons(attributes) + &#x27;&lt;/div&gt;&#x27; +
         &#x27;&lt;div class=&quot;asv-conflict-trigger&quot;&gt;&lt;span class=&quot;asv-conflict-position&quot;&gt;&#x27; + (run.conflictPosition || &quot;1/1&quot;) + &#x27;&lt;/span&gt; &#x27; + run.name + &#x27;&lt;/div&gt;&#x27; +
-        &#x27;&lt;div class=&quot;asv-conflict-time text-small&quot;&gt;&lt;span&gt;&#x27; + formatClock(run.start) + &#x27;–&#x27; + formatClock(run.end) + &#x27;&lt;/span&gt;&#x27; + forecastConfidenceMarkup(task) + &#x27;&lt;/div&gt;&#x27; + outcome;
+        &#x27;&lt;div class=&quot;asv-conflict-time text-small&quot;&gt;&lt;span&gt;&#x27; + formatDuration(run.end - run.start) + &#x27;&lt;/span&gt;&#x27; + forecastConfidenceMarkup(task) + &#x27;&lt;/div&gt;&#x27; + outcome;
       conflictCards.appendChild(card);
     });
   };
@@ -3883,14 +3904,21 @@ html&gt;body{padding:0}&lt;/style&gt;
     label.hidden = true;
     segment.appendChild(label);
     inlineTaskLabels.push({ segment, label });
+    if (taskOverrunSeconds(task)) {
+      const overrunLabel = label.cloneNode(true);
+      overrunLabel.classList.add(&quot;asv-task-inline-name-overrun&quot;);
+      segment.appendChild(overrunLabel);
+      inlineTaskLabels.push({ segment, label: overrunLabel });
+    }
   };
-  const appendStandaloneCaption = (button, run, leftPct) =&gt; {
-    if (leftPct &gt; 78) button.classList.add(&quot;is-caption-right&quot;);
-    const caption = document.createElement(&quot;span&quot;);
-    caption.className = &quot;asv-standalone-caption&quot;;
-    caption.innerHTML = &#x27;&lt;span class=&quot;asv-standalone-caption-name&quot;&gt;&#x27; + run.name + &#x27;&lt;/span&gt;&#x27; +
-      &#x27;&lt;span class=&quot;asv-standalone-caption-time&quot;&gt;&#x27; + formatClock(run.start) + &#x27;–&#x27; + formatClock(run.end) + &#x27;&lt;/span&gt;&#x27;;
-    button.appendChild(caption);
+  const bindStandaloneTaskTooltip = (button, run) =&gt; {
+    const task = run.tasks[0];
+    if (!task) return;
+    const showTooltip = () =&gt; showMainTaskTooltip(button, task, run);
+    button.addEventListener(&quot;mouseenter&quot;, showTooltip);
+    button.addEventListener(&quot;mouseleave&quot;, hideMainTaskTooltip);
+    button.addEventListener(&quot;focus&quot;, showTooltip);
+    button.addEventListener(&quot;blur&quot;, hideMainTaskTooltip);
   };
   runs.forEach(run =&gt; {
     const lane = lanesHost.children[run.lane];
@@ -3914,16 +3942,16 @@ html&gt;body{padding:0}&lt;/style&gt;
     button.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
     const runType = run.isTrigger ? &quot;Триггер&quot; : &quot;Отдельная задача&quot;;
     const conflictTaskDescription = run.conflictId ? &quot;, конфликтующая задача: &quot; + run.tasks[0].task : &quot;&quot;;
-    button.setAttribute(&quot;aria-label&quot;, runType + &quot;: &quot; + run.name + conflictTaskDescription + &quot;, &quot; + formatClock(run.start) + &quot;–&quot; + formatClock(run.end) + &quot;, &quot; + run.tasks.length + &quot; задач&quot;);
+    button.setAttribute(&quot;aria-label&quot;, runType + &quot;: &quot; + run.name + conflictTaskDescription + &quot;, длительность &quot; + formatDuration(run.end - run.start) + &quot;, &quot; + run.tasks.length + &quot; задач&quot;);
     if (run.isTrigger) {
       if (leftPct &gt; 78) button.classList.add(&quot;is-caption-right&quot;);
       const caption = document.createElement(&quot;span&quot;);
       caption.className = &quot;asv-trigger-caption text-small&quot;;
       caption.innerHTML = &#x27;&lt;span class=&quot;asv-trigger-caption-title&quot;&gt;&lt;span class=&quot;asv-trigger-caption-prefix&quot;&gt;T:&lt;/span&gt;&lt;span class=&quot;asv-trigger-caption-name&quot;&gt;&#x27; + run.name + &#x27;&lt;/span&gt;&lt;/span&gt;&#x27; +
-        &#x27;&lt;span class=&quot;asv-trigger-caption-time text-small&quot;&gt;&#x27; + formatClock(run.start) + &#x27;–&#x27; + formatClock(run.end) + &#x27;&lt;/span&gt;&#x27;;
+        &#x27;&lt;span class=&quot;asv-trigger-caption-time text-small&quot;&gt;&#x27; + formatDuration(run.end - run.start) + &#x27;&lt;/span&gt;&#x27;;
       button.appendChild(caption);
       triggerCaptions.push({ caption, run, nextStart: nextRunStart.get(run.id) });
-    } else appendStandaloneCaption(button, run, leftPct);
+    } else bindStandaloneTaskTooltip(button, run);
 
     const segments = document.createElement(&quot;span&quot;);
     segments.className = &quot;asv-segments&quot;;
@@ -3978,10 +4006,10 @@ html&gt;body{padding:0}&lt;/style&gt;
 
     }
 
-    if (run.tasks[0].status === &quot;ERROR&quot; &amp;&amp; run.conflictId) {
+    if (run.conflictId &amp;&amp; (run.tasks[0].status === &quot;ERROR&quot; || run.tasks[0].riskError)) {
       const statusBadge = document.createElement(&quot;span&quot;);
       statusBadge.className = &quot;asv-run-status-badge text-small&quot;;
-      statusBadge.textContent = isFutureTask(run.tasks[0]) ? &quot;Риск ошибки&quot; : &quot;Ошибка&quot;;
+      statusBadge.textContent = run.tasks[0].riskError ? &quot;Риск ошибки&quot; : &quot;Ошибка&quot;;
       button.appendChild(statusBadge);
     }
 
@@ -4024,13 +4052,12 @@ html&gt;body{padding:0}&lt;/style&gt;
     const currentTask = task.start &lt;= currentTime &amp;&amp; task.end &gt; currentTime;
     item.type = &quot;button&quot;;
     const queueForecastLevel = task.status === &quot;PREDICTED&quot; &amp;&amp; isFutureTask(task) ? taskForecastConfidence(task) : null;
-    item.className = &quot;asv-queue-task&quot; + (task.end &lt;= currentTime ? &quot; is-completed&quot; : &quot;&quot;) + (currentTask ? &quot; is-current&quot; : &quot;&quot;) + (queueForecastLevel ? &quot; is-forecast-&quot; + queueForecastLevel : &quot;&quot;);
+    item.className = &quot;asv-queue-task &quot; + statusClass(task.status) + (task.end &lt;= currentTime ? &quot; is-completed&quot; : &quot;&quot;) + (currentTask ? &quot; is-current&quot; : &quot;&quot;) + (queueForecastLevel ? &quot; is-forecast-&quot; + queueForecastLevel : &quot;&quot;);
     item.style.left = left + &quot;%&quot;;
     item.style.width = &quot;calc(&quot; + width + &quot;% - 4px)&quot;;
     item.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
     item.setAttribute(&quot;aria-label&quot;, (index + 1) + &quot; из &quot; + queueTasks.length + &quot;. &quot; + task.task + &quot;, &quot; + formatDuration(task.end - task.start));
-    const taskTimingLabel = currentTask ? &quot;Сейчас · &quot; + formatDuration(task.end - task.start) : formatDuration(task.end - task.start);
-    item.innerHTML = &#x27;&lt;span class=&quot;asv-queue-task-name&quot;&gt;&#x27; + task.task + &#x27;&lt;/span&gt;&lt;span class=&quot;asv-queue-task-time&quot;&gt;&#x27; + taskTimingLabel + &#x27;&lt;/span&gt;&#x27;;
+    appendInlineTaskName(item, task);
     applyTaskOverrunVisual(item, task);
     item.addEventListener(&quot;mouseenter&quot;, () =&gt; showMainTaskTooltip(item, task, queueRun));
     item.addEventListener(&quot;mouseleave&quot;, hideMainTaskTooltip);
@@ -4116,16 +4143,16 @@ html&gt;body{padding:0}&lt;/style&gt;
       compactTriggerButtons.push(button);
     }
     button.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
-    button.setAttribute(&quot;aria-label&quot;, (run.isTrigger ? &quot;Триггер: &quot; : &quot;Отдельная задача: &quot;) + run.name + &quot;, нода 84.116.108.73, &quot; + formatClock(run.start) + &quot;–&quot; + formatClock(run.end));
+    button.setAttribute(&quot;aria-label&quot;, (run.isTrigger ? &quot;Триггер: &quot; : &quot;Отдельная задача: &quot;) + run.name + &quot;, нода 84.116.108.73, длительность &quot; + formatDuration(run.end - run.start));
     if (run.isTrigger) {
       if (leftPct &gt; 78) button.classList.add(&quot;is-caption-right&quot;);
       const caption = document.createElement(&quot;span&quot;);
       caption.className = &quot;asv-trigger-caption text-small&quot;;
       caption.innerHTML = &#x27;&lt;span class=&quot;asv-trigger-caption-title&quot;&gt;&lt;span class=&quot;asv-trigger-caption-prefix&quot;&gt;T:&lt;/span&gt;&lt;span class=&quot;asv-trigger-caption-name&quot;&gt;&#x27; + run.name + &#x27;&lt;/span&gt;&lt;/span&gt;&#x27; +
-        &#x27;&lt;span class=&quot;asv-trigger-caption-time text-small&quot;&gt;&#x27; + formatClock(run.start) + &#x27;–&#x27; + formatClock(run.end) + &#x27;&lt;/span&gt;&#x27;;
+        &#x27;&lt;span class=&quot;asv-trigger-caption-time text-small&quot;&gt;&#x27; + formatDuration(run.end - run.start) + &#x27;&lt;/span&gt;&#x27;;
       button.appendChild(caption);
       triggerCaptions.push({ caption, run, nextStart: secondaryNextStart.get(run.id) });
-    } else appendStandaloneCaption(button, run, leftPct);
+    } else bindStandaloneTaskTooltip(button, run);
 
     const segments = document.createElement(&quot;span&quot;);
     segments.className = &quot;asv-segments&quot;;
@@ -4190,16 +4217,16 @@ html&gt;body{padding:0}&lt;/style&gt;
       compactTriggerButtons.push(button);
     }
     button.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
-    button.setAttribute(&quot;aria-label&quot;, (run.isTrigger ? &quot;Триггер: &quot; : &quot;Отдельная задача: &quot;) + run.name + &quot;, нода 84.116.108.91, &quot; + formatClock(run.start) + &quot;–&quot; + formatClock(run.end));
+    button.setAttribute(&quot;aria-label&quot;, (run.isTrigger ? &quot;Триггер: &quot; : &quot;Отдельная задача: &quot;) + run.name + &quot;, нода 84.116.108.91, длительность &quot; + formatDuration(run.end - run.start));
     if (run.isTrigger) {
       if (leftPct &gt; 78) button.classList.add(&quot;is-caption-right&quot;);
       const caption = document.createElement(&quot;span&quot;);
       caption.className = &quot;asv-trigger-caption text-small&quot;;
       caption.innerHTML = &#x27;&lt;span class=&quot;asv-trigger-caption-title&quot;&gt;&lt;span class=&quot;asv-trigger-caption-prefix&quot;&gt;T:&lt;/span&gt;&lt;span class=&quot;asv-trigger-caption-name&quot;&gt;&#x27; + run.name + &#x27;&lt;/span&gt;&lt;/span&gt;&#x27; +
-        &#x27;&lt;span class=&quot;asv-trigger-caption-time text-small&quot;&gt;&#x27; + formatClock(run.start) + &#x27;–&#x27; + formatClock(run.end) + &#x27;&lt;/span&gt;&#x27;;
+        &#x27;&lt;span class=&quot;asv-trigger-caption-time text-small&quot;&gt;&#x27; + formatDuration(run.end - run.start) + &#x27;&lt;/span&gt;&#x27;;
       button.appendChild(caption);
       triggerCaptions.push({ caption, run, nextStart: thirdNextStart.get(run.id) });
-    } else appendStandaloneCaption(button, run, leftPct);
+    } else bindStandaloneTaskTooltip(button, run);
 
     const segments = document.createElement(&quot;span&quot;);
     segments.className = &quot;asv-segments&quot;;
@@ -4246,7 +4273,8 @@ html&gt;body{padding:0}&lt;/style&gt;
       button.classList.toggle(&quot;is-compact-trigger&quot;, proportionalWidth &lt; 72);
     });
     inlineTaskLabels.forEach(({ segment, label }) =&gt; {
-      label.hidden = segment.getBoundingClientRect().width &lt; 48;
+      const minimumLabelWidth = segment.classList.contains(&quot;is-overrun&quot;) ? 36 : 48;
+      label.hidden = segment.getBoundingClientRect().width &lt; minimumLabelWidth;
     });
   };
   requestAnimationFrame(layoutInlineTaskLabels);
@@ -4404,16 +4432,14 @@ html&gt;body{padding:0}&lt;/style&gt;
     selectedRun = run;
     detail.classList.add(&quot;is-open&quot;);
     detail.setAttribute(&quot;aria-hidden&quot;, &quot;false&quot;);
-    const relatedSource = run.nodeIp === &quot;84.116.108.73&quot; ? secondaryRuns : run.nodeIp === &quot;84.116.108.91&quot; ? thirdRuns : runs;
-    const related = relatedSource.filter(item =&gt; item.name === run.name).sort((a, b) =&gt; a.start - b.start || a.firstId - b.firstId);
-    const runNumber = related.findIndex(item =&gt; item.id === run.id) + 1;
-    const runSuffix = related.length &gt; 1 ? &quot; · запуск &quot; + runNumber + &quot; из &quot; + related.length : &quot;&quot;;
     const runDuration = Math.max(run.end - run.start, 0);
     detailKind.textContent = run.isQueueTask
-      ? &quot;Очередь задач · &quot; + run.queuePosition + &quot; из &quot; + queueTasks.length
-      : run.isTrigger ? &quot;Триггер · &quot; + taskCountLabel(run.tasks.length) : &quot;Отдельная задача&quot;;
-    detailName.textContent = run.name + runSuffix;
-    detailMeta.textContent = formatDuration(runDuration);
+      ? &quot;Очередь задач · &quot; + run.queuePosition + &quot; из &quot; + queueTasks.length + &quot; · &quot; + formatDuration(runDuration)
+      : run.isTrigger
+        ? &quot;Триггер · &quot; + taskCountLabel(run.tasks.length) + &quot; · &quot; + formatDuration(runDuration)
+        : &quot;Отдельная задача · &quot; + formatDuration(runDuration);
+    detailName.textContent = run.name;
+    detailMeta.textContent = &quot;&quot;;
     detailTrack.replaceChildren();
     detailTrack.scrollTop = 0;
 
@@ -4470,10 +4496,10 @@ html&gt;body{padding:0}&lt;/style&gt;
       const resumabilityLabel = attributes.resumable ? &quot;Возобновляемая&quot; : &quot;Невозобновляемая&quot;;
       const effectiveConfidence = propagatedForecastConfidence(run, task);
       const confidence = forecastConfidenceMeta(task, effectiveConfidence);
-      const confidenceMarkup = forecastConfidenceMarkup(task, effectiveConfidence);
+      const sidebarConfidenceMarkup = sidebarForecastConfidenceMarkup(task, effectiveConfidence);
       const stateDescription = isFutureTask(task) ? &quot;уровень уверенности: &quot; + confidence.label : taskStatusText(task);
       const statusText = taskStatusText(task);
-      const statusMarkup = statusText
+      const statusMarkup = !isFutureTask(task) &amp;&amp; statusText
         ? &#x27;&lt;span class=&quot;asv-task-row-status-dot &#x27; + statusClass(task.status) + &#x27;&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;&#x27; + statusText + &#x27;&lt;/span&gt;&#x27;
         : &quot;&quot;;
       row.type = &quot;button&quot;;
@@ -4481,10 +4507,10 @@ html&gt;body{padding:0}&lt;/style&gt;
       const overrunDescription = taskOverrunSeconds(task) ? &quot;, дольше прогноза на &quot; + formatDuration(taskOverrunSeconds(task)) : &quot;&quot;;
       row.setAttribute(&quot;aria-label&quot;, (index + 1) + &quot;. &quot; + task.task + &quot;, &quot; + conflictLabel + &quot;, &quot; + resumabilityLabel + &quot;, &quot; + stateDescription + &quot;, &quot; + formatDuration(rawDuration) + overrunDescription);
       row.innerHTML = &#x27;&lt;span class=&quot;asv-task-row-index&quot;&gt;&#x27; + (index + 1) + &#x27;.&lt;/span&gt;&#x27; +
+        taskAttributeIcons(attributes) +
         &#x27;&lt;span class=&quot;asv-task-row-copy&quot;&gt;&lt;span class=&quot;asv-task-row-name&quot;&gt;&#x27; + task.task + &#x27;&lt;/span&gt;&#x27; +
         &#x27;&lt;span class=&quot;asv-task-row-meta text-small&quot;&gt;&lt;span&gt;&#x27; + formatDuration(rawDuration) + &#x27;&lt;/span&gt;&#x27; + taskOverrunMarkup(task) + &#x27;&lt;/span&gt;&lt;/span&gt;&#x27; +
-        taskAttributeIcons(attributes) +
-        &#x27;&lt;span class=&quot;asv-task-row-status text-small&quot;&gt;&#x27; + (isFutureTask(task) ? confidenceMarkup : statusMarkup) + &#x27;&lt;/span&gt;&#x27;;
+        &#x27;&lt;span class=&quot;asv-task-row-status text-small&quot;&gt;&#x27; + sidebarConfidenceMarkup + statusMarkup + &#x27;&lt;/span&gt;&#x27;;
       taskLinks.get(task.id).row = row;
       taskList.appendChild(row);
     });
