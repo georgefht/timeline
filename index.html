@@ -1774,7 +1774,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     position: absolute;
     left: 0;
     right: 22px;
-    height: 80px;
+    height: 86px;
     border-bottom: 1px solid var(--asv-rule);
   }
 
@@ -1802,7 +1802,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     appearance: none;
     position: absolute;
     z-index: 3;
-    top: 11px;
+    top: 16px;
     height: 34px;
     min-width: 36px;
     overflow: hidden;
@@ -1882,6 +1882,8 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 
   #asv-real .asv-queue-task-name {
+    position: relative;
+    z-index: 4;
     display: block;
     overflow: hidden;
     font-size: 11px;
@@ -1892,6 +1894,8 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 
   #asv-real .asv-queue-task-time {
+    position: relative;
+    z-index: 4;
     display: block;
     margin-top: 1px;
     overflow: hidden;
@@ -1942,8 +1946,8 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 
   #asv-real .asv-run.is-trigger {
-    top: 28px;
-    height: 26px;
+    top: 39px;
+    height: 32px;
     overflow: visible;
     border-radius: 4px;
     background: var(--asv-group);
@@ -1982,15 +1986,16 @@ html&gt;body{padding:0}&lt;/style&gt;
     width: 2px;
     min-width: 2px;
     flex: 0 0 2px !important;
+    padding: 0;
     border-radius: 1px;
     box-shadow: none;
   }
 
   #asv-real .asv-run.is-standalone {
-    top: 32px;
-    height: 18px;
+    top: 30px;
+    height: 26px;
     min-width: 2px;
-    border-radius: 1px;
+    border-radius: 3px;
     background: transparent;
   }
 
@@ -2230,24 +2235,62 @@ html&gt;body{padding:0}&lt;/style&gt;
     display: flex;
   }
 
-  #asv-real .asv-segment { height: 100%; min-width: 2px; }
+  #asv-real .asv-segment {
+    position: relative;
+    display: flex;
+    height: 100%;
+    min-width: 2px;
+    align-items: center;
+    overflow: hidden;
+    padding: 0;
+  }
 
-  #asv-real .asv-segment.is-overrun {
+  #asv-real .asv-task-inline-name {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    padding: 0 6px;
+    color: light-dark(#ffffff, #111318);
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1;
+    opacity: .78;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  #asv-real .asv-task-inline-name[hidden] { display: none; }
+
+  #asv-real .asv-run.is-compact-trigger .asv-segment { padding: 0; }
+
+  #asv-real .asv-segment.is-forecast-low .asv-task-inline-name,
+  #asv-real .asv-segment.is-forecast-question .asv-task-inline-name {
+    color: var(--asv-text);
+  }
+
+  #asv-real .asv-segment.is-overrun,
+  #asv-real .asv-queue-task.is-overrun {
     position: relative;
     overflow: visible;
   }
 
-  #asv-real .asv-segment.is-overrun::after {
+  #asv-real .asv-segment.is-overrun::after,
+  #asv-real .asv-queue-task.is-overrun::after {
     content: &quot;&quot;;
     position: absolute;
     z-index: 3;
-    top: -2px;
+    top: 0;
     right: 0;
-    bottom: -2px;
+    bottom: 0;
     box-sizing: border-box;
     width: max(var(--asv-overrun-share), 4px);
-    border: 1.5px dashed var(--asv-overrun);
-    border-radius: 3px;
+    border-right: 1.5px dashed var(--asv-overrun);
+    border-left: 1.5px dashed var(--asv-overrun);
+    border-radius: 0;
     background: var(--asv-overrun-soft);
     pointer-events: none;
   }
@@ -2532,8 +2575,8 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-conflict-popover {
     position: absolute;
     z-index: 14;
-    top: 48px;
-    left: 50%;
+    top: 0;
+    left: 0;
     display: none;
     width: min(400px, calc(100% - 32px));
     max-height: calc(100% - 72px);
@@ -2542,8 +2585,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     border: 1px solid var(--asv-rule);
     border-radius: 10px;
     background: var(--asv-page);
-    box-shadow: 0 16px 38px light-dark(rgb(28 31 38 / 16%), rgb(0 0 0 / 38%));
-    transform: translateX(-50%);
+    box-shadow: 0 8px 22px light-dark(rgb(28 31 38 / 10%), rgb(0 0 0 / 24%));
   }
 
   #asv-real .asv-conflict-popover.is-open { display: block; }
@@ -2603,6 +2645,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     font-size: 11px;
     font-weight: 500;
     line-height: 1.2;
+    white-space: nowrap;
   }
 
   #asv-real .asv-conflict-state.is-conflict {
@@ -2691,7 +2734,7 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   #asv-real .asv-conflict-outcome {
     display: grid;
-    grid-template-columns: 78px minmax(0, 1fr);
+    grid-template-columns: max-content minmax(0, 1fr);
     align-items: start;
     gap: 8px;
     margin-top: 7px;
@@ -2702,8 +2745,10 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   #asv-real .asv-conflict-outcome .asv-conflict-state {
     box-sizing: border-box;
-    width: 78px;
+    min-width: 66px;
     justify-content: center;
+    padding: 2px 5px;
+    font-size: 10px;
   }
 
   #asv-real .asv-detail {
@@ -3243,8 +3288,9 @@ html&gt;body{padding:0}&lt;/style&gt;
   const day = daySeconds * timelineDays;
   const currentTime = daySeconds + 5 * 60 * 60;
   const statusClass = value =&gt; &quot;asv-&quot; + value.toLowerCase();
-  const zoomLevels = [1, 1.5, 2, 3, 4, 6, 8];
-  let zoomIndex = 0;
+  const zoomLevels = [1, 1.25, 1.5, 2, 3, 4, 6, 8];
+  let zoomIndex = 1;
+  let layoutInlineTaskLabels = () =&gt; {};
 
   const currentTimePercent = currentTime / day * 100;
   historyZone.style.width = currentTimePercent + &quot;%&quot;;
@@ -3335,7 +3381,7 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   const queueTasks = [
     { id: 3001, task: &quot;clearIncrementCache&quot;, status: &quot;FINISHED&quot;, start: t14(-7, 0), end: t14(-4, 0) },
-    { id: 3002, task: &quot;loadDuplicateCandidates&quot;, status: &quot;FINISHED&quot;, start: t14(-4, 0), end: t14(-1, 30) },
+    { id: 3002, task: &quot;loadDuplicateCandidates&quot;, status: &quot;FINISHED&quot;, start: t14(-4, 0), end: t14(-1, 30), plannedEnd: t14(-1, 0) },
     { id: 3003, task: &quot;matchPhysicalDuplicates&quot;, status: &quot;FINISHED&quot;, start: t14(-1, 30), end: t14(2, 0) },
     { id: 3004, task: &quot;acceptPhysicalDuplicates&quot;, status: &quot;PREDICTED&quot;, start: t14(2, 0), end: t14(6, 30) },
     { id: 3005, task: &quot;rebuildEgrCheckHashes&quot;, status: &quot;PREDICTED&quot;, forecastConfidence: &quot;low&quot;, start: t14(6, 30), end: t14(9, 45) },
@@ -3397,6 +3443,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       const newWidth = overview.getBoundingClientRect().width;
       timelineScroll.scrollLeft = Math.max(0, centerRatio * newWidth - viewportWidth / 2);
       layoutDayLabels();
+      layoutInlineTaskLabels();
     });
   };
 
@@ -3412,7 +3459,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     event.stopPropagation();
     setZoom(0);
   });
-  setZoom(0);
+  setZoom(zoomIndex);
   requestAnimationFrame(() =&gt; {
     const width = overview.getBoundingClientRect().width;
     timelineScroll.scrollLeft = width / timelineDays;
@@ -3651,7 +3698,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       const problemTask = run.conflictRole === &quot;cause&quot; || run.conflictOutcome === &quot;error&quot; || run.conflictOutcome === &quot;predicted-error&quot;;
       const outcomeClass = problemTask ? &quot;is-error&quot; : &quot;is-finished&quot;;
       const outcomeLabel = futureConflict
-        ? (problemTask ? &quot;Риск ошибки&quot; : &quot;Без ошибки&quot;)
+        ? (problemTask ? &quot;Риск ошибки&quot; : &quot;Без риска&quot;)
         : (problemTask ? &quot;Ошибка&quot; : &quot;Завершено&quot;);
       const outcomeText = futureConflict
         ? (problemTask ? &quot;По прогнозу завершится с ошибкой после запуска&quot; : &quot;По прогнозу продолжит работу после конфликта&quot;)
@@ -3677,6 +3724,42 @@ html&gt;body{padding:0}&lt;/style&gt;
     activeConflictBolt = null;
   };
 
+  const positionConflictPopover = bolt =&gt; {
+    const gap = 10;
+    const edge = 10;
+    const rootBox = root.getBoundingClientRect();
+    const timelineBox = timelineScroll.getBoundingClientRect();
+    const boltBox = bolt.getBoundingClientRect();
+    const popoverBox = conflictPopover.getBoundingClientRect();
+    const minLeft = Math.max(edge, timelineBox.left - rootBox.left + edge);
+    const maxRight = Math.min(rootBox.width - edge, timelineBox.right - rootBox.left - edge);
+    const rightCandidate = boltBox.right - rootBox.left + gap;
+    const leftCandidate = boltBox.left - rootBox.left - popoverBox.width - gap;
+    const fitsRight = rightCandidate + popoverBox.width &lt;= maxRight;
+    const fitsLeft = leftCandidate &gt;= minLeft;
+    let left;
+    let placement;
+    if (fitsRight) {
+      left = rightCandidate;
+      placement = &quot;right&quot;;
+    } else if (fitsLeft) {
+      left = leftCandidate;
+      placement = &quot;left&quot;;
+    } else if (maxRight - (boltBox.right - rootBox.left) &gt;= boltBox.left - rootBox.left - minLeft) {
+      left = Math.max(minLeft, Math.min(rightCandidate, maxRight - popoverBox.width));
+      placement = &quot;right&quot;;
+    } else {
+      left = Math.max(minLeft, Math.min(leftCandidate, maxRight - popoverBox.width));
+      placement = &quot;left&quot;;
+    }
+    const anchorTop = boltBox.top - rootBox.top;
+    const maxTop = Math.max(edge, root.clientHeight - popoverBox.height - edge);
+    const top = Math.max(edge, Math.min(anchorTop, maxTop));
+    conflictPopover.dataset.placement = placement;
+    conflictPopover.style.left = Math.round(left) + &quot;px&quot;;
+    conflictPopover.style.top = Math.round(top) + &quot;px&quot;;
+  };
+
   const openConflict = (conflict, bolt) =&gt; {
     if (detail.classList.contains(&quot;is-open&quot;)) closeDetail();
     if (activeConflictBolt &amp;&amp; activeConflictBolt !== bolt) activeConflictBolt.setAttribute(&quot;aria-expanded&quot;, &quot;false&quot;);
@@ -3685,7 +3768,16 @@ html&gt;body{padding:0}&lt;/style&gt;
     conflictPopover.classList.add(&quot;is-open&quot;);
     conflictPopover.setAttribute(&quot;aria-hidden&quot;, &quot;false&quot;);
     bolt.setAttribute(&quot;aria-expanded&quot;, &quot;true&quot;);
+    positionConflictPopover(bolt);
   };
+
+  const repositionActiveConflict = () =&gt; {
+    if (activeConflictBolt &amp;&amp; conflictPopover.classList.contains(&quot;is-open&quot;)) {
+      positionConflictPopover(activeConflictBolt);
+    }
+  };
+  timelineScroll.addEventListener(&quot;scroll&quot;, repositionActiveConflict, { passive: true });
+  window.addEventListener(&quot;resize&quot;, repositionActiveConflict, { passive: true });
 
   const closeDetail = () =&gt; {
     hideMainTaskTooltip();
@@ -3781,6 +3873,16 @@ html&gt;body{padding:0}&lt;/style&gt;
   const conflictTaskSegments = new Map();
   const conflictRunButtons = new Map();
   const conflictTaskPins = new Map();
+  const compactTriggerButtons = [];
+  const inlineTaskLabels = [];
+  const appendInlineTaskName = (segment, task) =&gt; {
+    const label = document.createElement(&quot;span&quot;);
+    label.className = &quot;asv-task-inline-name&quot;;
+    label.textContent = task.task;
+    label.hidden = true;
+    segment.appendChild(label);
+    inlineTaskLabels.push({ segment, label });
+  };
   const appendStandaloneCaption = (button, run, leftPct) =&gt; {
     if (leftPct &gt; 78) button.classList.add(&quot;is-caption-right&quot;);
     const caption = document.createElement(&quot;span&quot;);
@@ -3804,7 +3906,10 @@ html&gt;body{padding:0}&lt;/style&gt;
     button.style.left = leftPct + &quot;%&quot;;
     button.style.width = widthPct + &quot;%&quot;;
     button.style.setProperty(&quot;--asv-run-width&quot;, widthPct + &quot;%&quot;);
-    if (compactTrigger) button.style.setProperty(&quot;--asv-compact-width&quot;, (6 + compactTaskCount * 4) + &quot;px&quot;);
+    if (compactTrigger) {
+      button.style.setProperty(&quot;--asv-compact-width&quot;, (6 + compactTaskCount * 4) + &quot;px&quot;);
+      compactTriggerButtons.push(button);
+    }
     button.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
     const runType = run.isTrigger ? &quot;Триггер&quot; : &quot;Отдельная задача&quot;;
     const conflictTaskDescription = run.conflictId ? &quot;, конфликтующая задача: &quot; + run.tasks[0].task : &quot;&quot;;
@@ -3830,6 +3935,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       applyTaskOverrunVisual(segment, task);
       applyForecastConfidenceVisual(segment, run, task);
       segment.setAttribute(&quot;data-task-id&quot;, String(task.id));
+      appendInlineTaskName(segment, task);
       mainTaskSegments.set(task.id, segment);
       segment.addEventListener(&quot;mouseenter&quot;, () =&gt; {
         if (selectedRun?.id === run.id &amp;&amp; activeTaskLinker) {
@@ -3887,7 +3993,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   const queueLane = document.createElement(&quot;section&quot;);
   queueLane.className = &quot;asv-queue-lane&quot;;
   queueLane.setAttribute(&quot;aria-label&quot;, &quot;Очередь из семи последовательных задач&quot;);
-  const queueTop = 54 + laneEnds.length * 86 + 4;
+  const queueTop = 54 + laneEnds.length * 86;
   const lastRegularLane = laneEnds.length ? lanesHost.children[laneEnds.length - 1] : null;
   if (lastRegularLane) {
     const lastRegularLaneTop = 54 + (laneEnds.length - 1) * 86;
@@ -3924,6 +4030,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     item.setAttribute(&quot;aria-label&quot;, (index + 1) + &quot; из &quot; + queueTasks.length + &quot;. &quot; + task.task + &quot;, &quot; + formatDuration(task.end - task.start));
     const taskTimingLabel = currentTask ? &quot;Сейчас · &quot; + formatDuration(task.end - task.start) : formatDuration(task.end - task.start);
     item.innerHTML = &#x27;&lt;span class=&quot;asv-queue-task-name&quot;&gt;&#x27; + task.task + &#x27;&lt;/span&gt;&lt;span class=&quot;asv-queue-task-time&quot;&gt;&#x27; + taskTimingLabel + &#x27;&lt;/span&gt;&#x27;;
+    applyTaskOverrunVisual(item, task);
     item.addEventListener(&quot;mouseenter&quot;, () =&gt; showMainTaskTooltip(item, task, queueRun));
     item.addEventListener(&quot;mouseleave&quot;, hideMainTaskTooltip);
     item.addEventListener(&quot;focus&quot;, () =&gt; showMainTaskTooltip(item, task, queueRun));
@@ -4003,7 +4110,10 @@ html&gt;body{padding:0}&lt;/style&gt;
     button.style.left = leftPct + &quot;%&quot;;
     button.style.width = widthPct + &quot;%&quot;;
     button.style.setProperty(&quot;--asv-run-width&quot;, widthPct + &quot;%&quot;);
-    if (compactTrigger) button.style.setProperty(&quot;--asv-compact-width&quot;, (6 + Math.min(run.tasks.length, 4) * 4) + &quot;px&quot;);
+    if (compactTrigger) {
+      button.style.setProperty(&quot;--asv-compact-width&quot;, (6 + Math.min(run.tasks.length, 4) * 4) + &quot;px&quot;);
+      compactTriggerButtons.push(button);
+    }
     button.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
     button.setAttribute(&quot;aria-label&quot;, (run.isTrigger ? &quot;Триггер: &quot; : &quot;Отдельная задача: &quot;) + run.name + &quot;, нода 84.116.108.73, &quot; + formatClock(run.start) + &quot;–&quot; + formatClock(run.end));
     if (run.isTrigger) {
@@ -4025,6 +4135,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       segment.style.flex = Math.max(task.end - task.start, 1) + &quot; 1 0&quot;;
       applyForecastConfidenceVisual(segment, run, task);
       segment.setAttribute(&quot;data-task-id&quot;, String(task.id));
+      appendInlineTaskName(segment, task);
       mainTaskSegments.set(task.id, segment);
       segment.addEventListener(&quot;mouseenter&quot;, () =&gt; {
         if (selectedRun?.id === run.id &amp;&amp; activeTaskLinker) {
@@ -4073,7 +4184,10 @@ html&gt;body{padding:0}&lt;/style&gt;
     button.style.left = leftPct + &quot;%&quot;;
     button.style.width = widthPct + &quot;%&quot;;
     button.style.setProperty(&quot;--asv-run-width&quot;, widthPct + &quot;%&quot;);
-    if (compactTrigger) button.style.setProperty(&quot;--asv-compact-width&quot;, (6 + Math.min(run.tasks.length, 4) * 4) + &quot;px&quot;);
+    if (compactTrigger) {
+      button.style.setProperty(&quot;--asv-compact-width&quot;, (6 + Math.min(run.tasks.length, 4) * 4) + &quot;px&quot;);
+      compactTriggerButtons.push(button);
+    }
     button.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
     button.setAttribute(&quot;aria-label&quot;, (run.isTrigger ? &quot;Триггер: &quot; : &quot;Отдельная задача: &quot;) + run.name + &quot;, нода 84.116.108.91, &quot; + formatClock(run.start) + &quot;–&quot; + formatClock(run.end));
     if (run.isTrigger) {
@@ -4095,6 +4209,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       segment.style.flex = Math.max(task.end - task.start, 1) + &quot; 1 0&quot;;
       applyForecastConfidenceVisual(segment, run, task);
       segment.setAttribute(&quot;data-task-id&quot;, String(task.id));
+      appendInlineTaskName(segment, task);
       mainTaskSegments.set(task.id, segment);
       segment.addEventListener(&quot;mouseenter&quot;, () =&gt; {
         if (selectedRun?.id === run.id &amp;&amp; activeTaskLinker) {
@@ -4122,6 +4237,20 @@ html&gt;body{padding:0}&lt;/style&gt;
     thirdLane.appendChild(button);
   });
 
+  layoutInlineTaskLabels = () =&gt; {
+    compactTriggerButtons.forEach(button =&gt; {
+      const laneWidth = button.parentElement?.clientWidth || 0;
+      const widthPercent = Number.parseFloat(button.style.width) || 0;
+      const proportionalWidth = laneWidth * widthPercent / 100;
+      button.classList.toggle(&quot;is-compact-trigger&quot;, proportionalWidth &lt; 72);
+    });
+    inlineTaskLabels.forEach(({ segment, label }) =&gt; {
+      label.hidden = segment.getBoundingClientRect().width &lt; 48;
+    });
+  };
+  requestAnimationFrame(layoutInlineTaskLabels);
+  window.addEventListener(&quot;resize&quot;, () =&gt; requestAnimationFrame(layoutInlineTaskLabels), { passive: true });
+
   const conflictGroups = new Map();
   runs.filter(run =&gt; run.conflictId).forEach(run =&gt; {
     if (!conflictGroups.has(run.conflictId)) {
@@ -4146,7 +4275,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     line.className = &quot;asv-conflict-line&quot;;
     line.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
     const lowerLane = Math.max(...conflict.runs.map(run =&gt; run.lane));
-    line.style.height = (54 + lowerLane * 86 + 21) + &quot;px&quot;;
+    line.style.height = (54 + lowerLane * 86 + 25) + &quot;px&quot;;
     anchor.append(bolt, line);
     conflictLayer.appendChild(anchor);
 
