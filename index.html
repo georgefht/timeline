@@ -1709,10 +1709,30 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   #asv-real .asv-tick {
     position: absolute;
+    z-index: 2;
     top: 22px;
     transform: translateX(-50%);
     color: var(--asv-muted);
     font-variant-numeric: tabular-nums;
+  }
+
+  #asv-real .asv-axis-hover-range {
+    position: absolute;
+    z-index: 1;
+    bottom: 0;
+    display: block;
+    width: 0;
+    min-width: 4px;
+    height: 2px;
+    border-radius: 2px 2px 0 0;
+    background: color-mix(in srgb, var(--asv-muted) 55%, transparent);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 90ms ease;
+  }
+
+  #asv-real .asv-axis-hover-range.is-visible {
+    opacity: 1;
   }
 
   #asv-real .asv-tick.is-first { transform: none; }
@@ -3904,6 +3924,23 @@ html&gt;body{padding:0}&lt;/style&gt;
   const conflictTaskPins = new Map();
   const compactTriggerButtons = [];
   const inlineTaskLabels = [];
+  const axisHoverRange = document.createElement(&quot;span&quot;);
+  axisHoverRange.className = &quot;asv-axis-hover-range&quot;;
+  axis.appendChild(axisHoverRange);
+  const showAxisHoverRange = run =&gt; {
+    const rangeStart = Math.max(0, Math.min(day, run.start));
+    const rangeEnd = Math.max(rangeStart, Math.min(day, run.end));
+    axisHoverRange.style.left = (rangeStart / day * 100) + &quot;%&quot;;
+    axisHoverRange.style.width = ((rangeEnd - rangeStart) / day * 100) + &quot;%&quot;;
+    axisHoverRange.classList.add(&quot;is-visible&quot;);
+  };
+  const hideAxisHoverRange = () =&gt; axisHoverRange.classList.remove(&quot;is-visible&quot;);
+  const bindTopLevelRange = (element, run) =&gt; {
+    element.addEventListener(&quot;mouseenter&quot;, () =&gt; showAxisHoverRange(run));
+    element.addEventListener(&quot;mouseleave&quot;, hideAxisHoverRange);
+    element.addEventListener(&quot;focus&quot;, () =&gt; showAxisHoverRange(run));
+    element.addEventListener(&quot;blur&quot;, hideAxisHoverRange);
+  };
   const appendInlineTaskName = (segment, task) =&gt; {
     const label = document.createElement(&quot;span&quot;);
     label.className = &quot;asv-task-inline-name&quot;;
@@ -4020,6 +4057,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       button.appendChild(statusBadge);
     }
 
+    bindTopLevelRange(button, run);
     button.addEventListener(&quot;click&quot;, () =&gt; selectRun(run));
     buttons.set(run.id, button);
     if (run.conflictId) conflictRunButtons.set(run.id, button);
@@ -4070,6 +4108,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     item.addEventListener(&quot;mouseleave&quot;, hideMainTaskTooltip);
     item.addEventListener(&quot;focus&quot;, () =&gt; showMainTaskTooltip(item, task, queueRun));
     item.addEventListener(&quot;blur&quot;, hideMainTaskTooltip);
+    bindTopLevelRange(item, queueRun);
     item.addEventListener(&quot;click&quot;, event =&gt; {
       event.stopPropagation();
       selectRun(queueRun);
@@ -4193,6 +4232,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       segments.appendChild(segment);
     });
     button.appendChild(segments);
+    bindTopLevelRange(button, run);
     button.addEventListener(&quot;click&quot;, () =&gt; selectRun(run));
     buttons.set(run.id, button);
     lane.appendChild(button);
@@ -4267,6 +4307,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       segments.appendChild(segment);
     });
     button.appendChild(segments);
+    bindTopLevelRange(button, run);
     button.addEventListener(&quot;click&quot;, () =&gt; selectRun(run));
     buttons.set(run.id, button);
     thirdLane.appendChild(button);
