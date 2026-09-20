@@ -1556,7 +1556,26 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 
   #asv-real .asv-frequent-item {
+    appearance: none;
+    width: 100%;
     min-width: 0;
+    margin: 0;
+    padding: 3px 5px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  #asv-real .asv-frequent-item:hover,
+  #asv-real .asv-frequent-item:focus-visible {
+    background: var(--asv-group);
+  }
+
+  #asv-real .asv-frequent-item.is-active {
+    background: #F2F6FD;
+    box-shadow: inset 2px 0 0 color-mix(in srgb, var(--asv-muted) 58%, transparent);
   }
 
   #asv-real .asv-frequent-item-name {
@@ -1815,6 +1834,30 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   #asv-real .asv-lane.is-third-lane {
     height: 86px;
+  }
+
+  #asv-real .asv-lane.is-frequent-lane {
+    height: 86px;
+    background: color-mix(in srgb, var(--asv-muted) 12%, var(--asv-page));
+    box-shadow: 0 -12px 0 color-mix(in srgb, var(--asv-muted) 12%, var(--asv-page));
+  }
+
+  #asv-real .asv-lane-label {
+    position: sticky;
+    z-index: 20;
+    left: 8px;
+    display: inline-flex;
+    margin-top: 4px;
+    margin-left: 8px;
+    padding: 2px 5px;
+    border: 1px solid var(--asv-group-line);
+    border-radius: 4px;
+    background: var(--asv-page);
+    color: var(--asv-muted);
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1.2;
+    pointer-events: none;
   }
 
   #asv-real .asv-queue-lane {
@@ -2472,10 +2515,29 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 
   #asv-real .asv-finished { background: var(--asv-ok); }
+  #asv-real .asv-running {
+    background: var(--asv-selected-soft);
+    box-shadow: inset 0 0 0 1px var(--asv-selected) !important;
+  }
+  #asv-real .asv-running .asv-task-inline-name {
+    color: var(--asv-selected);
+    opacity: .9;
+  }
   #asv-real .asv-error { background: var(--asv-error); }
   #asv-real .asv-skipped { background: var(--asv-skip); }
   #asv-real .asv-conflicted { background: var(--asv-conflict); }
   #asv-real .asv-predicted { background: var(--asv-predicted); }
+
+  #asv-real .asv-segment.asv-skipped {
+    flex: 0 0 3px !important;
+    width: 3px;
+    min-width: 3px;
+  }
+
+  #asv-real .asv-run.is-frequent-list-match {
+    z-index: 28;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--asv-muted) 58%, transparent), 0 3px 10px color-mix(in srgb, var(--asv-muted) 18%, transparent);
+  }
 
   #asv-real .asv-segment.asv-predicted.is-forecast-low,
   #asv-real .asv-proportional-fill.asv-predicted.is-forecast-low {
@@ -2595,6 +2657,25 @@ html&gt;body{padding:0}&lt;/style&gt;
     left: 0;
     height: 160px;
     border-left: 1.5px dashed var(--asv-conflict-guide);
+  }
+
+  #asv-real .asv-conflict-line::after {
+    content: &quot;&quot;;
+    position: absolute;
+    bottom: -3px;
+    left: -3.5px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--asv-conflict-guide);
+  }
+
+  #asv-real .asv-conflict-anchor.is-hovered .asv-conflict-line {
+    border-left-color: var(--asv-conflict-outline);
+  }
+
+  #asv-real .asv-conflict-anchor.is-hovered .asv-conflict-line::after {
+    background: var(--asv-conflict-outline);
   }
 
   #asv-real .asv-conflict-popover {
@@ -3195,7 +3276,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 &lt;/style&gt;
 
-&lt;section id=&quot;asv-real&quot; aria-label=&quot;История запусков триггеров с 16 сентября по 18 сентября, 14:00&quot;&gt;
+&lt;section id=&quot;asv-real&quot; aria-label=&quot;История и прогноз запусков триггеров с 16 сентября по 18 сентября, 14:00&quot;&gt;
   &lt;div class=&quot;asv-layout&quot;&gt;
     &lt;div class=&quot;asv-node-stack&quot;&gt;
     &lt;aside class=&quot;asv-node-panel is-primary-node&quot; aria-label=&quot;Сведения о ноде 10.28.98.136&quot;&gt;
@@ -3207,8 +3288,8 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;div class=&quot;asv-node-divider&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
       &lt;div class=&quot;asv-frequent-title&quot;&gt;Частые триггеры&lt;/div&gt;
       &lt;div class=&quot;asv-frequent-list&quot;&gt;
-        &lt;div class=&quot;asv-frequent-item&quot; data-tooltip=&quot;checkActualizeTrigger&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;checkActualizeTrigger&lt;/span&gt;&lt;/div&gt;
-        &lt;div class=&quot;asv-frequent-item&quot; data-tooltip=&quot;checkActualizeTrigger_2&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;checkActualizeTrigger_2&lt;/span&gt;&lt;/div&gt;
+        &lt;button class=&quot;asv-frequent-item&quot; type=&quot;button&quot; data-frequent-trigger-name=&quot;checkActualizeTrigger&quot; data-tooltip=&quot;checkActualizeTrigger&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;checkActualizeTrigger&lt;/span&gt;&lt;/button&gt;
+        &lt;button class=&quot;asv-frequent-item&quot; type=&quot;button&quot; data-frequent-trigger-name=&quot;checkActualizeTrigger_2&quot; data-tooltip=&quot;checkActualizeTrigger_2&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;checkActualizeTrigger_2&lt;/span&gt;&lt;/button&gt;
       &lt;/div&gt;
     &lt;/aside&gt;
     &lt;aside class=&quot;asv-node-panel is-secondary-node&quot; aria-label=&quot;Сведения о ноде 10.42.108.136&quot;&gt;
@@ -3219,13 +3300,13 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;div class=&quot;asv-node-divider&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
       &lt;div class=&quot;asv-frequent-title&quot;&gt;Частые триггеры&lt;/div&gt;
       &lt;div class=&quot;asv-frequent-list&quot;&gt;
-        &lt;div class=&quot;asv-frequent-item&quot; data-tooltip=&quot;incrementLoadTrigger1&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;incrementLoadTrigger1&lt;/span&gt;&lt;/div&gt;
-        &lt;div class=&quot;asv-frequent-item&quot; data-tooltip=&quot;incrementLoadTrigger2&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;incrementLoadTrigger2&lt;/span&gt;&lt;/div&gt;
-        &lt;div class=&quot;asv-frequent-item&quot; data-tooltip=&quot;incrementLoadTrigger3&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;incrementLoadTrigger3&lt;/span&gt;&lt;/div&gt;
-        &lt;div class=&quot;asv-frequent-item&quot; data-tooltip=&quot;incrementLoadTrigger4&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;incrementLoadTrigger4&lt;/span&gt;&lt;/div&gt;
-        &lt;div class=&quot;asv-frequent-item&quot; data-tooltip=&quot;incrementLoadTrigger5&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;incrementLoadTrigger5&lt;/span&gt;&lt;/div&gt;
-        &lt;div class=&quot;asv-frequent-item&quot; data-tooltip=&quot;incrementLoadTrigger6&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;incrementLoadTrigger6&lt;/span&gt;&lt;/div&gt;
-        &lt;div class=&quot;asv-frequent-item&quot; data-tooltip=&quot;publishPendingEvent&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;publishPendingEvent&lt;/span&gt;&lt;/div&gt;
+        &lt;button class=&quot;asv-frequent-item&quot; type=&quot;button&quot; data-frequent-trigger-name=&quot;incrementLoadTrigger1&quot; data-tooltip=&quot;incrementLoadTrigger1&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;incrementLoadTrigger1&lt;/span&gt;&lt;/button&gt;
+        &lt;button class=&quot;asv-frequent-item&quot; type=&quot;button&quot; data-frequent-trigger-name=&quot;incrementLoadTrigger2&quot; data-tooltip=&quot;incrementLoadTrigger2&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;incrementLoadTrigger2&lt;/span&gt;&lt;/button&gt;
+        &lt;button class=&quot;asv-frequent-item&quot; type=&quot;button&quot; data-frequent-trigger-name=&quot;incrementLoadTrigger3&quot; data-tooltip=&quot;incrementLoadTrigger3&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;incrementLoadTrigger3&lt;/span&gt;&lt;/button&gt;
+        &lt;button class=&quot;asv-frequent-item&quot; type=&quot;button&quot; data-frequent-trigger-name=&quot;incrementLoadTrigger4&quot; data-tooltip=&quot;incrementLoadTrigger4&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;incrementLoadTrigger4&lt;/span&gt;&lt;/button&gt;
+        &lt;button class=&quot;asv-frequent-item&quot; type=&quot;button&quot; data-frequent-trigger-name=&quot;incrementLoadTrigger5&quot; data-tooltip=&quot;incrementLoadTrigger5&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;incrementLoadTrigger5&lt;/span&gt;&lt;/button&gt;
+        &lt;button class=&quot;asv-frequent-item&quot; type=&quot;button&quot; data-frequent-trigger-name=&quot;incrementLoadTrigger6&quot; data-tooltip=&quot;incrementLoadTrigger6&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;incrementLoadTrigger6&lt;/span&gt;&lt;/button&gt;
+        &lt;button class=&quot;asv-frequent-item&quot; type=&quot;button&quot; data-frequent-trigger-name=&quot;publishPendingEvent&quot; data-tooltip=&quot;publishPendingEvent&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;publishPendingEvent&lt;/span&gt;&lt;/button&gt;
       &lt;/div&gt;
     &lt;/aside&gt;
     &lt;/div&gt;
@@ -3236,7 +3317,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         &lt;button class=&quot;asv-zoom-control&quot; type=&quot;button&quot; data-zoom-in aria-label=&quot;Увеличить масштаб&quot;&gt;+&lt;/button&gt;
       &lt;/div&gt;
       &lt;div class=&quot;asv-timeline-scroll&quot;&gt;
-        &lt;div class=&quot;asv-overview&quot; aria-label=&quot;Историческая шкала запусков с 16 сентября, 00:00 до 18 сентября, 14:00&quot;&gt;
+        &lt;div class=&quot;asv-overview&quot; aria-label=&quot;Шкала истории и прогноза запусков с 16 сентября, 00:00 до 18 сентября, 14:00; текущее время — 18 сентября, 03:00&quot;&gt;
           &lt;div class=&quot;asv-time-background&quot; aria-hidden=&quot;true&quot;&gt;&lt;span class=&quot;asv-history-zone&quot;&gt;&lt;/span&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-axis&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-grid&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
@@ -3247,6 +3328,12 @@ html&gt;body{padding:0}&lt;/style&gt;
           &lt;div class=&quot;asv-node-boundary&quot; data-node-boundary=&quot;secondary&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-lanes&quot;&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-conflict-layer&quot;&gt;&lt;/div&gt;
+          &lt;div class=&quot;asv-now-layer&quot; aria-hidden=&quot;true&quot;&gt;
+            &lt;div class=&quot;asv-now-marker&quot;&gt;
+              &lt;span class=&quot;asv-now-label&quot;&gt;Сейчас · 03:00&lt;/span&gt;
+              &lt;span class=&quot;asv-now-line&quot;&gt;&lt;/span&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
         &lt;/div&gt;
       &lt;/div&gt;
     &lt;/main&gt;
@@ -3299,20 +3386,24 @@ html&gt;body{padding:0}&lt;/style&gt;
   const conflictPopover = root.querySelector(&quot;.asv-conflict-popover&quot;);
   const conflictPopoverClose = root.querySelector(&quot;.asv-conflict-popover-close&quot;);
   const conflictPopoverTitle = root.querySelector(&quot;.asv-conflict-popover-title&quot;);
+  const conflictState = root.querySelector(&quot;.asv-conflict-state.is-conflict&quot;);
   const conflictDate = root.querySelector(&quot;.asv-conflict-date&quot;);
   const conflictCards = root.querySelector(&quot;.asv-conflict-cards&quot;);
   const historyZone = root.querySelector(&quot;.asv-history-zone&quot;);
+  const nowMarker = root.querySelector(&quot;.asv-now-marker&quot;);
   const daySeconds = 86400;
   const timelineDays = 3;
   const timelineHours = 62;
   const day = timelineHours * 60 * 60;
-  const currentTime = day;
+  const currentTime = daySeconds * 2 + 3 * 60 * 60;
   const statusClass = value =&gt; &quot;asv-&quot; + value.toLowerCase();
   const zoomLevels = [1, 1.25, 1.5, 2, 3, 4, 6, 8];
   let zoomIndex = 1;
   let layoutInlineTaskLabels = () =&gt; {};
 
-  historyZone.style.width = &quot;100%&quot;;
+  const currentTimePosition = currentTime / day * 100;
+  historyZone.style.width = currentTimePosition + &quot;%&quot;;
+  nowMarker.style.left = currentTimePosition + &quot;%&quot;;
 
   const historicalConflictAt = 9 * 60 * 60;
   runs.filter(run =&gt; run.demoConflict).forEach((run, index) =&gt; {
@@ -3360,6 +3451,239 @@ html&gt;body{padding:0}&lt;/style&gt;
     ...extra
   });
   const secondaryRuns = [{&quot;id&quot;:&quot;client2-14&quot;,&quot;name&quot;:&quot;refreshDataStatisticTrigger&quot;,&quot;status&quot;:&quot;FINISHED&quot;,&quot;isTrigger&quot;:true,&quot;firstId&quot;:14,&quot;start&quot;:0.002,&quot;end&quot;:11131,&quot;tasks&quot;:[],&quot;nodeIp&quot;:&quot;10.42.108.136&quot;,&quot;secondaryLane&quot;:0},{&quot;id&quot;:&quot;client2-179&quot;,&quot;name&quot;:&quot;hourly_trigger_1&quot;,&quot;status&quot;:&quot;FINISHED&quot;,&quot;isTrigger&quot;:true,&quot;firstId&quot;:179,&quot;start&quot;:14400.002,&quot;end&quot;:37630,&quot;tasks&quot;:[],&quot;nodeIp&quot;:&quot;10.42.108.136&quot;,&quot;secondaryLane&quot;:0},{&quot;id&quot;:&quot;client2-318&quot;,&quot;name&quot;:&quot;sparkIncrementLoadTrigger&quot;,&quot;status&quot;:&quot;FINISHED&quot;,&quot;isTrigger&quot;:true,&quot;firstId&quot;:318,&quot;start&quot;:27000.001,&quot;end&quot;:30270,&quot;tasks&quot;:[],&quot;nodeIp&quot;:&quot;10.42.108.136&quot;,&quot;secondaryLane&quot;:1},{&quot;id&quot;:&quot;client2-336&quot;,&quot;name&quot;:&quot;diagnosticLogsForTodayTrigger&quot;,&quot;status&quot;:&quot;FINISHED&quot;,&quot;isTrigger&quot;:true,&quot;firstId&quot;:336,&quot;start&quot;:28500.001,&quot;end&quot;:28500.001,&quot;tasks&quot;:[],&quot;nodeIp&quot;:&quot;10.42.108.136&quot;,&quot;secondaryLane&quot;:2},{&quot;id&quot;:&quot;client2-461&quot;,&quot;name&quot;:&quot;hourly_trigger_1&quot;,&quot;status&quot;:&quot;FINISHED&quot;,&quot;isTrigger&quot;:true,&quot;firstId&quot;:461,&quot;start&quot;:39600.003,&quot;end&quot;:63707,&quot;tasks&quot;:[],&quot;nodeIp&quot;:&quot;10.42.108.136&quot;,&quot;secondaryLane&quot;:0},{&quot;id&quot;:&quot;client2-735&quot;,&quot;name&quot;:&quot;hourly_trigger_1&quot;,&quot;status&quot;:&quot;FINISHED&quot;,&quot;isTrigger&quot;:true,&quot;firstId&quot;:735,&quot;start&quot;:64800.002,&quot;end&quot;:90378,&quot;tasks&quot;:[],&quot;nodeIp&quot;:&quot;10.42.108.136&quot;,&quot;secondaryLane&quot;:0},{&quot;id&quot;:&quot;client2-971&quot;,&quot;name&quot;:&quot;diagnosticLogsForTodayTrigger&quot;,&quot;status&quot;:&quot;FINISHED&quot;,&quot;isTrigger&quot;:true,&quot;firstId&quot;:971,&quot;start&quot;:86100.002,&quot;end&quot;:86100.002,&quot;tasks&quot;:[],&quot;nodeIp&quot;:&quot;10.42.108.136&quot;,&quot;secondaryLane&quot;:1},{&quot;id&quot;:&quot;client2-978&quot;,&quot;name&quot;:&quot;refreshDataStatisticTrigger&quot;,&quot;status&quot;:&quot;FINISHED&quot;,&quot;isTrigger&quot;:true,&quot;firstId&quot;:978,&quot;start&quot;:86400.003,&quot;end&quot;:97853,&quot;tasks&quot;:[],&quot;nodeIp&quot;:&quot;10.42.108.136&quot;,&quot;secondaryLane&quot;:1},{&quot;id&quot;:&quot;client2-1052&quot;,&quot;name&quot;:&quot;hourly_trigger_1&quot;,&quot;status&quot;:&quot;FINISHED&quot;,&quot;isTrigger&quot;:true,&quot;firstId&quot;:1052,&quot;start&quot;:93600.004,&quot;end&quot;:113957,&quot;tasks&quot;:[],&quot;nodeIp&quot;:&quot;10.42.108.136&quot;,&quot;secondaryLane&quot;:0},{&quot;id&quot;:&quot;client2-1276&quot;,&quot;name&quot;:&quot;sparkIncrementLoadTrigger&quot;,&quot;status&quot;:&quot;FINISHED&quot;,&quot;isTrigger&quot;:true,&quot;firstId&quot;:1276,&quot;start&quot;:113400.001,&quot;end&quot;:113465,&quot;tasks&quot;:[],&quot;nodeIp&quot;:&quot;10.42.108.136&quot;,&quot;secondaryLane&quot;:1},{&quot;id&quot;:&quot;client2-1290&quot;,&quot;name&quot;:&quot;diagnosticLogsForTodayTrigger&quot;,&quot;status&quot;:&quot;FINISHED&quot;,&quot;isTrigger&quot;:true,&quot;firstId&quot;:1290,&quot;start&quot;:114900.001,&quot;end&quot;:114900.001,&quot;tasks&quot;:[],&quot;nodeIp&quot;:&quot;10.42.108.136&quot;,&quot;secondaryLane&quot;:0},{&quot;id&quot;:&quot;client2-1292&quot;,&quot;name&quot;:&quot;hourly_trigger_1&quot;,&quot;status&quot;:&quot;FINISHED&quot;,&quot;isTrigger&quot;:true,&quot;firstId&quot;:1292,&quot;start&quot;:115200.001,&quot;end&quot;:132996,&quot;tasks&quot;:[],&quot;nodeIp&quot;:&quot;10.42.108.136&quot;,&quot;secondaryLane&quot;:0},{&quot;id&quot;:&quot;client2-1484&quot;,&quot;name&quot;:&quot;hourly_trigger_1&quot;,&quot;status&quot;:&quot;FINISHED&quot;,&quot;isTrigger&quot;:true,&quot;firstId&quot;:1484,&quot;start&quot;:133200.002,&quot;end&quot;:153406,&quot;tasks&quot;:[],&quot;nodeIp&quot;:&quot;10.42.108.136&quot;,&quot;secondaryLane&quot;:0},{&quot;id&quot;:&quot;client2-1720&quot;,&quot;name&quot;:&quot;hourly_trigger_1&quot;,&quot;status&quot;:&quot;FINISHED&quot;,&quot;isTrigger&quot;:true,&quot;firstId&quot;:1720,&quot;start&quot;:154800.001,&quot;end&quot;:172490,&quot;tasks&quot;:[],&quot;nodeIp&quot;:&quot;10.42.108.136&quot;,&quot;secondaryLane&quot;:0},{&quot;id&quot;:&quot;client2-1922&quot;,&quot;name&quot;:&quot;diagnosticLogsForTodayTrigger&quot;,&quot;status&quot;:&quot;FINISHED&quot;,&quot;isTrigger&quot;:true,&quot;firstId&quot;:1922,&quot;start&quot;:172500.001,&quot;end&quot;:172500.001,&quot;tasks&quot;:[],&quot;nodeIp&quot;:&quot;10.42.108.136&quot;,&quot;secondaryLane&quot;:0},{&quot;id&quot;:&quot;client2-1925&quot;,&quot;name&quot;:&quot;hourlyDedupTrigger2&quot;,&quot;status&quot;:&quot;FINISHED&quot;,&quot;isTrigger&quot;:true,&quot;firstId&quot;:1925,&quot;start&quot;:172800.002,&quot;end&quot;:188943,&quot;tasks&quot;:[],&quot;nodeIp&quot;:&quot;10.42.108.136&quot;,&quot;secondaryLane&quot;:0},{&quot;id&quot;:&quot;client2-1929&quot;,&quot;name&quot;:&quot;refreshDataStatisticTrigger&quot;,&quot;status&quot;:&quot;FINISHED&quot;,&quot;isTrigger&quot;:true,&quot;firstId&quot;:1929,&quot;start&quot;:172800.003,&quot;end&quot;:183342,&quot;tasks&quot;:[],&quot;nodeIp&quot;:&quot;10.42.108.136&quot;,&quot;secondaryLane&quot;:1},{&quot;id&quot;:&quot;client2-2126&quot;,&quot;name&quot;:&quot;hourlyDedupTrigger2&quot;,&quot;status&quot;:&quot;FINISHED&quot;,&quot;isTrigger&quot;:true,&quot;firstId&quot;:2126,&quot;start&quot;:190800.001,&quot;end&quot;:209669,&quot;tasks&quot;:[],&quot;nodeIp&quot;:&quot;10.42.108.136&quot;,&quot;secondaryLane&quot;:0},{&quot;id&quot;:&quot;client2-2228&quot;,&quot;name&quot;:&quot;sparkIncrementLoadTrigger&quot;,&quot;status&quot;:&quot;FINISHED&quot;,&quot;isTrigger&quot;:true,&quot;firstId&quot;:2228,&quot;start&quot;:199800.001,&quot;end&quot;:203450,&quot;tasks&quot;:[],&quot;nodeIp&quot;:&quot;10.42.108.136&quot;,&quot;secondaryLane&quot;:1},{&quot;id&quot;:&quot;client2-2248&quot;,&quot;name&quot;:&quot;diagnosticLogsForTodayTrigger&quot;,&quot;status&quot;:&quot;FINISHED&quot;,&quot;isTrigger&quot;:true,&quot;firstId&quot;:2248,&quot;start&quot;:201300.001,&quot;end&quot;:201300.001,&quot;tasks&quot;:[],&quot;nodeIp&quot;:&quot;10.42.108.136&quot;,&quot;secondaryLane&quot;:2},{&quot;id&quot;:&quot;client2-2362&quot;,&quot;name&quot;:&quot;hourlyDedupTrigger2&quot;,&quot;status&quot;:&quot;RUNNING&quot;,&quot;isTrigger&quot;:true,&quot;firstId&quot;:2362,&quot;start&quot;:212400.002,&quot;end&quot;:219600,&quot;tasks&quot;:[],&quot;nodeIp&quot;:&quot;10.42.108.136&quot;,&quot;secondaryLane&quot;:0}];
+  const triggerTaskCatalog = {
+    incrementLoadTrigger1: [&quot;cyclicIncrementLoad1&quot;],
+    incrementLoadTrigger2: [&quot;cyclicIncrementLoad2&quot;],
+    incrementLoadTrigger3: [&quot;cyclicIncrementLoad3&quot;],
+    incrementLoadTrigger4: [&quot;cyclicIncrementLoad4&quot;],
+    incrementLoadTrigger5: [&quot;cyclicIncrementLoad5&quot;],
+    incrementLoadTrigger6: [&quot;cyclicIncrementLoad6&quot;],
+    refreshDataStatisticTrigger: [&quot;refreshDataStatistic&quot;],
+    CommunicationsLoad_CKK: [&quot;CommunicationsBufferIPC&quot;],
+    hourly_trigger_1: [
+      &quot;findMassiveParties&quot;,
+      &quot;incrementalExportRelations&quot;,
+      &quot;massivePartyUnMergeTask&quot;,
+      &quot;massivePartyReMergeTask&quot;,
+      &quot;incrementDuplicatesAndMerge&quot;,
+      &quot;sparkCheckLegalActualize&quot;,
+      &quot;egrCheckActualize&quot;
+    ],
+    segmentTrigger: [&quot;SegmentBufferIPC&quot;],
+    sparkIncrementLoadTrigger: [&quot;SparkLegalFilesLoad&quot;, &quot;SparkEntrepreneurFilesLoad&quot;],
+    diagnosticLogsForTodayTrigger: [&quot;diagnosticLogsForToday&quot;],
+    PartyClose_ALL: [&quot;PartyClose&quot;],
+    hourlyDedupTrigger2: [
+      &quot;incrementDuplicatesAndMerge&quot;,
+      &quot;sparkCheckLegalActualize&quot;,
+      &quot;egrCheckActualize&quot;,
+      &quot;findMassiveParties&quot;,
+      &quot;incrementalExportRelations&quot;,
+      &quot;massivePartyUnMergeTask&quot;,
+      &quot;massivePartyReMergeTask&quot;
+    ],
+    checkActualizeTrigger: [&quot;legalListCheckActualize&quot;, &quot;physicalListCheckActualize&quot;],
+    checkActualizeTrigger_2: [&quot;legalListCheckActualize&quot;, &quot;physicalListCheckActualize&quot;],
+    publishPendingEvent: [&quot;publishBlacklistCheckPendingEvents&quot;]
+  };
+
+  const stringHash = value =&gt; {
+    let hash = 2166136261;
+    for (let index = 0; index &lt; value.length; index += 1) {
+      hash ^= value.charCodeAt(index);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash &gt;&gt;&gt; 0;
+  };
+
+  const taskBaseWeight = taskName =&gt; {
+    if (taskName === &quot;incrementDuplicatesAndMerge&quot;) return 3.4;
+    if (taskName === &quot;incrementalExportRelations&quot;) return 1.7;
+    if (taskName === &quot;findMassiveParties&quot;) return 1.35;
+    if (taskName.includes(&quot;LegalActualize&quot;) || taskName === &quot;egrCheckActualize&quot;) return 1.1;
+    if (taskName.includes(&quot;UnMerge&quot;) || taskName.includes(&quot;ReMerge&quot;)) return .85;
+    return 1;
+  };
+
+  const populateRunTasks = run =&gt; {
+    const taskNames = triggerTaskCatalog[run.name] || [];
+    if (!taskNames.length) return;
+    const duration = Math.max(0, run.end - run.start);
+    const weights = taskNames.map((taskName, index) =&gt; {
+      const jitter = .78 + (stringHash(run.id + &quot;:&quot; + taskName + &quot;:&quot; + index) % 45) / 100;
+      return taskBaseWeight(taskName) * jitter;
+    });
+    const weightSum = weights.reduce((sum, weight) =&gt; sum + weight, 0) || 1;
+    let cursor = run.start;
+    run.tasks = taskNames.map((taskName, index) =&gt; {
+      const taskStart = cursor;
+      const taskEnd = index === taskNames.length - 1
+        ? run.end
+        : Math.min(run.end, cursor + duration * weights[index] / weightSum);
+      cursor = taskEnd;
+      return {
+        id: Number(run.firstId) * 100 + index + 1,
+        trigger: run.name,
+        task: taskName,
+        status: run.status === &quot;RUNNING&quot; &amp;&amp; index === taskNames.length - 1 ? &quot;RUNNING&quot; : &quot;FINISHED&quot;,
+        start: taskStart,
+        end: taskEnd
+      };
+    });
+  };
+
+  [...runs, ...secondaryRuns].forEach(populateRunTasks);
+
+  const makeFrequentRun = (id, firstId, name, nodeIp, start, end, extra = {}) =&gt; ({
+    id,
+    name,
+    status: &quot;FINISHED&quot;,
+    isTrigger: true,
+    isFrequent: true,
+    firstId,
+    start,
+    end,
+    tasks: [],
+    nodeIp,
+    ...extra
+  });
+
+  const primaryFrequentRuns = [
+    makeFrequentRun(&quot;frequent-primary-1&quot;, 4001, &quot;checkActualizeTrigger&quot;, &quot;10.28.98.136&quot;, 3600, 6300),
+    makeFrequentRun(&quot;frequent-primary-2&quot;, 4002, &quot;checkActualizeTrigger_2&quot;, &quot;10.28.98.136&quot;, 36000, 39000),
+    makeFrequentRun(&quot;frequent-primary-3&quot;, 4003, &quot;checkActualizeTrigger&quot;, &quot;10.28.98.136&quot;, 68400, 72600),
+    makeFrequentRun(&quot;frequent-primary-4&quot;, 4004, &quot;checkActualizeTrigger_2&quot;, &quot;10.28.98.136&quot;, 102600, 105600),
+    makeFrequentRun(&quot;frequent-primary-5&quot;, 4005, &quot;checkActualizeTrigger&quot;, &quot;10.28.98.136&quot;, 140400, 144300),
+    makeFrequentRun(&quot;frequent-primary-6&quot;, 4006, &quot;checkActualizeTrigger_2&quot;, &quot;10.28.98.136&quot;, 198000, 201600),
+    makeFrequentRun(&quot;frequent-primary-7&quot;, 4007, &quot;checkActualizeTrigger&quot;, &quot;10.28.98.136&quot;, 216000, 219600)
+  ];
+
+  const secondaryFrequentRuns = [
+    makeFrequentRun(&quot;frequent-secondary-1&quot;, 5001, &quot;incrementLoadTrigger1&quot;, &quot;10.42.108.136&quot;, 1800, 4500, { secondaryLane: 0 }),
+    makeFrequentRun(&quot;frequent-secondary-2&quot;, 5002, &quot;incrementLoadTrigger2&quot;, &quot;10.42.108.136&quot;, 23400, 26400, { secondaryLane: 0 }),
+    makeFrequentRun(&quot;frequent-secondary-3&quot;, 5003, &quot;incrementLoadTrigger3&quot;, &quot;10.42.108.136&quot;, 43200, 46500, { secondaryLane: 0 }),
+    makeFrequentRun(&quot;frequent-secondary-4&quot;, 5004, &quot;incrementLoadTrigger4&quot;, &quot;10.42.108.136&quot;, 64800, 67500, { secondaryLane: 0 }),
+    makeFrequentRun(&quot;frequent-secondary-5&quot;, 5005, &quot;incrementLoadTrigger5&quot;, &quot;10.42.108.136&quot;, 95400, 98100, { secondaryLane: 0 }),
+    makeFrequentRun(&quot;frequent-secondary-6&quot;, 5006, &quot;incrementLoadTrigger6&quot;, &quot;10.42.108.136&quot;, 117000, 121200, { secondaryLane: 0 }),
+    makeFrequentRun(&quot;frequent-secondary-7&quot;, 5007, &quot;publishPendingEvent&quot;, &quot;10.42.108.136&quot;, 138600, 141600, { secondaryLane: 0 }),
+    makeFrequentRun(&quot;frequent-secondary-8&quot;, 5008, &quot;incrementLoadTrigger2&quot;, &quot;10.42.108.136&quot;, 162000, 165600, { secondaryLane: 0 }),
+    makeFrequentRun(&quot;frequent-secondary-9&quot;, 5009, &quot;incrementLoadTrigger4&quot;, &quot;10.42.108.136&quot;, 187200, 191100, { secondaryLane: 0 }),
+    makeFrequentRun(&quot;frequent-secondary-10&quot;, 5010, &quot;publishPendingEvent&quot;, &quot;10.42.108.136&quot;, 208800, 212400, { secondaryLane: 0 })
+  ];
+
+  [...primaryFrequentRuns, ...secondaryFrequentRuns].forEach(populateRunTasks);
+  runs.push(...primaryFrequentRuns);
+  secondaryRuns.push(...secondaryFrequentRuns);
+
+  const findTask = (runId, taskName) =&gt; {
+    const run = [...runs, ...secondaryRuns].find(item =&gt; item.id === runId);
+    return run?.tasks.find(task =&gt; task.task === taskName) || null;
+  };
+
+  const setTaskStatus = (runId, taskName, status) =&gt; {
+    const task = findTask(runId, taskName);
+    if (!task) return;
+    task.status = status;
+    if (status === &quot;SKIPPED&quot;) task.end = Math.min(task.end, task.start + 1);
+  };
+
+  const setTaskOverrun = (runId, taskName, seconds) =&gt; {
+    const task = findTask(runId, taskName);
+    if (task) task.plannedEnd = Math.max(task.start, task.end - seconds);
+  };
+
+  setTaskStatus(&quot;client2-1179&quot;, &quot;SegmentBufferIPC&quot;, &quot;ERROR&quot;);
+  setTaskStatus(&quot;client2-1484&quot;, &quot;egrCheckActualize&quot;, &quot;ERROR&quot;);
+  setTaskStatus(&quot;client2-2228&quot;, &quot;SparkEntrepreneurFilesLoad&quot;, &quot;ERROR&quot;);
+  setTaskStatus(&quot;frequent-secondary-4&quot;, &quot;cyclicIncrementLoad4&quot;, &quot;ERROR&quot;);
+  setTaskStatus(&quot;client2-1052&quot;, &quot;massivePartyUnMergeTask&quot;, &quot;SKIPPED&quot;);
+  setTaskStatus(&quot;client2-1925&quot;, &quot;sparkCheckLegalActualize&quot;, &quot;SKIPPED&quot;);
+  setTaskOverrun(&quot;client2-1849&quot;, &quot;PartyClose&quot;, 30 * 60);
+  setTaskOverrun(&quot;client2-735&quot;, &quot;incrementDuplicatesAndMerge&quot;, 45 * 60);
+  setTaskOverrun(&quot;client2-2126&quot;, &quot;incrementalExportRelations&quot;, 25 * 60);
+  setTaskOverrun(&quot;client2-318&quot;, &quot;SparkLegalFilesLoad&quot;, 12 * 60);
+
+  const forecastLevels = [&quot;high&quot;, &quot;low&quot;, &quot;question&quot;];
+  [...runs, ...secondaryRuns].forEach(run =&gt; {
+    if (run.start &lt;= currentTime &amp;&amp; run.end &gt; currentTime) run.status = &quot;RUNNING&quot;;
+    else if (run.start &gt; currentTime) run.status = &quot;PREDICTED&quot;;
+    run.tasks.forEach((task, index) =&gt; {
+      if (task.end &lt;= currentTime) return;
+      if (task.start &lt;= currentTime) {
+        task.status = &quot;RUNNING&quot;;
+        task.riskError = false;
+        delete task.plannedEnd;
+        return;
+      }
+      task.status = &quot;PREDICTED&quot;;
+      task.forecastConfidence = forecastLevels[stringHash(run.id + &quot;:&quot; + task.task + &quot;:&quot; + index + &quot;:forecast&quot;) % forecastLevels.length];
+      task.riskError = false;
+      delete task.plannedEnd;
+    });
+  });
+
+  const allRuns = [...runs, ...secondaryRuns];
+  const conflictTaskForRun = run =&gt; run.tasks.find(task =&gt; task.id === run.conflictTaskId) || run.tasks[0];
+  const taskAtTime = (run, at) =&gt; run.tasks.find(task =&gt; task.start &lt;= at &amp;&amp; task.end &gt;= at) || run.tasks[0];
+  const attachConflict = ({ id, at, date, participants, forecast = false }) =&gt; {
+    participants.forEach((participant, order) =&gt; {
+      const run = allRuns.find(item =&gt; item.id === participant.runId);
+      if (!run) return;
+      const task = participant.taskName
+        ? run.tasks.find(item =&gt; item.task === participant.taskName)
+        : taskAtTime(run, at);
+      if (!task) return;
+      run.conflictId = id;
+      run.conflictAt = at;
+      run.conflictDate = date;
+      run.conflictRole = participant.role;
+      run.conflictOutcome = participant.outcome;
+      run.conflictTaskId = task.id;
+      run.conflictOrder = order;
+      run.conflictPosition = (run.tasks.findIndex(item =&gt; item.id === task.id) + 1) + &quot;/&quot; + run.tasks.length;
+      task.isConflictTask = true;
+      if (forecast) {
+        task.status = &quot;PREDICTED&quot;;
+        task.forecastConfidence = participant.confidence || &quot;high&quot;;
+        task.riskError = participant.outcome === &quot;predicted-error&quot;;
+      } else {
+        task.status = participant.outcome === &quot;error&quot; ? &quot;ERROR&quot; : &quot;FINISHED&quot;;
+        task.riskError = false;
+      }
+    });
+  };
+
+  attachConflict({
+    id: &quot;history-sep17-0200&quot;,
+    at: daySeconds + 2 * 60 * 60,
+    date: &quot;17 сен 2026 · 02:00:00&quot;,
+    participants: [
+      { runId: &quot;client2-978&quot;, role: &quot;participant&quot;, outcome: &quot;finished&quot; },
+      { runId: &quot;client2-1057&quot;, role: &quot;cause&quot;, outcome: &quot;error&quot;, taskName: &quot;CommunicationsBufferIPC&quot; }
+    ]
+  });
+
+  attachConflict({
+    id: &quot;history-sep17-0500&quot;,
+    at: daySeconds + 5 * 60 * 60,
+    date: &quot;17 сен 2026 · 05:00:00&quot;,
+    participants: [
+      { runId: &quot;client2-1052&quot;, role: &quot;participant&quot;, outcome: &quot;finished&quot; },
+      { runId: &quot;client2-1179&quot;, role: &quot;cause&quot;, outcome: &quot;error&quot;, taskName: &quot;SegmentBufferIPC&quot; }
+    ]
+  });
+
+  attachConflict({
+    id: &quot;forecast-sep18-0730&quot;,
+    at: daySeconds * 2 + 7 * 60 * 60 + 30 * 60,
+    date: &quot;18 сен 2026 · 07:30:00&quot;,
+    forecast: true,
+    participants: [
+      { runId: &quot;frequent-primary-6&quot;, role: &quot;participant&quot;, outcome: &quot;predicted-finished&quot;, confidence: &quot;high&quot; },
+      { runId: &quot;client2-2228&quot;, role: &quot;cause&quot;, outcome: &quot;predicted-error&quot;, taskName: &quot;SparkLegalFilesLoad&quot;, confidence: &quot;low&quot; }
+    ]
+  });
+
   const thirdRuns = [];
   const stickyDayLabels = [];
 
@@ -3433,13 +3757,14 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   const statusLabel = {
     FINISHED: &quot;Завершено&quot;,
+    RUNNING: &quot;Выполняется&quot;,
     ERROR: &quot;Ошибка&quot;,
     SKIPPED: &quot;Пропущено&quot;,
     CONFLICTED: &quot;Конфликт&quot;,
     PREDICTED: &quot;&quot;
   };
 
-  const isFutureTask = task =&gt; task.start &gt;= currentTime;
+  const isFutureTask = task =&gt; task.status === &quot;PREDICTED&quot; || task.start &gt;= currentTime;
   const taskStatusText = task =&gt; task.isQueueTask &amp;&amp; task.start &lt;= currentTime &amp;&amp; task.end &gt; currentTime
     ? &quot;Выполняется&quot;
     : isFutureTask(task)
@@ -3626,13 +3951,16 @@ html&gt;body{padding:0}&lt;/style&gt;
   let activeTaskLinker = null;
 
   let activeConflictBolt = null;
+  let activeConflictHighlight = null;
 
   const renderConflict = conflict =&gt; {
-    conflictPopoverTitle.textContent = &quot;Параллельная работа конфликтующих задач&quot;;
+    const forecastConflict = conflict.runs.some(run =&gt; isFutureTask(conflictTaskForRun(run)));
+    conflictState.textContent = forecastConflict ? &quot;Прогноз конфликта&quot; : &quot;Конфликт&quot;;
+    conflictPopoverTitle.textContent = forecastConflict ? &quot;Прогноз параллельной работы задач&quot; : &quot;Параллельная работа конфликтующих задач&quot;;
     conflictDate.textContent = conflict.date;
     conflictCards.replaceChildren();
     conflict.runs.forEach(run =&gt; {
-      const task = run.tasks[0];
+      const task = conflictTaskForRun(run);
       const attributes = taskAttributeProfile(task);
       const futureConflict = isFutureTask(task);
       const problemTask = run.conflictRole === &quot;cause&quot; || run.conflictOutcome === &quot;error&quot; || run.conflictOutcome === &quot;predicted-error&quot;;
@@ -3646,22 +3974,26 @@ html&gt;body{padding:0}&lt;/style&gt;
       const outcome = '&lt;div class=&quot;asv-conflict-outcome&quot;&gt;&lt;span class=&quot;asv-conflict-state ' + outcomeClass + '&quot;&gt;' + outcomeLabel + '&lt;/span&gt;&lt;span&gt;' + outcomeText + '&lt;/span&gt;&lt;/div&gt;';
       const card = document.createElement(&quot;article&quot;);
       card.className = &quot;asv-conflict-card &quot; + (problemTask ? &quot;is-problem&quot; : &quot;is-normal&quot;);
-      card.innerHTML = '&lt;div class=&quot;asv-conflict-node text-small&quot;&gt;10.28.98.136&lt;/div&gt;' +
+      card.innerHTML = '&lt;div class=&quot;asv-conflict-node text-small&quot;&gt;' + run.nodeIp + '&lt;/div&gt;' +
         '&lt;div class=&quot;asv-conflict-task&quot;&gt;&lt;span class=&quot;asv-conflict-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;' + task.task + '&lt;/span&gt;' + taskAttributeIcons(attributes) + '&lt;/div&gt;' +
         '&lt;div class=&quot;asv-conflict-trigger&quot;&gt;&lt;span class=&quot;asv-conflict-position&quot;&gt;' + (run.conflictPosition || &quot;1/1&quot;) + '&lt;/span&gt; ' + run.name + '&lt;/div&gt;' +
-        '&lt;div class=&quot;asv-conflict-time text-small&quot;&gt;&lt;span&gt;' + formatDuration(run.end - run.start) + '&lt;/span&gt;' + forecastConfidenceMarkup(task) + '&lt;/div&gt;' + outcome;
+        '&lt;div class=&quot;asv-conflict-time text-small&quot;&gt;&lt;span&gt;' + formatDuration(task.end - task.start) + '&lt;/span&gt;' + forecastConfidenceMarkup(task) + '&lt;/div&gt;' + outcome;
       conflictCards.appendChild(card);
     });
   };
 
   const closeConflict = returnFocus =&gt; {
+    const closingBolt = activeConflictBolt;
+    const closingHighlight = activeConflictHighlight;
     conflictPopover.classList.remove(&quot;is-open&quot;);
     conflictPopover.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
-    if (activeConflictBolt) {
-      activeConflictBolt.setAttribute(&quot;aria-expanded&quot;, &quot;false&quot;);
-      if (returnFocus) activeConflictBolt.focus();
-    }
     activeConflictBolt = null;
+    activeConflictHighlight = null;
+    if (closingBolt) {
+      closingBolt.setAttribute(&quot;aria-expanded&quot;, &quot;false&quot;);
+      if (returnFocus) closingBolt.focus();
+    }
+    if (closingHighlight) closingHighlight(false);
   };
 
   const positionConflictPopover = bolt =&gt; {
@@ -3700,14 +4032,23 @@ html&gt;body{padding:0}&lt;/style&gt;
     conflictPopover.style.top = Math.round(top) + &quot;px&quot;;
   };
 
-  const openConflict = (conflict, bolt) =&gt; {
+  const openConflict = (conflict, bolt, setHighlight) =&gt; {
     if (detail.classList.contains(&quot;is-open&quot;)) closeDetail();
-    if (activeConflictBolt &amp;&amp; activeConflictBolt !== bolt) activeConflictBolt.setAttribute(&quot;aria-expanded&quot;, &quot;false&quot;);
+    if (activeConflictBolt &amp;&amp; activeConflictBolt !== bolt) {
+      const previousBolt = activeConflictBolt;
+      const previousHighlight = activeConflictHighlight;
+      activeConflictBolt = null;
+      activeConflictHighlight = null;
+      previousBolt.setAttribute(&quot;aria-expanded&quot;, &quot;false&quot;);
+      if (previousHighlight) previousHighlight(false);
+    }
     activeConflictBolt = bolt;
+    activeConflictHighlight = setHighlight;
     renderConflict(conflict);
     conflictPopover.classList.add(&quot;is-open&quot;);
     conflictPopover.setAttribute(&quot;aria-hidden&quot;, &quot;false&quot;);
     bolt.setAttribute(&quot;aria-expanded&quot;, &quot;true&quot;);
+    setHighlight(true);
     positionConflictPopover(bolt);
   };
 
@@ -3784,26 +4125,34 @@ html&gt;body{padding:0}&lt;/style&gt;
     axis.appendChild(tick);
   }
 
+  const frequentLaneHeight = 86;
   const laneEnds = [];
-  runs.forEach(run =&gt; {
+  runs.filter(run =&gt; !run.isFrequent).forEach(run =&gt; {
     const occupiedEnd = Math.max(run.end, run.start + 60);
     let lane = laneEnds.findIndex(end =&gt; end &lt;= run.start);
     if (lane &lt; 0) lane = laneEnds.length;
     laneEnds[lane] = occupiedEnd;
-    run.lane = lane;
+    run.lane = lane + 1;
   });
+  runs.filter(run =&gt; run.isFrequent).forEach(run =&gt; { run.lane = 0; });
 
   const nextRunStart = new Map();
-  laneEnds.forEach((_, laneIndex) =&gt; {
+  [0, ...laneEnds.map((_, index) =&gt; index + 1)].forEach(laneIndex =&gt; {
     const laneRuns = runs.filter(run =&gt; run.lane === laneIndex).sort((a, b) =&gt; a.start - b.start || a.firstId - b.firstId);
     laneRuns.forEach((run, index) =&gt; nextRunStart.set(run.id, laneRuns[index + 1]?.start ?? day));
   });
 
   const primaryLanes = [];
+  const primaryFrequentLane = document.createElement(&quot;div&quot;);
+  primaryFrequentLane.className = &quot;asv-lane is-primary-lane is-frequent-lane&quot;;
+  primaryFrequentLane.style.top = &quot;54px&quot;;
+  primaryFrequentLane.innerHTML = '&lt;span class=&quot;asv-lane-label&quot;&gt;Частые триггеры&lt;/span&gt;';
+  lanesHost.appendChild(primaryFrequentLane);
+  primaryLanes.push(primaryFrequentLane);
   laneEnds.forEach((_, index) =&gt; {
     const lane = document.createElement(&quot;div&quot;);
     lane.className = &quot;asv-lane is-primary-lane&quot;;
-    lane.style.top = (54 + index * 86) + &quot;px&quot;;
+    lane.style.top = (54 + frequentLaneHeight + index * 86) + &quot;px&quot;;
     lanesHost.appendChild(lane);
     primaryLanes.push(lane);
   });
@@ -3857,7 +4206,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     button.addEventListener(&quot;blur&quot;, hideMainTaskTooltip);
   };
   runs.forEach(run =&gt; {
-    const lane = lanesHost.children[run.lane];
+    const lane = primaryLanes[run.lane];
     const button = document.createElement(&quot;button&quot;);
     const span = Math.max(run.end - run.start, 60);
     const widthPct = span / day * 100;
@@ -3877,7 +4226,8 @@ html&gt;body{padding:0}&lt;/style&gt;
     }
     button.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
     const runType = run.isTrigger ? &quot;Триггер&quot; : &quot;Отдельная задача&quot;;
-    const conflictTaskDescription = run.conflictId ? &quot;, конфликтующая задача: &quot; + run.tasks[0].task : &quot;&quot;;
+    const conflictTask = run.conflictId ? conflictTaskForRun(run) : null;
+    const conflictTaskDescription = conflictTask ? &quot;, конфликтующая задача: &quot; + conflictTask.task : &quot;&quot;;
     button.setAttribute(&quot;aria-label&quot;, runType + &quot;: &quot; + run.name + conflictTaskDescription + &quot;, длительность &quot; + formatDuration(run.end - run.start) + &quot;, &quot; + run.tasks.length + &quot; задач&quot;);
     if (run.isTrigger) {
       if (leftPct &gt; 78) button.classList.add(&quot;is-caption-right&quot;);
@@ -3920,7 +4270,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         if (activeTaskLinker) activeTaskLinker.selectLinkedTask(task.id, true);
         showMainTaskTooltip(segment, task, run);
       });
-      if (run.conflictId) {
+      if (run.conflictId &amp;&amp; task.id === run.conflictTaskId) {
         if (!conflictTaskSegments.has(run.conflictId)) conflictTaskSegments.set(run.conflictId, []);
         conflictTaskSegments.get(run.conflictId).push(segment);
       }
@@ -3942,10 +4292,12 @@ html&gt;body{padding:0}&lt;/style&gt;
 
     }
 
-    if (run.conflictId &amp;&amp; (run.tasks[0].status === &quot;ERROR&quot; || run.tasks[0].riskError)) {
+    if (conflictTask &amp;&amp; (conflictTask.status === &quot;ERROR&quot; || conflictTask.riskError)) {
       const statusBadge = document.createElement(&quot;span&quot;);
       statusBadge.className = &quot;asv-run-status-badge text-small&quot;;
-      statusBadge.textContent = run.tasks[0].riskError ? &quot;Риск ошибки&quot; : &quot;Ошибка&quot;;
+      statusBadge.textContent = conflictTask.riskError ? &quot;Риск ошибки&quot; : &quot;Ошибка&quot;;
+      const badgeLeft = Math.max(0, Math.min(100, (conflictTask.end - run.start) / Math.max(run.end - run.start, 1) * 100));
+      statusBadge.style.left = &quot;calc(&quot; + badgeLeft + &quot;% - 4px)&quot;;
       button.appendChild(statusBadge);
     }
 
@@ -3956,13 +4308,14 @@ html&gt;body{padding:0}&lt;/style&gt;
     lane.appendChild(button);
   });
 
-  const expandedPrimaryHeight = 54 + laneEnds.length * 86 + 24;
+  const expandedPrimaryHeight = 54 + frequentLaneHeight + laneEnds.length * 86 + 24;
   const secondaryTop = expandedPrimaryHeight;
   const secondaryTopInset = 12;
   const secondaryLaneHeight = 86;
   const secondaryBottomInset = 24;
-  const secondaryLaneCount = Math.max(1, ...secondaryRuns.map(run =&gt; run.secondaryLane + 1));
-  const expandedSecondaryHeight = secondaryTopInset + secondaryLaneHeight * secondaryLaneCount + secondaryBottomInset;
+  const secondaryRegularLaneCount = Math.max(1, ...secondaryRuns.filter(run =&gt; !run.isFrequent).map(run =&gt; run.secondaryLane + 1));
+  const secondaryLaneCount = secondaryRegularLaneCount + 1;
+  const expandedSecondaryHeight = secondaryTopInset + frequentLaneHeight + secondaryLaneHeight * secondaryRegularLaneCount + secondaryBottomInset;
   const timelineHeight = secondaryTop + expandedSecondaryHeight;
   root.style.setProperty(&quot;--asv-primary-node-height&quot;, secondaryTop + &quot;px&quot;);
   root.style.setProperty(&quot;--asv-secondary-node-height&quot;, expandedSecondaryHeight + &quot;px&quot;);
@@ -3970,20 +4323,25 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   const secondaryLanes = Array.from({ length: secondaryLaneCount }, (_, index) =&gt; {
     const lane = document.createElement(&quot;div&quot;);
-    lane.className = &quot;asv-lane is-secondary-lane&quot;;
-    lane.style.top = (secondaryTop + secondaryTopInset + index * secondaryLaneHeight) + &quot;px&quot;;
+    lane.className = &quot;asv-lane is-secondary-lane&quot; + (index === 0 ? &quot; is-frequent-lane&quot; : &quot;&quot;);
+    const laneOffset = index === 0 ? 0 : frequentLaneHeight + (index - 1) * secondaryLaneHeight;
+    lane.style.top = (secondaryTop + secondaryTopInset + laneOffset) + &quot;px&quot;;
+    if (index === 0) lane.innerHTML = '&lt;span class=&quot;asv-lane-label&quot;&gt;Частые триггеры&lt;/span&gt;';
     lanesHost.appendChild(lane);
     return lane;
   });
+  secondaryRuns.forEach(run =&gt; {
+    run.displayLane = run.isFrequent ? 0 : run.secondaryLane + 1;
+  });
   const secondaryNextStart = new Map();
   secondaryLanes.forEach((_, laneIndex) =&gt; {
-    const laneRuns = secondaryRuns.filter(run =&gt; run.secondaryLane === laneIndex).sort((a, b) =&gt; a.start - b.start);
+    const laneRuns = secondaryRuns.filter(run =&gt; run.displayLane === laneIndex).sort((a, b) =&gt; a.start - b.start);
     laneRuns.forEach((run, index) =&gt; secondaryNextStart.set(run.id, laneRuns[index + 1]?.start ?? day));
   });
 
   secondaryRuns.forEach(run =&gt; {
-    run.lane = run.secondaryLane;
-    const lane = secondaryLanes[run.secondaryLane];
+    run.lane = run.displayLane;
+    const lane = secondaryLanes[run.displayLane];
     const button = document.createElement(&quot;button&quot;);
     const span = Math.max(run.end - run.start, 60);
     const widthPct = span / day * 100;
@@ -3992,7 +4350,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     const compactTrigger = run.isTrigger &amp;&amp; actualDuration &lt; 1200;
     const pointStandalone = !run.isTrigger &amp;&amp; actualDuration &lt; 60;
     button.type = &quot;button&quot;;
-    button.className = &quot;asv-run is-secondary-node-run &quot; + (run.isTrigger ? &quot;is-trigger&quot; : &quot;is-standalone&quot;) + (compactTrigger ? &quot; is-compact-trigger&quot; : &quot;&quot;) + (pointStandalone ? &quot; is-point-run&quot; : &quot;&quot;);
+    button.className = &quot;asv-run is-secondary-node-run &quot; + (run.isTrigger ? &quot;is-trigger&quot; : &quot;is-standalone&quot;) + (compactTrigger ? &quot; is-compact-trigger&quot; : &quot;&quot;) + (pointStandalone ? &quot; is-point-run&quot; : &quot;&quot;) + (run.conflictId ? &quot; is-conflict-demo&quot; : &quot;&quot;);
     button.style.left = leftPct + &quot;%&quot;;
     button.style.width = widthPct + &quot;%&quot;;
     button.style.setProperty(&quot;--asv-run-width&quot;, widthPct + &quot;%&quot;);
@@ -4001,7 +4359,9 @@ html&gt;body{padding:0}&lt;/style&gt;
       compactTriggerButtons.push(button);
     }
     button.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
-    button.setAttribute(&quot;aria-label&quot;, (run.isTrigger ? &quot;Триггер: &quot; : &quot;Отдельная задача: &quot;) + run.name + &quot;, нода 10.42.108.136, длительность &quot; + formatDuration(run.end - run.start));
+    const conflictTask = run.conflictId ? conflictTaskForRun(run) : null;
+    const conflictTaskDescription = conflictTask ? &quot;, конфликтующая задача: &quot; + conflictTask.task : &quot;&quot;;
+    button.setAttribute(&quot;aria-label&quot;, (run.isTrigger ? &quot;Триггер: &quot; : &quot;Отдельная задача: &quot;) + run.name + conflictTaskDescription + &quot;, нода 10.42.108.136, длительность &quot; + formatDuration(run.end - run.start));
     if (run.isTrigger) {
       if (leftPct &gt; 78) button.classList.add(&quot;is-caption-right&quot;);
       const caption = document.createElement(&quot;span&quot;);
@@ -4019,6 +4379,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       const segment = document.createElement(&quot;span&quot;);
       segment.className = &quot;asv-segment &quot; + statusClass(task.status);
       segment.style.flex = Math.max(task.end - task.start, 1) + &quot; 1 0&quot;;
+      applyTaskOverrunVisual(segment, task);
       applyForecastConfidenceVisual(segment, run, task);
       segment.setAttribute(&quot;data-task-id&quot;, String(task.id));
       appendInlineTaskName(segment, task);
@@ -4041,13 +4402,82 @@ html&gt;body{padding:0}&lt;/style&gt;
         if (activeTaskLinker) activeTaskLinker.selectLinkedTask(task.id, true);
         showMainTaskTooltip(segment, task, run);
       });
+      if (run.conflictId &amp;&amp; task.id === run.conflictTaskId) {
+        if (!conflictTaskSegments.has(run.conflictId)) conflictTaskSegments.set(run.conflictId, []);
+        conflictTaskSegments.get(run.conflictId).push(segment);
+      }
       segments.appendChild(segment);
     });
     button.appendChild(segments);
+
+    if (run.conflictId) {
+      const pin = document.createElement(&quot;span&quot;);
+      const runDurationForPin = Math.max(run.end - run.start, 1);
+      const pinLeft = Math.max(0, Math.min(100, (run.conflictAt - run.start) / runDurationForPin * 100));
+      pin.className = &quot;asv-conflict-task-pin&quot;;
+      pin.style.left = pinLeft + &quot;%&quot;;
+      pin.innerHTML = &quot;&amp;#9889;&amp;#65038;&quot;;
+      pin.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
+      button.appendChild(pin);
+      if (!conflictTaskPins.has(run.conflictId)) conflictTaskPins.set(run.conflictId, []);
+      conflictTaskPins.get(run.conflictId).push(pin);
+    }
+
+    if (conflictTask &amp;&amp; (conflictTask.status === &quot;ERROR&quot; || conflictTask.riskError)) {
+      const statusBadge = document.createElement(&quot;span&quot;);
+      statusBadge.className = &quot;asv-run-status-badge text-small&quot;;
+      statusBadge.textContent = conflictTask.riskError ? &quot;Риск ошибки&quot; : &quot;Ошибка&quot;;
+      const badgeLeft = Math.max(0, Math.min(100, (conflictTask.end - run.start) / Math.max(run.end - run.start, 1) * 100));
+      statusBadge.style.left = &quot;calc(&quot; + badgeLeft + &quot;% - 4px)&quot;;
+      button.appendChild(statusBadge);
+    }
     bindTopLevelRange(button, run);
     button.addEventListener(&quot;click&quot;, () =&gt; selectRun(run));
     buttons.set(run.id, button);
+    if (run.conflictId) conflictRunButtons.set(run.id, button);
     lane.appendChild(button);
+  });
+
+  const frequentListItems = Array.from(root.querySelectorAll(&quot;[data-frequent-trigger-name]&quot;));
+  const clearFrequentListSelection = () =&gt; {
+    frequentListItems.forEach(item =&gt; {
+      item.classList.remove(&quot;is-active&quot;);
+      item.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
+    });
+    buttons.forEach(button =&gt; button.classList.remove(&quot;is-frequent-list-match&quot;));
+  };
+
+  frequentListItems.forEach(item =&gt; {
+    item.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
+    item.addEventListener(&quot;click&quot;, event =&gt; {
+      event.stopPropagation();
+      const triggerName = item.getAttribute(&quot;data-frequent-trigger-name&quot;);
+      const matchingRuns = [...runs, ...secondaryRuns]
+        .filter(run =&gt; run.isFrequent &amp;&amp; run.name === triggerName)
+        .sort((a, b) =&gt; a.start - b.start);
+      if (!matchingRuns.length) return;
+      clearFrequentListSelection();
+      item.classList.add(&quot;is-active&quot;);
+      item.setAttribute(&quot;aria-pressed&quot;, &quot;true&quot;);
+      matchingRuns.forEach(run =&gt; buttons.get(run.id)?.classList.add(&quot;is-frequent-list-match&quot;));
+      const visibleCenter = (timelineScroll.scrollLeft + timelineScroll.clientWidth / 2) / Math.max(overview.scrollWidth, 1) * day;
+      const targetRun = matchingRuns.reduce((closest, run) =&gt; {
+        const runCenter = (run.start + run.end) / 2;
+        const closestCenter = (closest.start + closest.end) / 2;
+        return Math.abs(runCenter - visibleCenter) &lt; Math.abs(closestCenter - visibleCenter) ? run : closest;
+      }, matchingRuns[0]);
+      const nodeKey = targetRun.nodeIp === nodeIps.secondary ? &quot;secondary&quot; : &quot;primary&quot;;
+      if (nodeCollapseState[nodeKey]) {
+        nodeCollapseState[nodeKey] = false;
+        updateNodeLayout();
+      }
+      const targetButton = buttons.get(targetRun.id);
+      if (targetButton) {
+        const targetLeft = targetRun.start / day * overview.scrollWidth;
+        timelineScroll.scrollTo({ left: Math.max(0, targetLeft - timelineScroll.clientWidth * .35), behavior: &quot;smooth&quot; });
+      }
+      selectRun(targetRun, true);
+    });
   });
 
 
@@ -4067,7 +4497,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   window.addEventListener(&quot;resize&quot;, () =&gt; requestAnimationFrame(layoutInlineTaskLabels), { passive: true });
 
   const conflictGroups = new Map();
-  runs.filter(run =&gt; run.conflictId).forEach(run =&gt; {
+  allRuns.filter(run =&gt; run.conflictId).forEach(run =&gt; {
     if (!conflictGroups.has(run.conflictId)) {
       conflictGroups.set(run.conflictId, { id: run.conflictId, at: run.conflictAt, date: run.conflictDate, runs: [] });
     }
@@ -4075,29 +4505,35 @@ html&gt;body{padding:0}&lt;/style&gt;
   });
 
   conflictGroups.forEach(conflict =&gt; {
-    conflict.runs.sort((a, b) =&gt; a.start - b.start || a.firstId - b.firstId);
+    conflict.runs.sort((a, b) =&gt; a.conflictOrder - b.conflictOrder || a.start - b.start || a.firstId - b.firstId);
+    const forecastConflict = conflict.runs.some(run =&gt; isFutureTask(conflictTaskForRun(run)));
     const anchor = document.createElement(&quot;div&quot;);
     anchor.className = &quot;asv-conflict-anchor&quot;;
     anchor.style.left = (conflict.at / day * 100) + &quot;%&quot;;
     const bolt = document.createElement(&quot;button&quot;);
     bolt.className = &quot;asv-conflict-bolt&quot;;
     bolt.type = &quot;button&quot;;
-    bolt.setAttribute(&quot;data-tooltip&quot;, &quot;Конфликт двух задач · &quot; + formatClock(conflict.at));
-    bolt.setAttribute(&quot;aria-label&quot;, &quot;Открыть детали конфликта в &quot; + formatClock(conflict.at));
+    bolt.setAttribute(&quot;data-tooltip&quot;, (forecastConflict ? &quot;Прогноз конфликта&quot; : &quot;Конфликт двух задач&quot;) + &quot; · &quot; + formatClock(conflict.at));
+    bolt.setAttribute(&quot;aria-label&quot;, &quot;Открыть &quot; + (forecastConflict ? &quot;прогноз конфликта&quot; : &quot;детали конфликта&quot;) + &quot; в &quot; + formatClock(conflict.at));
     bolt.setAttribute(&quot;aria-expanded&quot;, &quot;false&quot;);
     bolt.innerHTML = '&lt;span class=&quot;asv-conflict-bolt-mark&quot; aria-hidden=&quot;true&quot;&gt;&amp;#9889;&amp;#65038;&lt;/span&gt;';
     const line = document.createElement(&quot;span&quot;);
     line.className = &quot;asv-conflict-line&quot;;
     line.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
-    const lowerLane = Math.max(...conflict.runs.map(run =&gt; run.lane));
-    line.style.height = (54 + lowerLane * 86 + 25) + &quot;px&quot;;
     anchor.append(bolt, line);
     conflictLayer.appendChild(anchor);
+    requestAnimationFrame(() =&gt; {
+      const overviewBox = overview.getBoundingClientRect();
+      const taskBottoms = (conflictTaskSegments.get(conflict.id) || []).map(segment =&gt; segment.getBoundingClientRect().bottom - overviewBox.top);
+      const targetBottom = taskBottoms.length ? Math.max(...taskBottoms) : 190;
+      line.style.height = Math.max(20, targetBottom - 30) + &quot;px&quot;;
+    });
 
     const setHighlight = active =&gt; {
-      anchor.classList.toggle(&quot;is-hovered&quot;, active);
-      (conflictTaskSegments.get(conflict.id) || []).forEach(segment =&gt; segment.classList.toggle(&quot;is-conflict-highlight&quot;, active));
-      conflict.runs.forEach(run =&gt; conflictRunButtons.get(run.id)?.classList.toggle(&quot;is-conflict-hovered&quot;, active));
+      const highlighted = active || (activeConflictBolt === bolt &amp;&amp; conflictPopover.classList.contains(&quot;is-open&quot;));
+      anchor.classList.toggle(&quot;is-hovered&quot;, highlighted);
+      (conflictTaskSegments.get(conflict.id) || []).forEach(segment =&gt; segment.classList.toggle(&quot;is-conflict-highlight&quot;, highlighted));
+      conflict.runs.forEach(run =&gt; conflictRunButtons.get(run.id)?.classList.toggle(&quot;is-conflict-hovered&quot;, highlighted));
     };
     bolt.addEventListener(&quot;mouseenter&quot;, () =&gt; setHighlight(true));
     bolt.addEventListener(&quot;mouseleave&quot;, () =&gt; setHighlight(false));
@@ -4110,7 +4546,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     bolt.addEventListener(&quot;click&quot;, event =&gt; {
       event.stopPropagation();
       if (conflictPopover.classList.contains(&quot;is-open&quot;) &amp;&amp; activeConflictBolt === bolt) closeConflict(false);
-      else openConflict(conflict, bolt);
+      else openConflict(conflict, bolt, setHighlight);
     });
   });
 
@@ -4139,7 +4575,8 @@ html&gt;body{padding:0}&lt;/style&gt;
     conflictLayer.classList.toggle(&quot;is-node-collapsed&quot;, nodeCollapseState.primary);
     secondaryLanes.forEach((lane, index) =&gt; {
       lane.hidden = nodeCollapseState.secondary;
-      lane.style.top = (primaryHeight + secondaryTopInset + index * secondaryLaneHeight) + &quot;px&quot;;
+      const laneOffset = index === 0 ? 0 : frequentLaneHeight + (index - 1) * secondaryLaneHeight;
+      lane.style.top = (primaryHeight + secondaryTopInset + laneOffset) + &quot;px&quot;;
     });
     secondaryNodeBoundary.style.top = primaryHeight + &quot;px&quot;;
 
@@ -4188,7 +4625,8 @@ html&gt;body{padding:0}&lt;/style&gt;
     }).observe(lanesHost);
   }
 
-  function selectRun(run) {
+  function selectRun(run, preserveFrequentSelection = false) {
+    if (!preserveFrequentSelection) clearFrequentListSelection();
     closeConflict(false);
     hideMainTaskTooltip();
     if (activeTaskLinker) {
