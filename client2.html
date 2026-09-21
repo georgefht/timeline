@@ -1859,6 +1859,20 @@ html&gt;body{padding:0}&lt;/style&gt;
     pointer-events: none;
   }
 
+  #asv-real .is-frequent-run:not(:hover):not(:focus-visible):not([aria-pressed=&quot;true&quot;]) .asv-trigger-caption {
+    visibility: hidden;
+  }
+
+  #asv-real .asv-run.is-frequent-run.is-compact-trigger {
+    --asv-compact-width: 5px !important;
+    min-width: 5px;
+  }
+
+  #asv-real .asv-run.is-frequent-run.is-compact-trigger .asv-segments {
+    inset: 4px 1px;
+    gap: 0;
+  }
+
   #asv-real .asv-queue-lane {
     position: absolute;
     z-index: 2;
@@ -3570,6 +3584,40 @@ html&gt;body{padding:0}&lt;/style&gt;
     makeFrequentRun(&quot;frequent-secondary-10&quot;, 5010, &quot;publishPendingEvent&quot;, &quot;10.42.108.136&quot;, 208800, 212400, { secondaryLane: 0 })
   ];
 
+  // Stable demo schedule: offsets are seconds from midnight; durations are seconds.
+  const frequentSchedules = [
+    { name: &quot;checkActualizeTrigger&quot;, node: &quot;primary&quot;, period: 900, offset: 0, duration: 90 },
+    { name: &quot;checkActualizeTrigger_2&quot;, node: &quot;primary&quot;, period: 900, offset: 240, duration: .015 },
+    { name: &quot;incrementLoadTrigger1&quot;, node: &quot;secondary&quot;, period: 900, offset: 30, duration: .029 },
+    { name: &quot;incrementLoadTrigger2&quot;, node: &quot;secondary&quot;, period: 300, offset: 120, duration: .012 },
+    { name: &quot;incrementLoadTrigger3&quot;, node: &quot;secondary&quot;, period: 900, offset: 210, duration: .030 },
+    { name: &quot;incrementLoadTrigger4&quot;, node: &quot;secondary&quot;, period: 900, offset: 330, duration: .016 },
+    { name: &quot;incrementLoadTrigger5&quot;, node: &quot;secondary&quot;, period: 900, offset: 510, duration: .030 },
+    { name: &quot;incrementLoadTrigger6&quot;, node: &quot;secondary&quot;, period: 900, offset: 630, duration: .024 },
+    { name: &quot;publishPendingEvent&quot;, node: &quot;secondary&quot;, period: 900, offset: 810, duration: .030 }
+  ];
+  primaryFrequentRuns.length = 0;
+  secondaryFrequentRuns.length = 0;
+  frequentSchedules.forEach((spec, specIndex) =&gt; {
+    for (let start = spec.offset, occurrence = 0; start &lt; day; start += spec.period, occurrence += 1) {
+      const seed = stringHash(spec.name + &quot;:&quot; + occurrence);
+      const future = start &gt;= currentTime;
+      // Approximately 97% of historical polls are empty and omitted.
+      if (!future &amp;&amp; seed % 100 &gt;= 3) continue;
+      const duration = spec.duration * (1 + ((seed % 21) - 10) / 100);
+      const primary = spec.node === &quot;primary&quot;;
+      const run = makeFrequentRun(
+        &quot;scheduled-&quot; + specIndex + &quot;-&quot; + occurrence,
+        10000 + specIndex * 1000 + occurrence,
+        spec.name, primary ? &quot;10.28.98.136&quot; : &quot;10.42.108.136&quot;,
+        start, Math.min(day, start + duration),
+        { secondaryLane: 0, forecastPeriod: spec.period, nominalDuration: spec.duration }
+      );
+      (primary ? primaryFrequentRuns : secondaryFrequentRuns).push(run);
+    }
+  });
+  primaryFrequentRuns.sort((a, b) =&gt; a.start - b.start);
+  secondaryFrequentRuns.sort((a, b) =&gt; a.start - b.start);
   [...primaryFrequentRuns, ...secondaryFrequentRuns].forEach(populateRunTasks);
   runs.push(...primaryFrequentRuns);
   secondaryRuns.push(...secondaryFrequentRuns);
@@ -3678,7 +3726,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     date: &quot;18 сен 2026 · 07:30:00&quot;,
     forecast: true,
     participants: [
-      { runId: &quot;frequent-primary-6&quot;, role: &quot;participant&quot;, outcome: &quot;predicted-finished&quot;, confidence: &quot;high&quot; },
+      { runId: primaryFrequentRuns.find(run =&gt; run.name === &quot;checkActualizeTrigger&quot; &amp;&amp; run.start === daySeconds * 2 + 7.5 * 3600).id, role: &quot;participant&quot;, outcome: &quot;predicted-finished&quot;, confidence: &quot;high&quot; },
       { runId: &quot;client2-2228&quot;, role: &quot;cause&quot;, outcome: &quot;predicted-error&quot;, taskName: &quot;SparkLegalFilesLoad&quot;, confidence: &quot;low&quot; }
     ]
   });
@@ -4438,6 +4486,9 @@ html&gt;body{padding:0}&lt;/style&gt;
   });
 
   const frequentListItems = Array.from(root.querySelectorAll(&quot;[data-frequent-trigger-name]&quot;));
+  allRuns.filter(run =&gt; run.isFrequent).forEach(run =&gt; {
+    buttons.get(run.id)?.classList.add(&quot;is-frequent-run&quot;);
+  });
   const clearFrequentListSelection = () =&gt; {
     frequentListItems.forEach(item =&gt; {
       item.classList.remove(&quot;is-active&quot;);
