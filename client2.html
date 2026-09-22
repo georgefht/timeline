@@ -2584,6 +2584,9 @@ html&gt;body{padding:0}&lt;/style&gt;
     min-width: 3px;
   }
 
+  #asv-real.is-frequent-focus .asv-run.is-frequent-run:not(.is-frequent-list-match) { opacity: .1; }
+  #asv-real.is-frequent-focus .asv-run.is-frequent-list-match { opacity: 1; }
+
   #asv-real .asv-run.is-frequent-list-match {
     z-index: 28;
     outline: 1px solid var(--asv-text);
@@ -3446,7 +3449,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   const nowMarker = root.querySelector(&quot;.asv-now-marker&quot;);
   const daySeconds = 86400;
   const timelineDays = 3;
-  const timelineHours = 62;
+  const timelineHours = 66;
   const day = timelineHours * 60 * 60;
   const currentTime = daySeconds * 2 + 3 * 60 * 60;
   const statusClass = value =&gt; &quot;asv-&quot; + value.toLowerCase();
@@ -3599,6 +3602,15 @@ html&gt;body{padding:0}&lt;/style&gt;
       };
     });
   };
+
+  const dedupRuns = [...runs, ...secondaryRuns]
+    .filter(run =&gt; run.name === &quot;hourlyDedupTrigger2&quot;)
+    .sort((a, b) =&gt; a.start - b.start);
+  const lastDedup = dedupRuns[dedupRuns.length - 1];
+  const previousDedup = dedupRuns[dedupRuns.length - 2];
+  if (lastDedup &amp;&amp; previousDedup &amp;&amp; lastDedup.start &gt; currentTime) {
+    lastDedup.end = lastDedup.start + previousDedup.end - previousDedup.start;
+  }
 
   [...runs, ...secondaryRuns].forEach(populateRunTasks);
 
@@ -4571,6 +4583,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     button.style.top = (24 + run.frequentTrack * 40 + 10) + &quot;px&quot;;
   });
   const clearFrequentListSelection = () =&gt; {
+    root.classList.remove(&quot;is-frequent-focus&quot;);
     frequentListItems.forEach(item =&gt; {
       item.classList.remove(&quot;is-active&quot;);
       const reset = item.parentElement.querySelector(&quot;.asv-frequent-reset&quot;);
@@ -4609,6 +4622,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       item.classList.add(&quot;is-active&quot;);
       item.setAttribute(&quot;aria-pressed&quot;, &quot;true&quot;);
       matchingRuns.forEach(run =&gt; buttons.get(run.id)?.classList.add(&quot;is-frequent-list-match&quot;));
+      root.classList.add(&quot;is-frequent-focus&quot;);
       reset.hidden = false;
       closeDetail(false);
       closeConflict(false);
