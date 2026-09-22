@@ -1555,6 +1555,14 @@ html&gt;body{padding:0}&lt;/style&gt;
     gap: 6px;
   }
 
+  #asv-real .asv-frequent-row { display: flex; align-items: center; min-width: 0; }
+  #asv-real .asv-frequent-reset {
+    flex: 0 0 22px; width: 22px; height: 22px; padding: 0;
+    border: 0; border-radius: 4px; background: transparent;
+    color: var(--asv-muted); cursor: pointer; font-size: 17px;
+  }
+  #asv-real .asv-frequent-reset[hidden] { display: none; }
+  #asv-real .asv-frequent-reset:hover { background: var(--asv-group); }
   #asv-real .asv-frequent-item {
     appearance: none;
     width: 100%;
@@ -1839,7 +1847,31 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-lane.is-frequent-lane {
     height: 86px;
     background: color-mix(in srgb, var(--asv-page) 56%, transparent);
+    border-bottom: 1px dashed var(--asv-muted);
   }
+
+  #asv-real .asv-run.is-trigger.is-frequent-run { height: 20px; }
+  #asv-real .asv-lane.is-frequent-lane::before {
+    content: &quot;&quot;;
+    position: absolute;
+    top: -12px;
+    right: 0;
+    left: 0;
+    height: 12px;
+    background: color-mix(in srgb, var(--asv-page) 56%, transparent);
+    pointer-events: none;
+  }
+
+  #asv-real .asv-frequent-track-divider {
+    position: absolute;
+    left: 0;
+    right: 0;
+    border-top: 1px dashed var(--asv-rule);
+    pointer-events: none;
+  }
+
+  #asv-real .asv-run.is-frequent-run .asv-segment { opacity: .65; }
+  #asv-real .asv-run.is-frequent-run .asv-segment.is-conflict-highlight { opacity: 1; }
 
   #asv-real .asv-lane-label {
     position: sticky;
@@ -2139,7 +2171,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-conflict-task-pin {
     position: absolute;
     z-index: 7;
-    top: calc(100% - 3px);
+    top: calc(100% + 2px);
     display: grid;
     width: 12px;
     height: 12px;
@@ -2167,8 +2199,13 @@ html&gt;body{padding:0}&lt;/style&gt;
     position: absolute;
     z-index: 8;
     right: auto;
-    bottom: 3px;
-    left: calc(100% - 4px);
+    top: calc(100% + 2px);
+    bottom: auto;
+    transform: translateY(-50%);
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    left: calc(100% + 3px);
     padding: 1px 4px;
     border: 1px solid var(--asv-error);
     border-radius: 4px;
@@ -2178,7 +2215,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     font-weight: 400;
     line-height: 1.1;
     white-space: nowrap;
-    pointer-events: none;
+    pointer-events: auto;
   }
 
   #asv-real .asv-conflict-task-label {
@@ -2549,8 +2586,11 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   #asv-real .asv-run.is-frequent-list-match {
     z-index: 28;
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--asv-muted) 58%, transparent), 0 3px 10px color-mix(in srgb, var(--asv-muted) 18%, transparent);
+    outline: 1px solid var(--asv-text);
+    outline-offset: 1px;
   }
+
+  #asv-real .asv-run.is-frequent-list-match .asv-segment { opacity: .8; }
 
   #asv-real .asv-segment.asv-predicted.is-forecast-low,
   #asv-real .asv-proportional-fill.asv-predicted.is-forecast-low {
@@ -3518,7 +3558,22 @@ html&gt;body{padding:0}&lt;/style&gt;
     return 1;
   };
 
+  // Fixed execution durations in seconds, shared by history and forecasts.
+  const frequentDurations = Object.freeze({
+    checkActualizeTrigger: 90,
+    checkActualizeTrigger_2: .015,
+    incrementLoadTrigger1: .029,
+    incrementLoadTrigger2: .012,
+    incrementLoadTrigger3: .030,
+    incrementLoadTrigger4: .016,
+    incrementLoadTrigger5: .030,
+    incrementLoadTrigger6: .024
+  });
+
   const populateRunTasks = run =&gt; {
+    if (Object.hasOwn(frequentDurations, run.name)) {
+      run.end = run.start + frequentDurations[run.name];
+    }
     const taskNames = triggerTaskCatalog[run.name] || [];
     if (!taskNames.length) return;
     const duration = Math.max(0, run.end - run.start);
@@ -3561,63 +3616,28 @@ html&gt;body{padding:0}&lt;/style&gt;
     ...extra
   });
 
-  const primaryFrequentRuns = [
-    makeFrequentRun(&quot;frequent-primary-1&quot;, 4001, &quot;checkActualizeTrigger&quot;, &quot;10.28.98.136&quot;, 3600, 6300),
-    makeFrequentRun(&quot;frequent-primary-2&quot;, 4002, &quot;checkActualizeTrigger_2&quot;, &quot;10.28.98.136&quot;, 36000, 39000),
-    makeFrequentRun(&quot;frequent-primary-3&quot;, 4003, &quot;checkActualizeTrigger&quot;, &quot;10.28.98.136&quot;, 68400, 72600),
-    makeFrequentRun(&quot;frequent-primary-4&quot;, 4004, &quot;checkActualizeTrigger_2&quot;, &quot;10.28.98.136&quot;, 102600, 105600),
-    makeFrequentRun(&quot;frequent-primary-5&quot;, 4005, &quot;checkActualizeTrigger&quot;, &quot;10.28.98.136&quot;, 140400, 144300),
-    makeFrequentRun(&quot;frequent-primary-6&quot;, 4006, &quot;checkActualizeTrigger_2&quot;, &quot;10.28.98.136&quot;, 198000, 201600),
-    makeFrequentRun(&quot;frequent-primary-7&quot;, 4007, &quot;checkActualizeTrigger&quot;, &quot;10.28.98.136&quot;, 216000, 219600)
-  ];
-
-  const secondaryFrequentRuns = [
-    makeFrequentRun(&quot;frequent-secondary-1&quot;, 5001, &quot;incrementLoadTrigger1&quot;, &quot;10.42.108.136&quot;, 1800, 4500, { secondaryLane: 0 }),
-    makeFrequentRun(&quot;frequent-secondary-2&quot;, 5002, &quot;incrementLoadTrigger2&quot;, &quot;10.42.108.136&quot;, 23400, 26400, { secondaryLane: 0 }),
-    makeFrequentRun(&quot;frequent-secondary-3&quot;, 5003, &quot;incrementLoadTrigger3&quot;, &quot;10.42.108.136&quot;, 43200, 46500, { secondaryLane: 0 }),
-    makeFrequentRun(&quot;frequent-secondary-4&quot;, 5004, &quot;incrementLoadTrigger4&quot;, &quot;10.42.108.136&quot;, 64800, 67500, { secondaryLane: 0 }),
-    makeFrequentRun(&quot;frequent-secondary-5&quot;, 5005, &quot;incrementLoadTrigger5&quot;, &quot;10.42.108.136&quot;, 95400, 98100, { secondaryLane: 0 }),
-    makeFrequentRun(&quot;frequent-secondary-6&quot;, 5006, &quot;incrementLoadTrigger6&quot;, &quot;10.42.108.136&quot;, 117000, 121200, { secondaryLane: 0 }),
-    makeFrequentRun(&quot;frequent-secondary-7&quot;, 5007, &quot;publishPendingEvent&quot;, &quot;10.42.108.136&quot;, 138600, 141600, { secondaryLane: 0 }),
-    makeFrequentRun(&quot;frequent-secondary-8&quot;, 5008, &quot;incrementLoadTrigger2&quot;, &quot;10.42.108.136&quot;, 162000, 165600, { secondaryLane: 0 }),
-    makeFrequentRun(&quot;frequent-secondary-9&quot;, 5009, &quot;incrementLoadTrigger4&quot;, &quot;10.42.108.136&quot;, 187200, 191100, { secondaryLane: 0 }),
-    makeFrequentRun(&quot;frequent-secondary-10&quot;, 5010, &quot;publishPendingEvent&quot;, &quot;10.42.108.136&quot;, 208800, 212400, { secondaryLane: 0 })
-  ];
-
-  // Stable demo schedule: offsets are seconds from midnight; durations are seconds.
-  const frequentSchedules = [
-    { name: &quot;checkActualizeTrigger&quot;, node: &quot;primary&quot;, period: 900, offset: 0, duration: 90 },
-    { name: &quot;checkActualizeTrigger_2&quot;, node: &quot;primary&quot;, period: 900, offset: 240, duration: .015 },
-    { name: &quot;incrementLoadTrigger1&quot;, node: &quot;secondary&quot;, period: 900, offset: 30, duration: .029 },
-    { name: &quot;incrementLoadTrigger2&quot;, node: &quot;secondary&quot;, period: 300, offset: 120, duration: .012 },
-    { name: &quot;incrementLoadTrigger3&quot;, node: &quot;secondary&quot;, period: 900, offset: 210, duration: .030 },
-    { name: &quot;incrementLoadTrigger4&quot;, node: &quot;secondary&quot;, period: 900, offset: 330, duration: .016 },
-    { name: &quot;incrementLoadTrigger5&quot;, node: &quot;secondary&quot;, period: 900, offset: 510, duration: .030 },
-    { name: &quot;incrementLoadTrigger6&quot;, node: &quot;secondary&quot;, period: 900, offset: 630, duration: .024 },
-    { name: &quot;publishPendingEvent&quot;, node: &quot;secondary&quot;, period: 900, offset: 810, duration: .030 }
-  ];
-  primaryFrequentRuns.length = 0;
-  secondaryFrequentRuns.length = 0;
-  frequentSchedules.forEach((spec, specIndex) =&gt; {
-    for (let start = spec.offset, occurrence = 0; start &lt; day; start += spec.period, occurrence += 1) {
-      const seed = stringHash(spec.name + &quot;:&quot; + occurrence);
-      const future = start &gt;= currentTime;
-      // Approximately 97% of historical polls are empty and omitted.
-      if (!future &amp;&amp; seed % 100 &gt;= 3) continue;
-      const duration = spec.duration * (1 + ((seed % 21) - 10) / 100);
-      const primary = spec.node === &quot;primary&quot;;
-      const run = makeFrequentRun(
-        &quot;scheduled-&quot; + specIndex + &quot;-&quot; + occurrence,
-        10000 + specIndex * 1000 + occurrence,
-        spec.name, primary ? &quot;10.28.98.136&quot; : &quot;10.42.108.136&quot;,
-        start, Math.min(day, start + duration),
-        { secondaryLane: 0, forecastPeriod: spec.period, nominalDuration: spec.duration }
-      );
-      (primary ? primaryFrequentRuns : secondaryFrequentRuns).push(run);
-    }
+  // First worksheet: top 15% of completed frequent runs before the current-time boundary.
+  const importedFrequentRows = [[1371,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,122100.002,124512],[1377,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,122400.005,124078],[447,&quot;incrementLoadTrigger6&quot;,&quot;10.42.108.136&quot;,38700.002,40265],[1524,&quot;incrementLoadTrigger3&quot;,&quot;10.42.108.136&quot;,136800.001,137914],[587,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,51300.002,52390],[1643,&quot;incrementLoadTrigger3&quot;,&quot;10.42.108.136&quot;,147600.001,148614],[858,&quot;incrementLoadTrigger6&quot;,&quot;10.42.108.136&quot;,75600.004,76583],[707,&quot;incrementLoadTrigger3&quot;,&quot;10.42.108.136&quot;,62100.004,63061],[1021,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,90900.003,91860.033],[476,&quot;incrementLoadTrigger6&quot;,&quot;10.42.108.136&quot;,41400.001,42358],[431,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,36900.002,37822],[340,&quot;incrementLoadTrigger6&quot;,&quot;10.42.108.136&quot;,28800.001,29629],[657,&quot;incrementLoadTrigger6&quot;,&quot;10.42.108.136&quot;,57600.003,58403],[25,&quot;incrementLoadTrigger6&quot;,&quot;10.42.108.136&quot;,900.002,1694],[1593,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,143100.002,143883],[64,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,4500.003,5209],[1825,&quot;incrementLoadTrigger3&quot;,&quot;10.42.108.136&quot;,163800.002,164507],[968,&quot;incrementLoadTrigger3&quot;,&quot;10.42.108.136&quot;,85500.005,86182],[1991,&quot;incrementLoadTrigger3&quot;,&quot;10.42.108.136&quot;,178200.002,178866],[1977,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,177300.003,177957],[490,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,42300.004,42955],[624,&quot;incrementLoadTrigger6&quot;,&quot;10.42.108.136&quot;,54900.002,55546],[630,&quot;incrementLoadTrigger3&quot;,&quot;10.42.108.136&quot;,54900.005,55530],[558,&quot;incrementLoadTrigger3&quot;,&quot;10.42.108.136&quot;,48600.002,49199],[1412,&quot;incrementLoadTrigger3&quot;,&quot;10.42.108.136&quot;,126900.001,127492],[878,&quot;incrementLoadTrigger3&quot;,&quot;10.42.108.136&quot;,77400.002,77937],[980,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,86400.003,86928],[489,&quot;incrementLoadTrigger3&quot;,&quot;10.42.108.136&quot;,42300.003,42822],[434,&quot;incrementLoadTrigger3&quot;,&quot;10.42.108.136&quot;,36900.003,37400],[904,&quot;incrementLoadTrigger6&quot;,&quot;10.42.108.136&quot;,80100.002,80596],[1040,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,92700.004,93196],[933,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,82500.001,82987],[799,&quot;incrementLoadTrigger3&quot;,&quot;10.42.108.136&quot;,70200.003,70681],[1086,&quot;incrementLoadTrigger3&quot;,&quot;10.42.108.136&quot;,96300.002,96764],[1326,&quot;incrementLoadTrigger3&quot;,&quot;10.42.108.136&quot;,117900.002,118325],[272,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,22500.003,22865],[957,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,84600.006,84965],[475,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,40800.002,41156],[1641,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,147300.002,147655.041],[700,&quot;incrementLoadTrigger6&quot;,&quot;10.42.108.136&quot;,61200.005,61555],[917,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,81000.004,81352],[819,&quot;incrementLoadTrigger6&quot;,&quot;10.42.108.136&quot;,72000.001,72349],[1174,&quot;incrementLoadTrigger3&quot;,&quot;10.42.108.136&quot;,104400.002,104748],[419,&quot;incrementLoadTrigger6&quot;,&quot;10.42.108.136&quot;,36000.003,36310],[509,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,44100.002,44397.019],[497,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,43200.001,43497],[779,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,68400.002,68695.039],[913,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,80700.003,80989],[491,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,42300.005,42588],[803,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,70800.001,71083],[813,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,71700.002,71976],[484,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,41700.001,41968],[296,&quot;incrementLoadTrigger6&quot;,&quot;10.42.108.136&quot;,25200.001,25464],[823,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,72600.001,72861],[323,&quot;incrementLoadTrigger3&quot;,&quot;10.42.108.136&quot;,27000.002,27261],[1631,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,146400.002,146658],[793,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,69900.004,70156],[560,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,48600.003,48854],[271,&quot;incrementLoadTrigger3&quot;,&quot;10.42.108.136&quot;,22500.002,22752],[541,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,46800.003,47051],[939,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,82800.005,83046],[95,&quot;incrementLoadTrigger3&quot;,&quot;10.42.108.136&quot;,7200.002,7436],[526,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,45900.001,46135],[465,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,39900.01,40134.051],[1536,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,137700.001,137931.074],[549,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,47700.003,47928.093],[515,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,45000.001,45227.098],[1621,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,145500.003,145727],[372,&quot;incrementLoadTrigger3&quot;,&quot;10.42.108.136&quot;,31500.002,31725.097],[738,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,64800.002,65025],[757,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,66600.002,66824],[571,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,49500.004,49724],[230,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,18900.005,19120],[783,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,69000.001,69219],[1611,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,144600.002,144818.03],[122,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,9300.003,9514],[1003,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,89100.002,89308],[843,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,74400.002,74607],[204,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,16800.001,17000],[397,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,33900.004,34098],[7,&quot;checkActualizeTrigger&quot;,&quot;10.28.98.136&quot;,109800,109994],[1467,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,131400.002,131594],[408,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,35100.002,35292],[1650,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,148200.002,148392],[352,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,29700.005,29886],[289,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,24300.002,24485],[436,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,37200.002,37383],[1622,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,145800.002,145982],[414,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,35100.002,35281.089],[698,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,61200.004,61380],[867,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,76500.003,76678],[316,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,27000.001,27174],[422,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,36000.004,36172.028],[85,&quot;incrementLoadTrigger6&quot;,&quot;10.42.108.136&quot;,6300.004,6472],[984,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,87300.002,87470],[673,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,59100.001,59269],[685,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,60300.002,60468],[580,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,50400.003,50568],[713,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,62700.008,62868],[826,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,72900.002,73067],[262,&quot;incrementLoadTrigger6&quot;,&quot;10.42.108.136&quot;,21600.003,21767],[988,&quot;incrementLoadTrigger1&quot;,&quot;10.42.108.136&quot;,87300.007,87467],[1411,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,126600.001,126766],[744,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,65700.001,65863.069],[591,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,51300.003,51463],[445,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,38100.001,38262],[724,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,63900.003,64061],[24,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,900.002,1058],[377,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,32100.003,32258],[952,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,84600.003,84755.093],[1493,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,134100.001,134255],[366,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,30900.005,31055],[37,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,1800.002,1954.03],[1460,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,130800.001,130954],[1328,&quot;publishPendingEvent&quot;,&quot;10.42.108.136&quot;,117900.002,118052],[1428,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,127800.002,127951],[1509,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,135000.002,135151],[622,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,54300.003,54450],[833,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,73500.002,73646],[337,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,28500.002,28646],[1481,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,132900.002,133044],[1450,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,129900.001,130043],[1644,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,147600.002,147743],[1458,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,130500.016,130641],[632,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,55200.001,55340],[973,&quot;publishPendingEvent&quot;,&quot;10.42.108.136&quot;,86400.001,86540],[1526,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,136800.002,136940],[1471,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,132000.001,132139],[1427,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,127800.002,127939],[650,&quot;publishPendingEvent&quot;,&quot;10.42.108.136&quot;,56700.003,56839],[1405,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,126000.001,126137],[1577,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,141300.002,141437],[953,&quot;publishPendingEvent&quot;,&quot;10.42.108.136&quot;,84600.006,84737],[1531,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,137100.002,137236],[652,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,57000.001,57135],[642,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,56100.001,56234],[764,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,67500.001,67634],[455,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,39000.003,39133],[550,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,47700.003,47832],[254,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,21000.003,21132],[482,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,41400.003,41531],[1590,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,142500.002,142630],[892,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,78900.001,79029.037],[305,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,25800.001,25928.065],[881,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,77700.001,77828],[380,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,32400.002,32528],[597,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,52200.004,52328],[274,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,22800.003,22927],[703,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,61800.001,61926],[1727,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,154800.002,154926],[609,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,53100.003,53226],[1568,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,140400.005,140526],[1521,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,136200.001,136325],[627,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,54900.003,55025.002],[1391,&quot;checkActualizeTrigger&quot;,&quot;10.28.98.136&quot;,124200.026,124324],[387,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,33000.001,33123],[1541,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,138300.001,138422],[1580,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,141600.001,141722],[1585,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,142200.001,142322],[655,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,57600.002,57722],[140,&quot;incrementLoadTrigger1&quot;,&quot;10.42.108.136&quot;,10800.004,10921.008],[663,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,58200.003,58321],[351,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,29700.005,29820],[614,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,54000.001,54119],[1432,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,128700.002,128818],[1418,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,126900.003,127018],[1684,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,151200.002,151317],[1946,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,174600.003,174717],[152,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,12000.003,12117],[734,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,64800.001,64916],[165,&quot;incrementLoadTrigger3&quot;,&quot;10.42.108.136&quot;,13500.001,13616],[528,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,45900.002,46016],[1615,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,144900.002,145015.096],[853,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,75300.001,75415],[1601,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,143700.003,143815],[176,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,14400.001,14514.039],[1765,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,158400.003,158514],[358,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,30600.001,30713],[1402,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,125700.001,125813],[1438,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,128700.003,128812],[640,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,55800.008,55912],[1557,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,139500.003,139611.096],[1841,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,165600.001,165711],[778,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,68400.002,68510],[451,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,38700.002,38810],[667,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,58500.002,58610],[1696,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,152100.004,152210],[1495,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,134100.002,134209],[291,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,24300.003,24409],[467,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,40500.001,40608],[517,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,45000.001,45108],[1651,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,148500.001,148607],[1313,&quot;publishPendingEvent&quot;,&quot;10.42.108.136&quot;,117000.002,117105],[1507,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,135000.002,135105],[443,&quot;checkActualizeTrigger&quot;,&quot;10.28.98.136&quot;,37800.011,37904],[339,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,28800.001,28903],[1093,&quot;incrementLoadTrigger1&quot;,&quot;10.42.108.136&quot;,97200.003,97303],[710,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,62100.005,62203],[421,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,36000.003,36102.05],[301,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,25200.005,25302],[1564,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,140400.003,140501],[435,&quot;checkActualizeTrigger&quot;,&quot;10.28.98.136&quot;,36900.011,37001],[718,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,63000.002,63100.067],[139,&quot;incrementLoadTrigger6&quot;,&quot;10.42.108.136&quot;,10800.004,10900],[77,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,5400.005,5500],[604,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,53100.001,53198.004],[566,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,49500.001,49596],[748,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,65700.005,65796],[1657,&quot;checkActualizeTrigger&quot;,&quot;10.28.98.136&quot;,148500.009,148596],[1422,&quot;publishPendingEvent&quot;,&quot;10.42.108.136&quot;,127800.001,127895],[259,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,21600.002,21695],[1356,&quot;publishPendingEvent&quot;,&quot;10.42.108.136&quot;,120600.002,120694.083],[398,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,34200.002,34294],[1545,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,138600.002,138694],[129,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,9900.002,9993],[1903,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,171000.001,171092],[1485,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,133200.002,133292],[1397,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,125100.003,125192],[208,&quot;incrementLoadTrigger6&quot;,&quot;10.42.108.136&quot;,17100.002,17191],[28,&quot;incrementLoadTrigger3&quot;,&quot;10.42.108.136&quot;,900.005,991],[540,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,46800.002,46890],[555,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,48600.002,48690],[678,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,59400.002,59490],[785,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,69300.001,69389],[1632,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,146700.001,146788],[699,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,61200.005,61288],[760,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,66600.006,66688],[115,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,9000.001,9087],[1665,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,149400.003,149487],[869,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,76500.007,76587],[1474,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,132300.002,132386.044],[98,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,7200.002,7286],[1772,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,159300.002,159386],[1813,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,162900.002,162986],[1969,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,176400.002,176486],[720,&quot;checkActualizeTrigger&quot;,&quot;10.28.98.136&quot;,63000.009,63085.01],[1735,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,155700.003,155785],[807,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,71100.006,71185],[1009,&quot;checkActualizeTrigger&quot;,&quot;10.28.98.136&quot;,89100.021,89185],[1098,&quot;checkActualizeTrigger&quot;,&quot;10.28.98.136&quot;,97200.02,97284.059],[1874,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,168300.001,168384],[44,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,2700.001,2784],[135,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,10800.002,10884],[23,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,900.002,983],[927,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,81900.004,81983],[1746,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,156600.009,156683],[767,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,67500.001,67582.01],[1703,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,153000.001,153082],[857,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,75600.002,75681],[178,&quot;incrementLoadTrigger6&quot;,&quot;10.42.108.136&quot;,14400.002,14481],[269,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,22500.002,22581],[797,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,70200.002,70280],[686,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,60300.002,60380],[369,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,31500.001,31579],[59,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,3600.002,3678],[1018,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,90000.007,90078],[1516,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,135900.001,135977.016],[150,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,11700.002,11777],[837,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,73800.001,73876],[1802,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,162000.002,162076],[1716,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,153900.003,153976],[2038,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,182700.002,182774],[249,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,20700.004,20774],[2027,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,181800.001,181873],[664,&quot;publishPendingEvent&quot;,&quot;10.42.108.136&quot;,58500.001,58573],[320,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,27000.002,27073],[1886,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,169200.002,169273],[1781,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,160200.001,160272.062],[309,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,26100.001,26172],[199,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,16200.002,16272],[2018,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,180900.002,180972],[1690,&quot;incrementLoadTrigger5&quot;,&quot;10.42.108.136&quot;,152100.001,152171],[189,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,15300.003,15371],[1897,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,170100.003,170170],[1837,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,164700.002,164769.036],[1936,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,173700.003,173769.003],[1995,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,179100.001,179169],[1187,&quot;incrementLoadTrigger5&quot;,&quot;10.42.108.136&quot;,105300.002,105369],[1383,&quot;publishPendingEvent&quot;,&quot;10.42.108.136&quot;,123300.002,123369],[181,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,14400.002,14469],[850,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,74700.005,74769],[1752,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,157500.001,157568],[13,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,0.002,68],[1707,&quot;checkActualizeTrigger&quot;,&quot;10.28.98.136&quot;,153000.006,153068],[1429,&quot;checkActualizeTrigger&quot;,&quot;10.28.98.136&quot;,127800.01,127868],[56,&quot;incrementLoadTrigger6&quot;,&quot;10.42.108.136&quot;,3600.002,3667],[749,&quot;incrementLoadTrigger5&quot;,&quot;10.42.108.136&quot;,65700.007,65767],[1867,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,167400.002,167466],[250,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,20700.005,20766],[909,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,80100.005,80166],[1959,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,175500.001,175565],[877,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,77400.002,77465],[1919,&quot;checkActualizeTrigger&quot;,&quot;10.28.98.136&quot;,171900.006,171965],[110,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,8100.004,8164],[886,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,78300.006,78364],[90,&quot;incrementLoadTrigger2&quot;,&quot;10.42.108.136&quot;,6300.008,6364],[1479,&quot;checkActualizeTrigger&quot;,&quot;10.28.98.136&quot;,132300.011,132364],[240,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,19800.002,19863],[1826,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,163800.002,163863],[207,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,17100.001,17162],[1794,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,161100.002,161162],[1931,&quot;incrementLoadTrigger4&quot;,&quot;10.42.108.136&quot;,172800.003,172860],[1278,&quot;checkActualizeTrigger&quot;,&quot;10.28.98.136&quot;,113400.021,113460]];
+  const primaryFrequentRuns = [];
+  const secondaryFrequentRuns = [];
+  importedFrequentRows.forEach(([row, name, nodeIp, start, end]) =&gt; {
+    const run = makeFrequentRun(&quot;imported-&quot; + row, 20000 + row, name, nodeIp, start, end, { secondaryLane: 0, sourceRow: row });
+    (nodeIp === &quot;10.28.98.136&quot; ? primaryFrequentRuns : secondaryFrequentRuns).push(run);
   });
-  primaryFrequentRuns.sort((a, b) =&gt; a.start - b.start);
-  secondaryFrequentRuns.sort((a, b) =&gt; a.start - b.start);
+  // Only three illustrative conflict forecasts are visible in the future.
+  [
+    [&quot;demo-frequent-1&quot;, &quot;checkActualizeTrigger&quot;, &quot;10.28.98.136&quot;, 55.5 * 3600],
+    [&quot;demo-frequent-2&quot;, &quot;incrementLoadTrigger2&quot;, &quot;10.42.108.136&quot;, 53 * 3600],
+    [&quot;demo-frequent-3&quot;, &quot;incrementLoadTrigger3&quot;, &quot;10.42.108.136&quot;, 59 * 3600]
+  ].forEach(([id, name, nodeIp, start], index) =&gt; {
+    const samples = importedFrequentRows.filter(row =&gt; row[1] === name).map(row =&gt; row[4] - row[3]).sort((a,b) =&gt; a-b);
+    const duration = frequentDurations[name] ?? samples[Math.floor(samples.length / 2)];
+    const run = makeFrequentRun(id, 40000 + index, name, nodeIp, start, start + duration, { secondaryLane: 0, isDemoForecast: true });
+    (nodeIp === &quot;10.28.98.136&quot; ? primaryFrequentRuns : secondaryFrequentRuns).push(run);
+  });
+  primaryFrequentRuns.sort((a,b) =&gt; a.start-b.start);
+  secondaryFrequentRuns.sort((a,b) =&gt; a.start-b.start);
+
   [...primaryFrequentRuns, ...secondaryFrequentRuns].forEach(populateRunTasks);
   runs.push(...primaryFrequentRuns);
   secondaryRuns.push(...secondaryFrequentRuns);
@@ -3726,10 +3746,43 @@ html&gt;body{padding:0}&lt;/style&gt;
     date: &quot;18 сен 2026 · 07:30:00&quot;,
     forecast: true,
     participants: [
-      { runId: primaryFrequentRuns.find(run =&gt; run.name === &quot;checkActualizeTrigger&quot; &amp;&amp; run.start === daySeconds * 2 + 7.5 * 3600).id, role: &quot;participant&quot;, outcome: &quot;predicted-finished&quot;, confidence: &quot;high&quot; },
+      { runId: &quot;demo-frequent-1&quot;, role: &quot;participant&quot;, outcome: &quot;predicted-finished&quot;, confidence: &quot;high&quot; },
       { runId: &quot;client2-2228&quot;, role: &quot;cause&quot;, outcome: &quot;predicted-error&quot;, taskName: &quot;SparkLegalFilesLoad&quot;, confidence: &quot;low&quot; }
     ]
   });
+
+  [
+    { id: &quot;demo-conflict-2&quot;, at: 53 * 3600, date: &quot;18 сен 2026 · 05:00:00&quot;, frequent: &quot;demo-frequent-2&quot;, other: &quot;client2-2135&quot; },
+    { id: &quot;demo-conflict-3&quot;, at: 59 * 3600, date: &quot;18 сен 2026 · 11:00:00&quot;, frequent: &quot;demo-frequent-3&quot;, other: &quot;client2-2362&quot; }
+  ].forEach(item =&gt; attachConflict({
+    id: item.id, at: item.at, date: item.date, forecast: true,
+    participants: [
+      { runId: item.frequent, role: &quot;participant&quot;, outcome: &quot;predicted-finished&quot;, confidence: &quot;high&quot; },
+      { runId: item.other, role: &quot;cause&quot;, outcome: &quot;predicted-error&quot;, confidence: &quot;low&quot; }
+    ]
+  }));
+
+  // Two explicitly simulated historical failures between overlapping frequent runs.
+  const historicalFrequent = allRuns.filter(run =&gt; run.isFrequent &amp;&amp; run.end &lt; currentTime);
+  let historicalFrequentConflicts = 0;
+  for (const later of historicalFrequent) {
+    if (historicalFrequentConflicts === 2) break;
+    if (later.conflictId || later.tasks.length !== 1) continue;
+    const earlier = historicalFrequent.find(run =&gt; !run.conflictId &amp;&amp; run.name !== later.name &amp;&amp; run.nodeIp === later.nodeIp &amp;&amp; run.start &lt; later.start &amp;&amp; run.end &gt; later.start);
+    if (!earlier) continue;
+    earlier.isDemoConflict = later.isDemoConflict = true;
+    historicalFrequentConflicts += 1;
+    const date = new Date(Date.UTC(2026, 8, 16) + later.start * 1000);
+    attachConflict({
+      id: &quot;demo-history-frequent-&quot; + historicalFrequentConflicts,
+      at: later.start,
+      date: date.getUTCDate() + &quot; сен 2026 · &quot; + date.toISOString().slice(11, 19),
+      participants: [
+        { runId: earlier.id, role: &quot;participant&quot;, outcome: &quot;finished&quot; },
+        { runId: later.id, role: &quot;cause&quot;, outcome: &quot;error&quot; }
+      ]
+    });
+  }
 
   const thirdRuns = [];
   const stickyDayLabels = [];
@@ -4002,7 +4055,7 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   const renderConflict = conflict =&gt; {
     const forecastConflict = conflict.runs.some(run =&gt; isFutureTask(conflictTaskForRun(run)));
-    conflictState.textContent = forecastConflict ? &quot;Прогноз конфликта&quot; : &quot;Конфликт&quot;;
+    conflictState.textContent = forecastConflict ? &quot;Прогноз конфликта · демо&quot; : (conflict.runs.some(run =&gt; run.isDemoConflict) ? &quot;Конфликт · демо&quot; : &quot;Конфликт&quot;);
     conflictPopoverTitle.textContent = forecastConflict ? &quot;Прогноз параллельной работы задач&quot; : &quot;Параллельная работа конфликтующих задач&quot;;
     conflictDate.textContent = conflict.date;
     conflictCards.replaceChildren();
@@ -4107,7 +4160,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   timelineScroll.addEventListener(&quot;scroll&quot;, repositionActiveConflict, { passive: true });
   window.addEventListener(&quot;resize&quot;, repositionActiveConflict, { passive: true });
 
-  const closeDetail = () =&gt; {
+  const closeDetail = (restoreFocus = true) =&gt; {
     hideMainTaskTooltip();
     if (activeTaskLinker) {
       activeTaskLinker.setLinkedTask(null, false);
@@ -4120,7 +4173,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       button.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
       button.classList.remove(&quot;is-task-inspection-active&quot;, &quot;has-task-hover&quot;);
     });
-    if (selectedRun &amp;&amp; buttons.has(selectedRun.id)) buttons.get(selectedRun.id).focus();
+    if (restoreFocus &amp;&amp; selectedRun &amp;&amp; buttons.has(selectedRun.id)) buttons.get(selectedRun.id).focus({ preventScroll: true });
     selectedRun = null;
   };
 
@@ -4172,7 +4225,18 @@ html&gt;body{padding:0}&lt;/style&gt;
     axis.appendChild(tick);
   }
 
-  const frequentLaneHeight = 86;
+  const packFrequentRuns = list =&gt; {
+    const ends = [];
+    [...list].sort((a,b) =&gt; a.start-b.start).forEach(run =&gt; {
+      let lane = ends.findIndex(end =&gt; end &lt;= run.start);
+      if (lane &lt; 0) lane = ends.length;
+      ends[lane] = Math.max(run.end, run.start + 60);
+      run.frequentTrack = lane;
+    });
+    return 24 + Math.max(1, ends.length) * 40;
+  };
+  const frequentLaneHeight = packFrequentRuns(primaryFrequentRuns);
+  const secondaryFrequentHeight = packFrequentRuns(secondaryFrequentRuns);
   const laneEnds = [];
   runs.filter(run =&gt; !run.isFrequent).forEach(run =&gt; {
     const occupiedEnd = Math.max(run.end, run.start + 60);
@@ -4193,6 +4257,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   const primaryFrequentLane = document.createElement(&quot;div&quot;);
   primaryFrequentLane.className = &quot;asv-lane is-primary-lane is-frequent-lane&quot;;
   primaryFrequentLane.style.top = &quot;54px&quot;;
+  primaryFrequentLane.style.height = frequentLaneHeight + &quot;px&quot;;
   primaryFrequentLane.innerHTML = '&lt;span class=&quot;asv-lane-label&quot;&gt;Частые триггеры&lt;/span&gt;';
   lanesHost.appendChild(primaryFrequentLane);
   primaryLanes.push(primaryFrequentLane);
@@ -4289,7 +4354,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     const segments = document.createElement(&quot;span&quot;);
     segments.className = &quot;asv-segments&quot;;
     const runSpan = Math.max(run.end - run.start, 1);
-    const visibleTasks = compactTrigger ? run.tasks.slice(0, 4) : run.tasks;
+    const visibleTasks = run.tasks;
     visibleTasks.forEach(task =&gt; {
       const segment = document.createElement(&quot;span&quot;);
       segment.className = &quot;asv-segment &quot; + statusClass(task.status);
@@ -4344,7 +4409,8 @@ html&gt;body{padding:0}&lt;/style&gt;
       statusBadge.className = &quot;asv-run-status-badge text-small&quot;;
       statusBadge.textContent = conflictTask.riskError ? &quot;Риск ошибки&quot; : &quot;Ошибка&quot;;
       const badgeLeft = Math.max(0, Math.min(100, (conflictTask.end - run.start) / Math.max(run.end - run.start, 1) * 100));
-      statusBadge.style.left = &quot;calc(&quot; + badgeLeft + &quot;% - 4px)&quot;;
+      statusBadge.style.left = &quot;calc(&quot; + badgeLeft + &quot;% + 3px)&quot;;
+      statusBadge.title = statusBadge.textContent;
       button.appendChild(statusBadge);
     }
 
@@ -4362,7 +4428,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   const secondaryBottomInset = 24;
   const secondaryRegularLaneCount = Math.max(1, ...secondaryRuns.filter(run =&gt; !run.isFrequent).map(run =&gt; run.secondaryLane + 1));
   const secondaryLaneCount = secondaryRegularLaneCount + 1;
-  const expandedSecondaryHeight = secondaryTopInset + frequentLaneHeight + secondaryLaneHeight * secondaryRegularLaneCount + secondaryBottomInset;
+  const expandedSecondaryHeight = secondaryTopInset + secondaryFrequentHeight + secondaryLaneHeight * secondaryRegularLaneCount + secondaryBottomInset;
   const timelineHeight = secondaryTop + expandedSecondaryHeight;
   root.style.setProperty(&quot;--asv-primary-node-height&quot;, secondaryTop + &quot;px&quot;);
   root.style.setProperty(&quot;--asv-secondary-node-height&quot;, expandedSecondaryHeight + &quot;px&quot;);
@@ -4371,8 +4437,9 @@ html&gt;body{padding:0}&lt;/style&gt;
   const secondaryLanes = Array.from({ length: secondaryLaneCount }, (_, index) =&gt; {
     const lane = document.createElement(&quot;div&quot;);
     lane.className = &quot;asv-lane is-secondary-lane&quot; + (index === 0 ? &quot; is-frequent-lane&quot; : &quot;&quot;);
-    const laneOffset = index === 0 ? 0 : frequentLaneHeight + (index - 1) * secondaryLaneHeight;
+    const laneOffset = index === 0 ? 0 : secondaryFrequentHeight + (index - 1) * secondaryLaneHeight;
     lane.style.top = (secondaryTop + secondaryTopInset + laneOffset) + &quot;px&quot;;
+    if (index === 0) lane.style.height = secondaryFrequentHeight + &quot;px&quot;;
     if (index === 0) lane.innerHTML = '&lt;span class=&quot;asv-lane-label&quot;&gt;Частые триггеры&lt;/span&gt;';
     lanesHost.appendChild(lane);
     return lane;
@@ -4421,7 +4488,7 @@ html&gt;body{padding:0}&lt;/style&gt;
 
     const segments = document.createElement(&quot;span&quot;);
     segments.className = &quot;asv-segments&quot;;
-    const visibleTasks = compactTrigger ? run.tasks.slice(0, 4) : run.tasks;
+    const visibleTasks = run.tasks;
     visibleTasks.forEach(task =&gt; {
       const segment = document.createElement(&quot;span&quot;);
       segment.className = &quot;asv-segment &quot; + statusClass(task.status);
@@ -4475,7 +4542,8 @@ html&gt;body{padding:0}&lt;/style&gt;
       statusBadge.className = &quot;asv-run-status-badge text-small&quot;;
       statusBadge.textContent = conflictTask.riskError ? &quot;Риск ошибки&quot; : &quot;Ошибка&quot;;
       const badgeLeft = Math.max(0, Math.min(100, (conflictTask.end - run.start) / Math.max(run.end - run.start, 1) * 100));
-      statusBadge.style.left = &quot;calc(&quot; + badgeLeft + &quot;% - 4px)&quot;;
+      statusBadge.style.left = &quot;calc(&quot; + badgeLeft + &quot;% + 3px)&quot;;
+      statusBadge.title = statusBadge.textContent;
       button.appendChild(statusBadge);
     }
     bindTopLevelRange(button, run);
@@ -4486,18 +4554,49 @@ html&gt;body{padding:0}&lt;/style&gt;
   });
 
   const frequentListItems = Array.from(root.querySelectorAll(&quot;[data-frequent-trigger-name]&quot;));
+  [primaryFrequentLane, secondaryLanes[0]].forEach(lane =&gt; {
+    const height = Number.parseFloat(lane.style.height);
+    for (let top = 64; top &lt; height; top += 40) {
+      const divider = document.createElement(&quot;span&quot;);
+      divider.className = &quot;asv-frequent-track-divider&quot;;
+      divider.style.top = top + &quot;px&quot;;
+      divider.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
+      lane.appendChild(divider);
+    }
+  });
   allRuns.filter(run =&gt; run.isFrequent).forEach(run =&gt; {
-    buttons.get(run.id)?.classList.add(&quot;is-frequent-run&quot;);
+    const button = buttons.get(run.id);
+    if (!button) return;
+    button.classList.add(&quot;is-frequent-run&quot;);
+    button.style.top = (24 + run.frequentTrack * 40 + 10) + &quot;px&quot;;
   });
   const clearFrequentListSelection = () =&gt; {
     frequentListItems.forEach(item =&gt; {
       item.classList.remove(&quot;is-active&quot;);
+      const reset = item.parentElement.querySelector(&quot;.asv-frequent-reset&quot;);
+      if (reset) reset.hidden = true;
       item.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
     });
     buttons.forEach(button =&gt; button.classList.remove(&quot;is-frequent-list-match&quot;));
   };
 
   frequentListItems.forEach(item =&gt; {
+    const row = document.createElement(&quot;div&quot;);
+    row.className = &quot;asv-frequent-row&quot;;
+    item.parentElement.insertBefore(row, item);
+    row.appendChild(item);
+    const reset = document.createElement(&quot;button&quot;);
+    reset.type = &quot;button&quot;;
+    reset.className = &quot;asv-frequent-reset&quot;;
+    reset.textContent = &quot;×&quot;;
+    reset.hidden = true;
+    reset.setAttribute(&quot;aria-label&quot;, &quot;Сбросить подсветку &quot; + item.getAttribute(&quot;data-frequent-trigger-name&quot;));
+    reset.addEventListener(&quot;click&quot;, event =&gt; {
+      event.stopPropagation();
+      clearFrequentListSelection();
+      item.focus({ preventScroll: true });
+    });
+    row.appendChild(reset);
     item.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
     item.addEventListener(&quot;click&quot;, event =&gt; {
       event.stopPropagation();
@@ -4510,23 +4609,10 @@ html&gt;body{padding:0}&lt;/style&gt;
       item.classList.add(&quot;is-active&quot;);
       item.setAttribute(&quot;aria-pressed&quot;, &quot;true&quot;);
       matchingRuns.forEach(run =&gt; buttons.get(run.id)?.classList.add(&quot;is-frequent-list-match&quot;));
-      const visibleCenter = (timelineScroll.scrollLeft + timelineScroll.clientWidth / 2) / Math.max(overview.scrollWidth, 1) * day;
-      const targetRun = matchingRuns.reduce((closest, run) =&gt; {
-        const runCenter = (run.start + run.end) / 2;
-        const closestCenter = (closest.start + closest.end) / 2;
-        return Math.abs(runCenter - visibleCenter) &lt; Math.abs(closestCenter - visibleCenter) ? run : closest;
-      }, matchingRuns[0]);
-      const nodeKey = targetRun.nodeIp === nodeIps.secondary ? &quot;secondary&quot; : &quot;primary&quot;;
-      if (nodeCollapseState[nodeKey]) {
-        nodeCollapseState[nodeKey] = false;
-        updateNodeLayout();
-      }
-      const targetButton = buttons.get(targetRun.id);
-      if (targetButton) {
-        const targetLeft = targetRun.start / day * overview.scrollWidth;
-        timelineScroll.scrollTo({ left: Math.max(0, targetLeft - timelineScroll.clientWidth * .35), behavior: &quot;smooth&quot; });
-      }
-      selectRun(targetRun, true);
+      reset.hidden = false;
+      closeDetail(false);
+      closeConflict(false);
+      hideMainTaskTooltip();
     });
   });
 
@@ -4536,7 +4622,28 @@ html&gt;body{padding:0}&lt;/style&gt;
       const laneWidth = button.parentElement?.clientWidth || 0;
       const widthPercent = Number.parseFloat(button.style.width) || 0;
       const proportionalWidth = laneWidth * widthPercent / 100;
-      button.classList.toggle(&quot;is-compact-trigger&quot;, proportionalWidth &lt; 72);
+      button.classList.toggle(&quot;is-compact-trigger&quot;, proportionalWidth &lt; 16);
+    });
+    const runRects = Array.from(buttons.values()).map(button =&gt; ({ button, rect: button.getBoundingClientRect() }));
+    runRects.forEach(({ button, rect }) =&gt; {
+      const badge = button.querySelector(&quot;.asv-run-status-badge&quot;);
+      if (!badge || !rect.width) return;
+      const pin = button.querySelector(&quot;.asv-conflict-task-pin&quot;);
+      const pinRight = pin ? pin.getBoundingClientRect().right : rect.left;
+      // Keep the text after the lightning, then stop before the next run on this track.
+      badge.style.marginLeft = &quot;0px&quot;;
+      const initialLeft = badge.getBoundingClientRect().left;
+      badge.style.marginLeft = Math.max(0, pinRight + 3 - initialLeft) + &quot;px&quot;;
+      const left = Math.max(initialLeft, pinRight + 3);
+      let right = button.parentElement.getBoundingClientRect().right - 4;
+      runRects.forEach(other =&gt; {
+        if (other.button !== button &amp;&amp; Math.abs(other.rect.top - rect.top) &lt; 3 &amp;&amp; other.rect.left &gt; rect.left) {
+          right = Math.min(right, other.rect.left - 9);
+        }
+      });
+      const available = Math.max(0, right - left);
+      badge.style.maxWidth = available + &quot;px&quot;;
+      badge.style.visibility = available &lt; 12 ? &quot;hidden&quot; : &quot;visible&quot;;
     });
     inlineTaskLabels.forEach(({ segment, label }) =&gt; {
       const minimumLabelWidth = segment.classList.contains(&quot;is-overrun&quot;) ? 36 : 48;
@@ -4625,7 +4732,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     conflictLayer.classList.toggle(&quot;is-node-collapsed&quot;, nodeCollapseState.primary);
     secondaryLanes.forEach((lane, index) =&gt; {
       lane.hidden = nodeCollapseState.secondary;
-      const laneOffset = index === 0 ? 0 : frequentLaneHeight + (index - 1) * secondaryLaneHeight;
+      const laneOffset = index === 0 ? 0 : secondaryFrequentHeight + (index - 1) * secondaryLaneHeight;
       lane.style.top = (primaryHeight + secondaryTopInset + laneOffset) + &quot;px&quot;;
     });
     secondaryNodeBoundary.style.top = primaryHeight + &quot;px&quot;;
@@ -4672,6 +4779,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     new ResizeObserver(() =&gt; {
       layoutTriggerCaptions();
       layoutDayLabels();
+      layoutInlineTaskLabels();
     }).observe(lanesHost);
   }
 
