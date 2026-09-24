@@ -1555,6 +1555,9 @@ html&gt;body{padding:0}&lt;/style&gt;
     gap: 6px;
   }
 
+  #asv-real.is-frequent-layer-hidden .asv-frequent-section,
+  #asv-real.is-frequent-layer-hidden .asv-frequent-divider { display: none; }
+
   #asv-real .asv-frequent-row { display: flex; align-items: center; min-width: 0; }
   #asv-real .asv-frequent-reset {
     flex: 0 0 22px; width: 22px; height: 22px; padding: 0;
@@ -1689,6 +1692,47 @@ html&gt;body{padding:0}&lt;/style&gt;
     border-radius: 6px;
     background: var(--asv-page);
   }
+
+  #asv-real .asv-timeline-actions {
+    position: absolute;
+    z-index: 9;
+    top: 5px;
+    right: 9px;
+    display: flex;
+    align-items: stretch;
+    gap: 6px;
+  }
+
+  #asv-real .asv-timeline-actions .asv-zoom-controls {
+    position: static;
+    top: auto;
+    right: auto;
+  }
+
+  #asv-real .asv-frequent-layer-toggle {
+    display: inline-flex;
+    height: 28px;
+    align-items: center;
+    gap: 5px;
+    padding: 0 9px;
+    border: 1px solid var(--asv-rule);
+    border-radius: 6px;
+    background: var(--asv-page);
+    color: var(--asv-text);
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  #asv-real .asv-frequent-layer-toggle:hover,
+  #asv-real .asv-frequent-layer-toggle:focus-visible { background: var(--asv-group); outline: none; }
+  #asv-real .asv-frequent-layer-toggle-state {
+    min-width: 25px;
+    color: #4d766d;
+    font-variant-numeric: tabular-nums;
+  }
+  #asv-real .asv-frequent-layer-toggle.is-off { color: var(--asv-muted); }
+  #asv-real .asv-frequent-layer-toggle.is-off .asv-frequent-layer-toggle-state { color: var(--asv-muted); }
 
   #asv-real .asv-zoom-control {
     appearance: none;
@@ -1898,6 +1942,12 @@ html&gt;body{padding:0}&lt;/style&gt;
     border-radius: 2px;
     background: #a9cbc5;
     pointer-events: none;
+  }
+  #asv-real .asv-frequency-mark.is-long { z-index: 6; }
+  #asv-real .asv-frequency-mark.is-long::before {
+    border-radius: 3px;
+    background: #96bdb5;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, #426f65 32%, transparent);
   }
   #asv-real .asv-frequency-mark.is-single::after {
     content: &quot;&quot;;
@@ -3024,7 +3074,7 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   #asv-real .asv-conflict-popover {
     position: absolute;
-    z-index: 14;
+    z-index: 40;
     top: 0;
     left: 0;
     display: none;
@@ -3629,11 +3679,13 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;div class=&quot;asv-node-tag text-small&quot;&gt;нода для задач&lt;/div&gt;
       &lt;div class=&quot;asv-node-ip&quot;&gt;10.28.98.136&lt;/div&gt;
       &lt;div class=&quot;asv-node-status&quot;&gt;&lt;span class=&quot;asv-node-status-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;Онлайн&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;asv-node-divider&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
-      &lt;div class=&quot;asv-frequent-title&quot;&gt;Частые триггеры&lt;/div&gt;
-      &lt;div class=&quot;asv-frequent-list&quot;&gt;
-        &lt;button class=&quot;asv-frequent-item&quot; type=&quot;button&quot; data-frequent-trigger-name=&quot;checkActualizeTrigger&quot; data-tooltip=&quot;checkActualizeTrigger&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;checkActualizeTrigger&lt;/span&gt;&lt;/button&gt;
-        &lt;button class=&quot;asv-frequent-item&quot; type=&quot;button&quot; data-frequent-trigger-name=&quot;checkActualizeTrigger_2&quot; data-tooltip=&quot;checkActualizeTrigger_2&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;checkActualizeTrigger_2&lt;/span&gt;&lt;/button&gt;
+      &lt;div class=&quot;asv-node-divider asv-frequent-divider&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
+      &lt;div class=&quot;asv-frequent-section&quot;&gt;
+        &lt;div class=&quot;asv-frequent-title&quot;&gt;Частые триггеры&lt;/div&gt;
+        &lt;div class=&quot;asv-frequent-list&quot;&gt;
+          &lt;button class=&quot;asv-frequent-item&quot; type=&quot;button&quot; data-frequent-trigger-name=&quot;checkActualizeTrigger&quot; data-tooltip=&quot;checkActualizeTrigger&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;checkActualizeTrigger&lt;/span&gt;&lt;/button&gt;
+          &lt;button class=&quot;asv-frequent-item&quot; type=&quot;button&quot; data-frequent-trigger-name=&quot;checkActualizeTrigger_2&quot; data-tooltip=&quot;checkActualizeTrigger_2&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;checkActualizeTrigger_2&lt;/span&gt;&lt;/button&gt;
+        &lt;/div&gt;
       &lt;/div&gt;
     &lt;/aside&gt;
     &lt;aside class=&quot;asv-node-panel is-secondary-node&quot; aria-label=&quot;Сведения о ноде 10.42.108.136&quot;&gt;
@@ -3641,7 +3693,8 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;div class=&quot;asv-node-collapsed-summary&quot;&gt;&lt;span class=&quot;asv-node-status-dot is-support-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;10.42.108.136&lt;/span&gt;&lt;/div&gt;
       &lt;div class=&quot;asv-node-ip&quot;&gt;10.42.108.136&lt;/div&gt;
       &lt;div class=&quot;asv-node-status is-support&quot;&gt;&lt;span class=&quot;asv-node-status-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;Поддержка&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;asv-node-divider&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
+      &lt;div class=&quot;asv-node-divider asv-frequent-divider&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
+      &lt;div class=&quot;asv-frequent-section&quot;&gt;
       &lt;div class=&quot;asv-frequent-title&quot;&gt;Частые триггеры&lt;/div&gt;
       &lt;div class=&quot;asv-frequent-list&quot;&gt;
         &lt;button class=&quot;asv-frequent-item&quot; type=&quot;button&quot; data-frequent-trigger-name=&quot;incrementLoadTrigger1&quot; data-tooltip=&quot;incrementLoadTrigger1&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;incrementLoadTrigger1&lt;/span&gt;&lt;/button&gt;
@@ -3651,14 +3704,19 @@ html&gt;body{padding:0}&lt;/style&gt;
         &lt;button class=&quot;asv-frequent-item&quot; type=&quot;button&quot; data-frequent-trigger-name=&quot;incrementLoadTrigger5&quot; data-tooltip=&quot;incrementLoadTrigger5&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;incrementLoadTrigger5&lt;/span&gt;&lt;/button&gt;
         &lt;button class=&quot;asv-frequent-item&quot; type=&quot;button&quot; data-frequent-trigger-name=&quot;incrementLoadTrigger6&quot; data-tooltip=&quot;incrementLoadTrigger6&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;incrementLoadTrigger6&lt;/span&gt;&lt;/button&gt;
         &lt;button class=&quot;asv-frequent-item&quot; type=&quot;button&quot; data-frequent-trigger-name=&quot;publishPendingEvent&quot; data-tooltip=&quot;publishPendingEvent&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;publishPendingEvent&lt;/span&gt;&lt;/button&gt;
+        &lt;button class=&quot;asv-frequent-item&quot; type=&quot;button&quot; data-frequent-trigger-name=&quot;rebuildIndexTrigger&quot; data-tooltip=&quot;rebuildIndexTrigger&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;rebuildIndexTrigger&lt;/span&gt;&lt;/button&gt;
+      &lt;/div&gt;
       &lt;/div&gt;
     &lt;/aside&gt;
     &lt;/div&gt;
     &lt;main class=&quot;asv-timeline-pane&quot;&gt;
-      &lt;div class=&quot;asv-zoom-controls&quot; aria-label=&quot;Масштаб таймлайна&quot;&gt;
-        &lt;button class=&quot;asv-zoom-control&quot; type=&quot;button&quot; data-zoom-out aria-label=&quot;Уменьшить масштаб&quot;&gt;−&lt;/button&gt;
-        &lt;button class=&quot;asv-zoom-control asv-zoom-value text-small&quot; type=&quot;button&quot; data-zoom-reset aria-label=&quot;Вернуть масштаб 100 процентов&quot;&gt;100%&lt;/button&gt;
-        &lt;button class=&quot;asv-zoom-control&quot; type=&quot;button&quot; data-zoom-in aria-label=&quot;Увеличить масштаб&quot;&gt;+&lt;/button&gt;
+      &lt;div class=&quot;asv-timeline-actions&quot; aria-label=&quot;Отображение таймлайна&quot;&gt;
+        &lt;button class=&quot;asv-frequent-layer-toggle&quot; type=&quot;button&quot; data-frequent-layer-toggle aria-pressed=&quot;true&quot; aria-label=&quot;Скрыть частые триггеры и связанные с ними конфликты&quot;&gt;&lt;span&gt;Частые&lt;/span&gt;&lt;span class=&quot;asv-frequent-layer-toggle-state&quot;&gt;вкл&lt;/span&gt;&lt;/button&gt;
+        &lt;div class=&quot;asv-zoom-controls&quot; aria-label=&quot;Масштаб таймлайна&quot;&gt;
+          &lt;button class=&quot;asv-zoom-control&quot; type=&quot;button&quot; data-zoom-out aria-label=&quot;Уменьшить масштаб&quot;&gt;−&lt;/button&gt;
+          &lt;button class=&quot;asv-zoom-control asv-zoom-value text-small&quot; type=&quot;button&quot; data-zoom-reset aria-label=&quot;Вернуть масштаб 100 процентов&quot;&gt;100%&lt;/button&gt;
+          &lt;button class=&quot;asv-zoom-control&quot; type=&quot;button&quot; data-zoom-in aria-label=&quot;Увеличить масштаб&quot;&gt;+&lt;/button&gt;
+        &lt;/div&gt;
       &lt;/div&gt;
       &lt;div class=&quot;asv-timeline-scroll&quot;&gt;
         &lt;div class=&quot;asv-overview&quot; aria-label=&quot;Шкала истории и прогноза запусков с 16 сентября, 00:00 до 18 сентября, 14:00; текущее время — 18 сентября, 03:00&quot;&gt;
@@ -3718,6 +3776,13 @@ html&gt;body{padding:0}&lt;/style&gt;
   const zoomOut = root.querySelector(&quot;[data-zoom-out]&quot;);
   const zoomReset = root.querySelector(&quot;[data-zoom-reset]&quot;);
   const zoomIn = root.querySelector(&quot;[data-zoom-in]&quot;);
+  const frequentLayerToggle = root.querySelector(&quot;[data-frequent-layer-toggle]&quot;);
+  const frequentLayerToggleState = frequentLayerToggle?.querySelector(&quot;.asv-frequent-layer-toggle-state&quot;);
+  let frequentLayerVisible = true;
+  let activeFrequentTriggerName = null;
+  const isFrequentConflictFilteredOut = conflict =&gt; Boolean(activeFrequentTriggerName) &amp;&amp;
+    conflict.hasFrequentParticipant &amp;&amp;
+    !conflict.runs.some(run =&gt; run.isFrequent &amp;&amp; run.name === activeFrequentTriggerName);
   const axis = root.querySelector(&quot;.asv-axis&quot;);
   const lanesHost = root.querySelector(&quot;.asv-lanes&quot;);
   const detail = root.querySelector(&quot;.asv-detail&quot;);
@@ -3828,7 +3893,8 @@ html&gt;body{padding:0}&lt;/style&gt;
     ],
     checkActualizeTrigger: [&quot;legalListCheckActualize&quot;, &quot;physicalListCheckActualize&quot;],
     checkActualizeTrigger_2: [&quot;legalListCheckActualize&quot;, &quot;physicalListCheckActualize&quot;],
-    publishPendingEvent: [&quot;publishBlacklistCheckPendingEvents&quot;]
+    publishPendingEvent: [&quot;publishBlacklistCheckPendingEvents&quot;],
+    rebuildIndexTrigger: [&quot;prepareIndexSnapshot&quot;, &quot;rebuildSearchIndex&quot;]
   };
 
   const stringHash = value =&gt; {
@@ -3859,7 +3925,8 @@ html&gt;body{padding:0}&lt;/style&gt;
     incrementLoadTrigger4: .016,
     incrementLoadTrigger5: .030,
     incrementLoadTrigger6: .024,
-    publishPendingEvent: 3
+    publishPendingEvent: 3,
+    rebuildIndexTrigger: 60 * 60
   });
 
   const populateRunTasks = run =&gt; {
@@ -3925,6 +3992,17 @@ html&gt;body{padding:0}&lt;/style&gt;
     const run = makeFrequentRun(&quot;imported-&quot; + row, 20000 + row, name, nodeIp, start, end, { secondaryLane: 0, sourceRow: row });
     (nodeIp === &quot;10.28.98.136&quot; ? primaryFrequentRuns : secondaryFrequentRuns).push(run);
   });
+  // Historical long-running frequent trigger: it stays on the same compact rail,
+  // while short runs above it expose every real overlap through the count badges.
+  secondaryFrequentRuns.push(makeFrequentRun(
+    &quot;demo-history-long-frequent&quot;,
+    42001,
+    &quot;rebuildIndexTrigger&quot;,
+    &quot;10.42.108.136&quot;,
+    daySeconds * 2,
+    daySeconds * 2 + 60 * 60,
+    { secondaryLane: 0, isLongFrequentDemo: true }
+  ));
   // Only three illustrative conflict forecasts are visible in the future.
   [
     [&quot;demo-frequent-1&quot;, &quot;checkActualizeTrigger&quot;, &quot;10.28.98.136&quot;, 55.5 * 3600, &quot;client2-2228&quot;],
@@ -4455,6 +4533,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   };
 
   const openConflict = (conflict, bolt, setHighlight) =&gt; {
+    if (isFrequentConflictFilteredOut(conflict)) return;
     closeFrequentOverlapPopover(false);
     if (detail.classList.contains(&quot;is-open&quot;)) closeDetail();
     if (activeConflictBolt &amp;&amp; activeConflictBolt !== bolt) {
@@ -4885,6 +4964,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   const frequentConflictPins = [];
   const frequentBars = [];
   const frequentLinks = [];
+  const frequentConflictLinks = new Map();
   const frequentRunPositions = new Map();
   const frequentRunStateLabel = run =&gt; {
     const failed = run.tasks.some(task =&gt; task.status === &quot;ERROR&quot;);
@@ -4907,13 +4987,15 @@ html&gt;body{padding:0}&lt;/style&gt;
     laneRuns.forEach(run =&gt; {
       const critical = Boolean(run.conflictId) || run.tasks.some(task =&gt; task.status === &quot;ERROR&quot; || task.riskError);
       const risk = !critical &amp;&amp; run.tasks.some(task =&gt; task.riskError);
+      const longRunning = run.isLongFrequentDemo || run.end - run.start &gt;= 15 * 60;
       const item = document.createElement(&quot;div&quot;);
       item.className = &quot;asv-frequency-item&quot;;
       item.style.left = (run.start / day * 100) + &quot;%&quot;;
       const mark = document.createElement(&quot;button&quot;);
       mark.type = &quot;button&quot;;
       mark.className = &quot;asv-frequency-mark is-single&quot; +
-        (critical ? &quot; is-critical&quot; : risk ? &quot; is-risk&quot; : &quot;&quot;);
+        (critical ? &quot; is-critical&quot; : risk ? &quot; is-risk&quot; : &quot;&quot;) +
+        (longRunning ? &quot; is-long&quot; : &quot;&quot;);
       mark.style.left = &quot;0px&quot;;
       frequentBars.push({ mark, lane, run });
       frequentRunPositions.set(run.id, run.start / day * 100);
@@ -5159,6 +5241,7 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   const clearFrequentListSelection = () =&gt; {
     closeFrequentOverlapPopover(false);
+    activeFrequentTriggerName = null;
     root.classList.remove(&quot;is-frequent-focus&quot;);
     frequentListItems.forEach(item =&gt; {
       item.classList.remove(&quot;is-active&quot;);
@@ -5170,6 +5253,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     frequentGroups.forEach(mark =&gt; mark.classList.remove(&quot;is-frequent-list-match&quot;, &quot;is-selected&quot;));
     frequentConflictBolts.forEach(bolts =&gt; bolts.forEach(bolt =&gt; bolt.classList.remove(&quot;is-frequent-list-match&quot;)));
     frequentOverlapBadges.forEach(({ badge }) =&gt; badge.classList.remove(&quot;is-frequent-list-match&quot;));
+    updateFrequentConflictFilter();
   };
 
   frequentListItems.forEach(item =&gt; {
@@ -5198,6 +5282,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         .sort((a, b) =&gt; a.start - b.start);
       if (!matchingRuns.length) return;
       clearFrequentListSelection();
+      activeFrequentTriggerName = triggerName;
       item.classList.add(&quot;is-active&quot;);
       item.setAttribute(&quot;aria-pressed&quot;, &quot;true&quot;);
       matchingRuns.forEach(run =&gt; buttons.get(run.id)?.classList.add(&quot;is-frequent-list-match&quot;));
@@ -5211,6 +5296,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       reset.hidden = false;
       closeDetail(false);
       closeConflict(false);
+      updateFrequentConflictFilter();
       hideMainTaskTooltip();
     });
   });
@@ -5268,11 +5354,15 @@ html&gt;body{padding:0}&lt;/style&gt;
     }
     conflictGroups.get(run.conflictId).runs.push(run);
   });
+  conflictGroups.forEach(conflict =&gt; {
+    conflict.hasFrequentParticipant = conflict.runs.some(run =&gt; run.isFrequent);
+  });
 
   const conflictLineLayouts = [];
   const layoutConflictLines = () =&gt; {
     const overviewBox = overview.getBoundingClientRect();
     conflictLineLayouts.forEach(({ conflict, line }) =&gt; {
+      if (!frequentLayerVisible &amp;&amp; conflict.hasFrequentParticipant) return;
       const lineBox = line.getBoundingClientRect();
       const lineTop = lineBox.top - overviewBox.top;
       const taskTargets = (conflictTaskSegments.get(conflict.id) || []).map(segment =&gt; {
@@ -5304,7 +5394,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     const frequentPair = conflict.runs.length === 2 &amp;&amp; conflict.runs.every(run =&gt; run.isFrequent) &amp;&amp;
       conflict.runs[0].nodeIp === conflict.runs[1].nodeIp;
     const anchor = document.createElement(&quot;div&quot;);
-    anchor.className = &quot;asv-conflict-anchor&quot;;
+    anchor.className = &quot;asv-conflict-anchor&quot; + (conflict.hasFrequentParticipant ? &quot; is-frequent-related-conflict&quot; : &quot;&quot;);
     anchor.style.left = (conflict.at / day * 100) + &quot;%&quot;;
     const bolt = document.createElement(&quot;button&quot;);
     bolt.className = &quot;asv-conflict-bolt&quot;;
@@ -5318,7 +5408,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     line.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
     anchor.append(bolt, line);
     conflictLayer.appendChild(anchor);
-    conflictLineLayouts.push({ conflict, line });
+    conflictLineLayouts.push({ conflict, anchor, line });
     let frequentLink = null;
     if (frequentPair) {
       const pairLane = conflict.runs[0].nodeIp === &quot;10.28.98.136&quot; ? primaryFrequentLane : secondaryLanes[0];
@@ -5332,7 +5422,9 @@ html&gt;body{padding:0}&lt;/style&gt;
         link.className = &quot;asv-frequent-conflict-link&quot;;
         link.style.left = startPercent + &quot;%&quot;;
         link.style.width = Math.max(2, (endPercent - startPercent) / 100 * pairLane.clientWidth) + &quot;px&quot;;
-        frequentLinks.push({ link, lane: pairLane, startPercent, endPercent });
+        frequentLinks.push({ link, lane: pairLane, startPercent, endPercent, conflictId: conflict.id });
+        if (!frequentConflictLinks.has(conflict.id)) frequentConflictLinks.set(conflict.id, []);
+        frequentConflictLinks.get(conflict.id).push(link);
         link.setAttribute(&quot;aria-label&quot;, &quot;Конфликт: &quot; + conflict.runs.map(run =&gt; run.name).join(&quot; и &quot;));
         link.setAttribute(&quot;aria-expanded&quot;, &quot;false&quot;);
         link.title = conflict.runs.map(run =&gt; run.name).join(&quot; ↔ &quot;);
@@ -5344,6 +5436,16 @@ html&gt;body{padding:0}&lt;/style&gt;
 
     const setHighlight = active =&gt; {
       const localBolts = frequentConflictBolts.get(conflict.id) || [];
+      if (isFrequentConflictFilteredOut(conflict)) {
+        anchor.classList.remove(&quot;is-hovered&quot;);
+        (conflictTaskSegments.get(conflict.id) || []).forEach(segment =&gt; segment.classList.remove(&quot;is-conflict-highlight&quot;));
+        localBolts.forEach(localBolt =&gt; localBolt.classList.remove(&quot;is-conflict-hovered&quot;));
+        conflict.runs.forEach(run =&gt; {
+          conflictRunButtons.get(run.id)?.classList.remove(&quot;is-conflict-hovered&quot;);
+          frequentGroups.get(run.id)?.classList.remove(&quot;is-conflict-hovered&quot;);
+        });
+        return;
+      }
       const highlighted = active || ((activeConflictBolt === bolt || activeConflictBolt === frequentLink ||
         localBolts.includes(activeConflictBolt) || conflict.runs.some(run =&gt; activeConflictBolt === frequentGroups.get(run.id))) &amp;&amp;
         conflictPopover.classList.contains(&quot;is-open&quot;));
@@ -5410,6 +5512,48 @@ html&gt;body{padding:0}&lt;/style&gt;
       });
     }
   });
+
+  function updateFrequentConflictFilter() {
+    conflictLineLayouts.forEach(({ conflict, anchor }) =&gt; {
+      const filteredOut = isFrequentConflictFilteredOut(conflict);
+      const hidden = filteredOut || (!frequentLayerVisible &amp;&amp; conflict.hasFrequentParticipant);
+      // The local lightning belongs to a frequent trigger. When another type is
+      // dimmed by the filter, remove that lightning instead of dimming it too.
+      const localBoltHidden = hidden || (Boolean(activeFrequentTriggerName) &amp;&amp;
+        conflict.runs.some(run =&gt; run.isFrequent &amp;&amp; run.name !== activeFrequentTriggerName));
+      anchor.hidden = hidden;
+      const globalBolt = anchor.querySelector(&quot;.asv-conflict-bolt&quot;);
+      if (globalBolt) {
+        globalBolt.setAttribute(&quot;aria-disabled&quot;, String(hidden));
+        globalBolt.setAttribute(&quot;tabindex&quot;, hidden ? &quot;-1&quot; : &quot;0&quot;);
+        if (hidden) globalBolt.setAttribute(&quot;aria-expanded&quot;, &quot;false&quot;);
+      }
+      (frequentConflictBolts.get(conflict.id) || []).forEach(localBolt =&gt; {
+        localBolt.hidden = localBoltHidden;
+        localBolt.setAttribute(&quot;aria-hidden&quot;, String(localBoltHidden));
+        localBolt.setAttribute(&quot;aria-disabled&quot;, String(localBoltHidden));
+        localBolt.setAttribute(&quot;tabindex&quot;, localBoltHidden ? &quot;-1&quot; : &quot;0&quot;);
+        if (localBoltHidden) {
+          localBolt.classList.remove(&quot;is-conflict-hovered&quot;);
+          localBolt.setAttribute(&quot;aria-expanded&quot;, &quot;false&quot;);
+        }
+      });
+      (frequentConflictLinks.get(conflict.id) || []).forEach(link =&gt; {
+        link.hidden = hidden;
+        link.setAttribute(&quot;aria-hidden&quot;, String(hidden));
+        link.setAttribute(&quot;aria-disabled&quot;, String(hidden));
+        link.setAttribute(&quot;tabindex&quot;, hidden ? &quot;-1&quot; : &quot;0&quot;);
+        if (hidden) link.setAttribute(&quot;aria-expanded&quot;, &quot;false&quot;);
+      });
+      (conflictTaskPins.get(conflict.id) || []).forEach(pin =&gt; {
+        pin.hidden = hidden;
+        if (pin.getAttribute(&quot;role&quot;) !== &quot;button&quot;) return;
+        pin.setAttribute(&quot;aria-disabled&quot;, String(hidden));
+        pin.setAttribute(&quot;tabindex&quot;, hidden ? &quot;-1&quot; : &quot;0&quot;);
+      });
+    });
+  }
+  updateFrequentConflictFilter();
   window.addEventListener(&quot;resize&quot;, () =&gt; requestAnimationFrame(layoutConflictLines), { passive: true });
 
   const collapsedNodeHeight = 50;
@@ -5426,18 +5570,25 @@ html&gt;body{padding:0}&lt;/style&gt;
   const nodeIps = { primary: &quot;10.28.98.136&quot;, secondary: &quot;10.42.108.136&quot; };
 
   const updateNodeLayout = () =&gt; {
-    const primaryHeight = nodeCollapseState.primary ? collapsedNodeHeight : expandedPrimaryHeight;
-    const secondaryHeight = nodeCollapseState.secondary ? collapsedNodeHeight : expandedSecondaryHeight;
+    const visiblePrimaryFrequentHeight = frequentLayerVisible ? frequentLaneHeight : 0;
+    const visibleSecondaryFrequentHeight = frequentLayerVisible ? secondaryFrequentHeight : 0;
+    const visibleExpandedPrimaryHeight = 54 + visiblePrimaryFrequentHeight + laneEnds.length * 86 + 24;
+    const visibleExpandedSecondaryHeight = secondaryTopInset + visibleSecondaryFrequentHeight + secondaryLaneHeight * secondaryRegularLaneCount + secondaryBottomInset;
+    const primaryHeight = nodeCollapseState.primary ? collapsedNodeHeight : visibleExpandedPrimaryHeight;
+    const secondaryHeight = nodeCollapseState.secondary ? collapsedNodeHeight : visibleExpandedSecondaryHeight;
     const totalHeight = primaryHeight + secondaryHeight;
     root.style.setProperty(&quot;--asv-primary-node-height&quot;, primaryHeight + &quot;px&quot;);
     root.style.setProperty(&quot;--asv-secondary-node-height&quot;, secondaryHeight + &quot;px&quot;);
     root.style.setProperty(&quot;--asv-timeline-height&quot;, totalHeight + &quot;px&quot;);
 
-    primaryLanes.forEach(lane =&gt; { lane.hidden = nodeCollapseState.primary; });
+    primaryLanes.forEach((lane, index) =&gt; {
+      lane.hidden = nodeCollapseState.primary || (!frequentLayerVisible &amp;&amp; index === 0);
+      if (index &gt; 0) lane.style.top = (54 + visiblePrimaryFrequentHeight + (index - 1) * 86) + &quot;px&quot;;
+    });
     conflictLayer.classList.toggle(&quot;is-node-collapsed&quot;, nodeCollapseState.primary);
     secondaryLanes.forEach((lane, index) =&gt; {
-      lane.hidden = nodeCollapseState.secondary;
-      const laneOffset = index === 0 ? 0 : secondaryFrequentHeight + (index - 1) * secondaryLaneHeight;
+      lane.hidden = nodeCollapseState.secondary || (!frequentLayerVisible &amp;&amp; index === 0);
+      const laneOffset = index === 0 ? 0 : visibleSecondaryFrequentHeight + (index - 1) * secondaryLaneHeight;
       lane.style.top = (primaryHeight + secondaryTopInset + laneOffset) + &quot;px&quot;;
     });
     secondaryNodeBoundary.style.top = primaryHeight + &quot;px&quot;;
@@ -5459,6 +5610,29 @@ html&gt;body{padding:0}&lt;/style&gt;
     requestAnimationFrame(layoutConflictLines);
   };
 
+  const setFrequentLayerVisibility = visible =&gt; {
+    frequentLayerVisible = visible;
+    root.classList.toggle(&quot;is-frequent-layer-hidden&quot;, !visible);
+    frequentLayerToggle?.classList.toggle(&quot;is-off&quot;, !visible);
+    frequentLayerToggle?.setAttribute(&quot;aria-pressed&quot;, String(visible));
+    frequentLayerToggle?.setAttribute(&quot;aria-label&quot;, visible
+      ? &quot;Скрыть частые триггеры и связанные с ними конфликты&quot;
+      : &quot;Показать частые триггеры и связанные с ними конфликты&quot;);
+    if (frequentLayerToggleState) frequentLayerToggleState.textContent = visible ? &quot;вкл&quot; : &quot;выкл&quot;;
+    if (!visible) {
+      clearFrequentListSelection();
+      closeFrequentOverlapPopover(false);
+      if (selectedRun?.isFrequent) closeDetail(false);
+    }
+    closeConflict(false);
+    updateFrequentConflictFilter();
+    updateNodeLayout();
+    requestAnimationFrame(() =&gt; {
+      layoutInlineTaskLabels();
+      layoutConflictLines();
+    });
+  };
+
   root.querySelectorAll(&quot;[data-node-toggle]&quot;).forEach(toggle =&gt; {
     toggle.addEventListener(&quot;click&quot;, event =&gt; {
       event.stopPropagation();
@@ -5470,6 +5644,10 @@ html&gt;body{padding:0}&lt;/style&gt;
       hideMainTaskTooltip();
       updateNodeLayout();
     });
+  });
+  frequentLayerToggle?.addEventListener(&quot;click&quot;, event =&gt; {
+    event.stopPropagation();
+    setFrequentLayerVisibility(!frequentLayerVisible);
   });
   updateNodeLayout();
 
