@@ -2985,6 +2985,15 @@ html&gt;body{padding:0}&lt;/style&gt;
     background: color-mix(in srgb, var(--asv-muted) 30%, var(--asv-page));
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--asv-muted) 22%, transparent);
   }
+  #asv-real .asv-frequency-mark.is-idle {
+    z-index: 1;
+    cursor: default;
+    pointer-events: none;
+  }
+  #asv-real .asv-frequency-mark.is-idle::before {
+    background: color-mix(in srgb, var(--asv-muted) 9%, var(--asv-page));
+    box-shadow: none;
+  }
   #asv-real .asv-frequency-mark.is-past.is-critical,
   #asv-real .asv-frequency-mark.is-past.is-risk {
     border-color: color-mix(in srgb, var(--asv-muted) 40%, var(--asv-rule));
@@ -5221,6 +5230,30 @@ html&gt;body{padding:0}&lt;/style&gt;
     [secondaryLanes[0], secondaryFrequentRuns]
   ].forEach(([lane, laneRuns]) =&gt; {
     const laneConflictIds = new Set();
+    // Pale historical ticks provide context for the many scheduled runs that
+    // were idle. They are decorative only and never enter conflict accounting.
+    const historicalSchedules = lane === primaryFrequentLane
+      ? [[&quot;checkActualizeTrigger&quot;, 15 * 60], [&quot;checkActualizeTrigger_2&quot;, 15 * 60]]
+      : [[&quot;incrementLoadTrigger1&quot;, 15 * 60], [&quot;incrementLoadTrigger2&quot;, 5 * 60],
+         [&quot;incrementLoadTrigger3&quot;, 15 * 60], [&quot;incrementLoadTrigger4&quot;, 15 * 60],
+         [&quot;incrementLoadTrigger5&quot;, 15 * 60], [&quot;incrementLoadTrigger6&quot;, 15 * 60],
+         [&quot;publishPendingEvent&quot;, 15 * 60]];
+    historicalSchedules.forEach(([name, cadence]) =&gt; {
+      for (let start = 0; start &lt; currentTime; start += cadence) {
+        const hasRecordedRun = laneRuns.some(run =&gt; run.name === name &amp;&amp; Math.abs(run.start - start) &lt; 2);
+        if (hasRecordedRun) continue;
+        const item = document.createElement(&quot;div&quot;);
+        item.className = &quot;asv-frequency-item is-idle-item&quot;;
+        item.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
+        item.style.left = (start / day * 100) + &quot;%&quot;;
+        const mark = document.createElement(&quot;span&quot;);
+        mark.className = &quot;asv-frequency-mark is-single is-idle&quot;;
+        mark.style.left = &quot;0px&quot;;
+        mark.style.setProperty(&quot;--asv-frequency-duration&quot;, &quot;2px&quot;);
+        item.appendChild(mark);
+        lane.appendChild(item);
+      }
+    });
     laneRuns.forEach(run =&gt; {
       const critical = Boolean(run.conflictId) || run.tasks.some(task =&gt; task.status === &quot;ERROR&quot; || task.riskError);
       const risk = !critical &amp;&amp; run.tasks.some(task =&gt; task.riskError);
