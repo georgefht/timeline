@@ -2018,6 +2018,22 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
   #asv-real .asv-frequency-mark.is-selected::before,
   #asv-real .asv-frequency-mark:focus-visible::before { box-shadow: inset 0 0 0 1px var(--asv-text); }
+  #asv-real .asv-frequency-mark.is-selected,
+  #asv-real .asv-frequency-mark.is-frequent-list-match { z-index: 10; }
+  #asv-real .asv-frequency-mark.is-selected::before,
+  #asv-real .asv-frequency-mark.is-frequent-list-match::before {
+    box-shadow: inset 0 0 0 1px var(--asv-page), 0 0 0 1px var(--asv-text);
+  }
+  #asv-real .asv-frequency-overlap-badge.is-open,
+  #asv-real .asv-frequency-overlap-badge.is-frequent-list-match {
+    outline: 2px solid var(--asv-text);
+    outline-offset: 2px;
+    transform: scale(1.06);
+  }
+  #asv-real .asv-frequent-item.is-active .asv-frequent-item-name {
+    color: var(--asv-text);
+    font-weight: 600;
+  }
   #asv-real.is-frequent-focus .asv-frequency-mark:not(.is-frequent-list-match),
   #asv-real.is-frequent-focus .asv-frequency-bolt:not(.is-frequent-list-match) { opacity: .12; }
   #asv-real.is-frequent-focus .asv-frequency-overlap-badge:not(.is-frequent-list-match) { opacity: .12; }
@@ -3003,6 +3019,12 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-frequency-mark.is-single.is-past.is-risk::before {
     background: color-mix(in srgb, var(--asv-muted) 30%, var(--asv-page));
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--asv-muted) 22%, transparent);
+  }
+  #asv-real .asv-frequency-mark.is-single.is-past.is-selected,
+  #asv-real .asv-frequency-mark.is-single.is-past.is-frequent-list-match { z-index: 11; }
+  #asv-real .asv-frequency-mark.is-single.is-past.is-selected::before,
+  #asv-real .asv-frequency-mark.is-single.is-past.is-frequent-list-match::before {
+    box-shadow: inset 0 0 0 1px var(--asv-page), 0 0 0 2px var(--asv-text);
   }
 
   #asv-real .asv-segment.asv-skipped {
@@ -4043,7 +4065,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   });
 
   const populateRunTasks = run =&gt; {
-    if (Object.hasOwn(frequentDurations, run.name)) {
+    if (!run.isLongFrequentDemo &amp;&amp; Object.hasOwn(frequentDurations, run.name)) {
       run.end = run.start + frequentDurations[run.name];
     }
     const taskNames = triggerTaskCatalog[run.name] || [];
@@ -4114,6 +4136,13 @@ html&gt;body{padding:0}&lt;/style&gt;
     const run = makeFrequentRun(&quot;workbook-history-&quot; + row, 50000 + row, name, nodeIp, start, Math.max(start, end), { secondaryLane: 0, sourceRow: row, isMissed: true, status: &quot;MISSED&quot; });
     (nodeIp === &quot;10.28.98.136&quot; ? primaryFrequentRuns : secondaryFrequentRuns).push(run);
   });
+  // One long historical run demonstrates how a frequent trigger can span
+  // shorter neighboring triggers on the second node.
+  secondaryFrequentRuns.push(makeFrequentRun(
+    &quot;historical-long-frequent-demo&quot;, 69001, &quot;incrementLoadTrigger1&quot;, &quot;10.42.108.136&quot;,
+    32 * 60 * 60, 33 * 60 * 60,
+    { secondaryLane: 0, isLongFrequentDemo: true, status: &quot;FINISHED&quot; }
+  ));
 
   // Gray ticks represent slots missed in otherwise regular 5- and 15-minute
   // histories from the workbook. Their tiny hit duration lets the overlap
@@ -4156,9 +4185,8 @@ html&gt;body{padding:0}&lt;/style&gt;
     const run = makeFrequentRun(id, 40000 + index, name, nodeIp, start, start + duration, { secondaryLane: 0, isDemoForecast: true });
     (nodeIp === &quot;10.28.98.136&quot; ? primaryFrequentRuns : secondaryFrequentRuns).push(run);
   });
-  // Project the frequent schedules throughout the visible future window.
-  // Workbook history repeats these families every 15 minutes, except
-  // incrementLoadTrigger2, which repeats every 5 minutes.
+  // Scale future volume from the observed historical count, then spread each
+  // family across the forecast window with slight deterministic variation.
   const recurringFrequentForecasts = [
     [&quot;checkActualizeTrigger&quot;, &quot;10.28.98.136&quot;, 900, &quot;high&quot;],
     [&quot;checkActualizeTrigger_2&quot;, &quot;10.28.98.136&quot;, 900, &quot;high&quot;],
@@ -4171,11 +4199,34 @@ html&gt;body{padding:0}&lt;/style&gt;
     [&quot;publishPendingEvent&quot;, &quot;10.42.108.136&quot;, 900, &quot;high&quot;]
   ];
   let recurringForecastIndex = 0;
+  const forecastWindow = day - currentTime;
   recurringFrequentForecasts.forEach(([name, nodeIp, cadence, forecastConfidence]) =&gt; {
     const laneRuns = nodeIp === &quot;10.28.98.136&quot; ? primaryFrequentRuns : secondaryFrequentRuns;
     const samples = importedFrequentRows.filter(row =&gt; row[1] === name).map(row =&gt; row[4] - row[3]).sort((a,b) =&gt; a-b);
     const duration = frequentDurations[name] ?? (samples.length ? samples[Math.floor(samples.length / 2)] : .03);
-    for (let start = currentTime + cadence; start &lt; day; start += cadence) {
+    const historicalCount = importedFrequentRows.filter(row =&gt; row[1] === name).length;
+    let forecastCount;
+    if (nodeIp === &quot;10.28.98.136&quot;) {
+      // Match the visible historical rate on node one, including its pale idle
+      // schedule markers, scaled to the shorter forecast window.
+      const recordedPast = laneRuns.filter(run =&gt; run.name === name &amp;&amp; run.end &lt;= currentTime).length;
+      let idlePast = 0;
+      for (let slot = 0; slot &lt; Math.ceil(currentTime / cadence); slot += 1) {
+        const seed = stringHash(name + &quot;:&quot; + slot + &quot;:history-idle&quot;);
+        if (seed % 7 === 0) continue;
+        const hasRecordedRun = laneRuns.some(run =&gt; run.name === name &amp;&amp; run.end &lt;= currentTime &amp;&amp; Math.abs(run.start - slot * cadence) &lt; 2);
+        if (!hasRecordedRun) idlePast += 1;
+      }
+      forecastCount = Math.max(1, Math.round((recordedPast + idlePast) * forecastWindow / currentTime));
+    } else {
+      // The forward view intentionally shows more runs than the historical slice.
+      forecastCount = Math.max(1, Math.round(historicalCount * 1.4));
+    }
+    const spacing = forecastWindow / forecastCount;
+    for (let index = 0; index &lt; forecastCount; index += 1) {
+      const seed = stringHash(name + &quot;:&quot; + index + &quot;:forecast-window&quot;);
+      const position = .2 + (seed / 0xFFFFFFFF) * .6;
+      const start = Math.min(day - duration, currentTime + (index + position) * spacing);
       const alreadyScheduled = laneRuns.some(run =&gt; run.name === name &amp;&amp; Math.abs(run.start - start) &lt; 1);
       if (alreadyScheduled) continue;
       const run = makeFrequentRun(&quot;recurring-forecast-&quot; + recurringForecastIndex, 71000 + recurringForecastIndex, name, nodeIp, start, start + duration, { secondaryLane: 0, status: &quot;PREDICTED&quot;, isWorkbookForecast: true, forecastConfidence });
@@ -4183,6 +4234,32 @@ html&gt;body{padding:0}&lt;/style&gt;
       recurringForecastIndex++;
     }
   });
+  // Place a small subset of future runs into shared moments so concurrent
+  // forecasts are represented by the same expandable counters as history.
+  const futureForecastPools = new Map();
+  [...primaryFrequentRuns, ...secondaryFrequentRuns]
+    .filter(run =&gt; run.isWorkbookForecast)
+    .forEach(run =&gt; {
+      if (!futureForecastPools.has(run.name)) futureForecastPools.set(run.name, []);
+      futureForecastPools.get(run.name).push(run);
+    });
+  futureForecastPools.forEach(pool =&gt; pool.sort((a,b) =&gt; a.start-b.start));
+  const futureForecastPoolOffsets = new Map();
+  for (let groupIndex = 0; groupIndex &lt; 24; groupIndex += 1) {
+    const seed = stringHash(&quot;future-overlap-anchor:&quot; + groupIndex);
+    const jitter = ((seed / 0xFFFFFFFF) - .5) * .48;
+    const anchor = currentTime + (groupIndex + .5 + jitter) * (forecastWindow / 24);
+    const availableNames = [...futureForecastPools.keys()]
+      .filter(name =&gt; (futureForecastPoolOffsets.get(name) || 0) &lt; futureForecastPools.get(name).length)
+      .sort((a,b) =&gt; stringHash(a + &quot;:&quot; + groupIndex) - stringHash(b + &quot;:&quot; + groupIndex));
+    availableNames.slice(0, 3).forEach(name =&gt; {
+      const offset = futureForecastPoolOffsets.get(name) || 0;
+      const run = futureForecastPools.get(name)[offset];
+      futureForecastPoolOffsets.set(name, offset + 1);
+      run.start = anchor;
+      run.end = anchor + (frequentDurations[name] ?? .03);
+    });
+  }
   primaryFrequentRuns.sort((a,b) =&gt; a.start-b.start);
   secondaryFrequentRuns.sort((a,b) =&gt; a.start-b.start);
 
@@ -5239,8 +5316,13 @@ html&gt;body{padding:0}&lt;/style&gt;
          [&quot;incrementLoadTrigger5&quot;, 15 * 60], [&quot;incrementLoadTrigger6&quot;, 15 * 60],
          [&quot;publishPendingEvent&quot;, 15 * 60]];
     historicalSchedules.forEach(([name, cadence]) =&gt; {
-      for (let start = 0; start &lt; currentTime; start += cadence) {
-        const hasRecordedRun = laneRuns.some(run =&gt; run.name === name &amp;&amp; Math.abs(run.start - start) &lt; 2);
+      const slotCount = Math.ceil(currentTime / cadence);
+      for (let slot = 0; slot &lt; slotCount; slot += 1) {
+        const seed = stringHash(name + &quot;:&quot; + slot + &quot;:history-idle&quot;);
+        if (seed % 7 === 0) continue;
+        const jitter = (((seed &gt;&gt;&gt; 8) / 0xFFFFFF) - .5) * .42;
+        const start = Math.max(0, Math.min(currentTime - .01, slot * cadence + cadence * jitter));
+        const hasRecordedRun = laneRuns.some(run =&gt; run.name === name &amp;&amp; Math.abs(run.start - slot * cadence) &lt; 2);
         if (hasRecordedRun) continue;
         const item = document.createElement(&quot;div&quot;);
         item.className = &quot;asv-frequency-item is-idle-item&quot;;
@@ -5452,6 +5534,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     const cluster = activeOverlapCluster;
     activeOverlapBadge = null;
     activeOverlapCluster = null;
+    badge.classList.remove(&quot;is-open&quot;);
     overlapPopover.classList.remove(&quot;is-open&quot;);
     overlapPopover.hidden = true;
     badge.setAttribute(&quot;aria-expanded&quot;, &quot;false&quot;);
@@ -5465,6 +5548,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     if (detail.classList.contains(&quot;is-open&quot;)) closeDetail(false);
     activeOverlapBadge = badge;
     activeOverlapCluster = cluster;
+    badge.classList.add(&quot;is-open&quot;);
     renderFrequentOverlap(cluster);
     overlapPopover.hidden = false;
     overlapPopover.classList.add(&quot;is-open&quot;);
