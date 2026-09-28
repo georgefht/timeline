@@ -1949,6 +1949,24 @@ html&gt;body{padding:0}&lt;/style&gt;
     background: #96bdb5;
     box-shadow: inset 0 0 0 1px color-mix(in srgb, #426f65 32%, transparent);
   }
+  #asv-real .asv-frequency-mark.is-missed::before {
+    background: color-mix(in srgb, var(--asv-muted) 36%, var(--asv-page));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--asv-muted) 18%, transparent);
+  }
+  #asv-real .asv-frequency-mark.is-forecast-high::before {
+    background: color-mix(in srgb, var(--asv-predicted) 64%, var(--asv-page));
+  }
+  #asv-real .asv-frequency-mark.is-forecast-low::before {
+    background: color-mix(in srgb, var(--asv-predicted) 40%, var(--asv-page));
+  }
+  #asv-real .asv-frequency-mark.is-forecast-question::before {
+    background-color: color-mix(in srgb, var(--asv-predicted) 28%, var(--asv-page));
+    background-image: repeating-linear-gradient(
+      135deg,
+      transparent 0 3px,
+      color-mix(in srgb, var(--asv-predicted) 24%, transparent) 3px 4px
+    );
+  }
   #asv-real .asv-frequency-mark.is-single::after {
     content: &quot;&quot;;
     position: absolute;
@@ -2014,10 +2032,10 @@ html&gt;body{padding:0}&lt;/style&gt;
     padding: 0 4px;
     place-items: center;
     transform: translateX(-50%);
-    border: 1px solid #9dbbb4;
+    border: 1px solid color-mix(in srgb, var(--asv-muted) 26%, var(--asv-rule));
     border-radius: 8px;
-    background: #edf5f2;
-    color: #31564d;
+    background: color-mix(in srgb, var(--asv-muted) 10%, var(--asv-page));
+    color: var(--asv-muted);
     font-size: 10px;
     font-weight: 600;
     line-height: 1;
@@ -2026,10 +2044,21 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-frequency-overlap-badge:hover,
   #asv-real .asv-frequency-overlap-badge:focus-visible,
   #asv-real .asv-frequency-overlap-badge[aria-expanded=&quot;true&quot;] {
-    border-color: #567c74;
-    background: #e0eee9;
+    border-color: color-mix(in srgb, var(--asv-muted) 58%, var(--asv-rule));
+    background: color-mix(in srgb, var(--asv-muted) 18%, var(--asv-page));
     outline: none;
-    box-shadow: 0 0 0 2px var(--asv-page), 0 0 0 3px #567c74;
+    box-shadow: 0 0 0 2px var(--asv-page), 0 0 0 3px var(--asv-muted);
+  }
+  #asv-real .asv-frequency-overlap-badge.is-future {
+    border-color: color-mix(in srgb, var(--asv-predicted) 34%, var(--asv-rule));
+    background: color-mix(in srgb, var(--asv-predicted) 18%, var(--asv-page));
+    color: color-mix(in srgb, var(--asv-predicted) 72%, var(--asv-text));
+  }
+  #asv-real .asv-frequency-overlap-badge.is-future:hover,
+  #asv-real .asv-frequency-overlap-badge.is-future:focus-visible,
+  #asv-real .asv-frequency-overlap-badge.is-future[aria-expanded=&quot;true&quot;] {
+    background: color-mix(in srgb, var(--asv-predicted) 28%, var(--asv-page));
+    box-shadow: 0 0 0 2px var(--asv-page), 0 0 0 3px color-mix(in srgb, var(--asv-predicted) 56%, var(--asv-muted));
   }
   #asv-real .asv-frequency-overlap-badge.is-conflict { border-color: #cda7aa; }
   #asv-real .asv-frequency-overlap-badge.is-conflict::after {
@@ -2935,6 +2964,38 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-conflicted { background: var(--asv-conflict); }
   #asv-real .asv-predicted { background: var(--asv-predicted); }
 
+  /* Completed history is visually neutral on the timeline; conflict participants
+     and the yellow overrun window retain their own emphasis. */
+  #asv-real .asv-segment.is-past {
+    background: color-mix(in srgb, var(--asv-muted) 26%, var(--asv-page));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--asv-muted) 18%, transparent);
+  }
+  #asv-real .asv-segment.is-past &gt; .asv-task-inline-name {
+    color: var(--asv-muted);
+    opacity: .9;
+  }
+  #asv-real .asv-queue-task.is-past:not(.is-current) {
+    background: color-mix(in srgb, var(--asv-muted) 26%, var(--asv-page));
+    color: var(--asv-muted);
+  }
+  #asv-real .asv-queue-task.is-past .asv-task-inline-name {
+    color: var(--asv-muted);
+  }
+  #asv-real .asv-frequency-mark.is-past::before {
+    background: color-mix(in srgb, var(--asv-muted) 30%, var(--asv-page));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--asv-muted) 22%, transparent);
+  }
+  #asv-real .asv-frequency-mark.is-past.is-critical,
+  #asv-real .asv-frequency-mark.is-past.is-risk {
+    border-color: color-mix(in srgb, var(--asv-muted) 40%, var(--asv-rule));
+    background: transparent;
+  }
+  #asv-real .asv-frequency-mark.is-single.is-past.is-critical::before,
+  #asv-real .asv-frequency-mark.is-single.is-past.is-risk::before {
+    background: color-mix(in srgb, var(--asv-muted) 30%, var(--asv-page));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--asv-muted) 22%, transparent);
+  }
+
   #asv-real .asv-segment.asv-skipped {
     flex: 0 0 3px !important;
     width: 3px;
@@ -3287,6 +3348,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 
   #asv-real .asv-detail.is-open {
+    z-index: 35;
     transform: translateX(0);
   }
 
@@ -3733,7 +3795,6 @@ html&gt;body{padding:0}&lt;/style&gt;
         &lt;button class=&quot;asv-frequent-item&quot; type=&quot;button&quot; data-frequent-trigger-name=&quot;incrementLoadTrigger5&quot; data-tooltip=&quot;incrementLoadTrigger5&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;incrementLoadTrigger5&lt;/span&gt;&lt;/button&gt;
         &lt;button class=&quot;asv-frequent-item&quot; type=&quot;button&quot; data-frequent-trigger-name=&quot;incrementLoadTrigger6&quot; data-tooltip=&quot;incrementLoadTrigger6&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;incrementLoadTrigger6&lt;/span&gt;&lt;/button&gt;
         &lt;button class=&quot;asv-frequent-item&quot; type=&quot;button&quot; data-frequent-trigger-name=&quot;publishPendingEvent&quot; data-tooltip=&quot;publishPendingEvent&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;publishPendingEvent&lt;/span&gt;&lt;/button&gt;
-        &lt;button class=&quot;asv-frequent-item&quot; type=&quot;button&quot; data-frequent-trigger-name=&quot;rebuildIndexTrigger&quot; data-tooltip=&quot;rebuildIndexTrigger&quot;&gt;&lt;span class=&quot;asv-frequent-item-name&quot;&gt;rebuildIndexTrigger&lt;/span&gt;&lt;/button&gt;
       &lt;/div&gt;
       &lt;/div&gt;
     &lt;/aside&gt;
@@ -4035,17 +4096,44 @@ html&gt;body{padding:0}&lt;/style&gt;
     const run = makeFrequentRun(&quot;imported-&quot; + row, 20000 + row, name, nodeIp, start, end, { secondaryLane: 0, sourceRow: row });
     (nodeIp === &quot;10.28.98.136&quot; ? primaryFrequentRuns : secondaryFrequentRuns).push(run);
   });
-  // Historical long-running frequent trigger: it stays on the same compact rail,
-  // while short runs above it expose every real overlap through the count badges.
-  secondaryFrequentRuns.push(makeFrequentRun(
-    &quot;demo-history-long-frequent&quot;,
-    42001,
-    &quot;rebuildIndexTrigger&quot;,
-    &quot;10.42.108.136&quot;,
-    daySeconds * 2,
-    daySeconds * 2 + 60 * 60,
-    { secondaryLane: 0, isLongFrequentDemo: true }
-  ));
+  // One source-backed historical marker for each frequent trigger type not
+  // represented in the duration-focused sample above.
+  const supplementalFrequentHistoryRows = [
+    [1932, &quot;checkActualizeTrigger_2&quot;, &quot;10.28.98.136&quot;, 172800.006, 172807]
+  ];
+  supplementalFrequentHistoryRows.forEach(([row, name, nodeIp, start, end]) =&gt; {
+    const run = makeFrequentRun(&quot;workbook-history-&quot; + row, 50000 + row, name, nodeIp, start, Math.max(start, end), { secondaryLane: 0, sourceRow: row, isMissed: true, status: &quot;MISSED&quot; });
+    (nodeIp === &quot;10.28.98.136&quot; ? primaryFrequentRuns : secondaryFrequentRuns).push(run);
+  });
+
+  // Gray ticks represent slots missed in otherwise regular 5- and 15-minute
+  // histories from the workbook. Their tiny hit duration lets the overlap
+  // counter include simultaneous missed and completed starts.
+  const missedFrequentRows = [
+    [&quot;incrementLoadTrigger2&quot;, &quot;10.42.108.136&quot;, 41100.002],
+    [&quot;incrementLoadTrigger2&quot;, &quot;10.42.108.136&quot;, 82800.001],
+    [&quot;incrementLoadTrigger2&quot;, &quot;10.42.108.136&quot;, 122400.002],
+    [&quot;incrementLoadTrigger2&quot;, &quot;10.42.108.136&quot;, 122700.002],
+    [&quot;incrementLoadTrigger2&quot;, &quot;10.42.108.136&quot;, 123000.002],
+    [&quot;incrementLoadTrigger2&quot;, &quot;10.42.108.136&quot;, 123300.002],
+    [&quot;incrementLoadTrigger2&quot;, &quot;10.42.108.136&quot;, 123600.002],
+    [&quot;incrementLoadTrigger2&quot;, &quot;10.42.108.136&quot;, 123900.002],
+    [&quot;incrementLoadTrigger2&quot;, &quot;10.42.108.136&quot;, 124200.002],
+    [&quot;incrementLoadTrigger2&quot;, &quot;10.42.108.136&quot;, 124500.002],
+    [&quot;incrementLoadTrigger3&quot;, &quot;10.42.108.136&quot;, 63000.004],
+    [&quot;incrementLoadTrigger3&quot;, &quot;10.42.108.136&quot;, 137700.001],
+    [&quot;incrementLoadTrigger3&quot;, &quot;10.42.108.136&quot;, 148500.001],
+    [&quot;incrementLoadTrigger4&quot;, &quot;10.42.108.136&quot;, 37800.002],
+    [&quot;incrementLoadTrigger4&quot;, &quot;10.42.108.136&quot;, 91800.003],
+    [&quot;incrementLoadTrigger4&quot;, &quot;10.42.108.136&quot;, 123300.005],
+    [&quot;incrementLoadTrigger6&quot;, &quot;10.42.108.136&quot;, 39600.002],
+    [&quot;incrementLoadTrigger6&quot;, &quot;10.42.108.136&quot;, 42300.001]
+  ];
+  missedFrequentRows.forEach(([name, nodeIp, start], index) =&gt; {
+    const run = makeFrequentRun(&quot;missed-frequent-&quot; + index, 60000 + index, name, nodeIp, start, start + .02, { secondaryLane: 0, isMissed: true, status: &quot;MISSED&quot; });
+    (nodeIp === &quot;10.28.98.136&quot; ? primaryFrequentRuns : secondaryFrequentRuns).push(run);
+  });
+
   // Only three illustrative conflict forecasts are visible in the future.
   [
     [&quot;demo-frequent-1&quot;, &quot;checkActualizeTrigger&quot;, &quot;10.28.98.136&quot;, 55.5 * 3600, &quot;client2-2228&quot;],
@@ -4058,6 +4146,33 @@ html&gt;body{padding:0}&lt;/style&gt;
     const duration = frequentDurations[name] ?? samples[Math.floor(samples.length / 2)];
     const run = makeFrequentRun(id, 40000 + index, name, nodeIp, start, start + duration, { secondaryLane: 0, isDemoForecast: true });
     (nodeIp === &quot;10.28.98.136&quot; ? primaryFrequentRuns : secondaryFrequentRuns).push(run);
+  });
+  // Project the frequent schedules throughout the visible future window.
+  // Workbook history repeats these families every 15 minutes, except
+  // incrementLoadTrigger2, which repeats every 5 minutes.
+  const recurringFrequentForecasts = [
+    [&quot;checkActualizeTrigger&quot;, &quot;10.28.98.136&quot;, 900, &quot;high&quot;],
+    [&quot;checkActualizeTrigger_2&quot;, &quot;10.28.98.136&quot;, 900, &quot;high&quot;],
+    [&quot;incrementLoadTrigger1&quot;, &quot;10.42.108.136&quot;, 900, &quot;high&quot;],
+    [&quot;incrementLoadTrigger2&quot;, &quot;10.42.108.136&quot;, 300, &quot;low&quot;],
+    [&quot;incrementLoadTrigger3&quot;, &quot;10.42.108.136&quot;, 900, &quot;high&quot;],
+    [&quot;incrementLoadTrigger4&quot;, &quot;10.42.108.136&quot;, 900, &quot;high&quot;],
+    [&quot;incrementLoadTrigger5&quot;, &quot;10.42.108.136&quot;, 900, &quot;high&quot;],
+    [&quot;incrementLoadTrigger6&quot;, &quot;10.42.108.136&quot;, 900, &quot;high&quot;],
+    [&quot;publishPendingEvent&quot;, &quot;10.42.108.136&quot;, 900, &quot;high&quot;]
+  ];
+  let recurringForecastIndex = 0;
+  recurringFrequentForecasts.forEach(([name, nodeIp, cadence, forecastConfidence]) =&gt; {
+    const laneRuns = nodeIp === &quot;10.28.98.136&quot; ? primaryFrequentRuns : secondaryFrequentRuns;
+    const samples = importedFrequentRows.filter(row =&gt; row[1] === name).map(row =&gt; row[4] - row[3]).sort((a,b) =&gt; a-b);
+    const duration = frequentDurations[name] ?? (samples.length ? samples[Math.floor(samples.length / 2)] : .03);
+    for (let start = currentTime + cadence; start &lt; day; start += cadence) {
+      const alreadyScheduled = laneRuns.some(run =&gt; run.name === name &amp;&amp; Math.abs(run.start - start) &lt; 1);
+      if (alreadyScheduled) continue;
+      const run = makeFrequentRun(&quot;recurring-forecast-&quot; + recurringForecastIndex, 71000 + recurringForecastIndex, name, nodeIp, start, start + duration, { secondaryLane: 0, status: &quot;PREDICTED&quot;, isWorkbookForecast: true, forecastConfidence });
+      laneRuns.push(run);
+      recurringForecastIndex++;
+    }
   });
   primaryFrequentRuns.sort((a,b) =&gt; a.start-b.start);
   secondaryFrequentRuns.sort((a,b) =&gt; a.start-b.start);
@@ -4798,6 +4913,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     visibleTasks.forEach(task =&gt; {
       const segment = document.createElement(&quot;span&quot;);
       segment.className = &quot;asv-segment &quot; + statusClass(task.status);
+      if (task.end &lt;= currentTime &amp;&amp; !task.isConflictTask) segment.classList.add(&quot;is-past&quot;);
       segment.style.flex = Math.max(task.end - task.start, 1) + &quot; 1 0&quot;;
       applyTaskOverrunVisual(segment, task);
       applyForecastConfidenceVisual(segment, run, task);
@@ -4895,6 +5011,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     item.type = &quot;button&quot;;
     const queueForecastLevel = task.status === &quot;PREDICTED&quot; &amp;&amp; task.start &gt;= currentTime ? taskForecastConfidence(task) : null;
     item.className = &quot;asv-queue-task &quot; + statusClass(task.status) + (task.end &lt;= currentTime ? &quot; is-completed&quot; : &quot;&quot;) + (currentTask ? &quot; is-current&quot; : &quot;&quot;) + (queueForecastLevel ? &quot; is-forecast-&quot; + queueForecastLevel : &quot;&quot;);
+    if (task.end &lt;= currentTime &amp;&amp; !task.isConflictTask) item.classList.add(&quot;is-past&quot;);
     item.style.left = left + &quot;%&quot;;
     item.style.width = &quot;calc(&quot; + width + &quot;% - 4px)&quot;;
     item.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
@@ -5006,6 +5123,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     visibleTasks.forEach(task =&gt; {
       const segment = document.createElement(&quot;span&quot;);
       segment.className = &quot;asv-segment &quot; + statusClass(task.status);
+      if (task.end &lt;= currentTime &amp;&amp; !task.isConflictTask) segment.classList.add(&quot;is-past&quot;);
       segment.style.flex = Math.max(task.end - task.start, 1) + &quot; 1 0&quot;;
       applyTaskOverrunVisual(segment, task);
       applyForecastConfidenceVisual(segment, run, task);
@@ -5085,6 +5203,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   const frequentConflictLinks = new Map();
   const frequentRunPositions = new Map();
   const frequentRunStateLabel = run =&gt; {
+    if (run.isMissed) return &quot;Не запускался по расписанию&quot;;
     const failed = run.tasks.some(task =&gt; task.status === &quot;ERROR&quot;);
     const risk = run.tasks.some(task =&gt; task.riskError);
     const skipped = run.tasks.some(task =&gt; task.status === &quot;SKIPPED&quot;);
@@ -5109,18 +5228,22 @@ html&gt;body{padding:0}&lt;/style&gt;
       const item = document.createElement(&quot;div&quot;);
       item.className = &quot;asv-frequency-item&quot;;
       item.style.left = (run.start / day * 100) + &quot;%&quot;;
-      const mark = document.createElement(&quot;button&quot;);
-      mark.type = &quot;button&quot;;
+      const mark = document.createElement(run.isMissed ? &quot;span&quot; : &quot;button&quot;);
+      if (!run.isMissed) mark.type = &quot;button&quot;;
       mark.className = &quot;asv-frequency-mark is-single&quot; +
         (critical ? &quot; is-critical&quot; : risk ? &quot; is-risk&quot; : &quot;&quot;) +
-        (longRunning ? &quot; is-long&quot; : &quot;&quot;);
+        (longRunning ? &quot; is-long&quot; : &quot;&quot;) +
+        (run.end &lt;= currentTime &amp;&amp; !run.conflictId ? &quot; is-past&quot; : &quot;&quot;) +
+        (run.isMissed ? &quot; is-missed&quot; : &quot;&quot;) +
+        (run.status === &quot;PREDICTED&quot; &amp;&amp; run.forecastConfidence ? &quot; is-forecast-&quot; + run.forecastConfidence : &quot;&quot;);
       mark.style.left = &quot;0px&quot;;
       frequentBars.push({ mark, lane, run });
       frequentRunPositions.set(run.id, run.start / day * 100);
       mark.style.setProperty(&quot;--asv-frequency-duration&quot;, ((run.end - run.start) / day * lane.clientWidth) + &quot;px&quot;);
       mark.setAttribute(&quot;aria-label&quot;, run.name + &quot;, &quot; + formatDuration(run.end - run.start) + &quot;, &quot; + frequentStatus(run));
       mark.title = run.name + &quot; · &quot; + formatClockPrecise(run.start) + &quot;–&quot; + formatClockPrecise(run.end) +
-        &quot; · &quot; + formatDuration(run.end - run.start) + &quot; · &quot; + frequentStatus(run);
+        &quot; · &quot; + formatDuration(run.end - run.start) + &quot; · &quot; + frequentStatus(run) +
+        (run.forecastConfidence ? &quot; · Уверенность: &quot; + (run.forecastConfidence === &quot;high&quot; ? &quot;высокая&quot; : run.forecastConfidence === &quot;low&quot; ? &quot;низкая&quot; : &quot;под вопросом&quot;) : &quot;&quot;);
       frequentGroups.set(run.id, mark);
       if (run.conflictId &amp;&amp; !laneConflictIds.has(run.conflictId)) {
         const id = run.conflictId;
@@ -5145,7 +5268,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         frequentConflictPins.push({ bolt, lane, run });
         item.appendChild(bolt);
       }
-      mark.addEventListener(&quot;click&quot;, event =&gt; {
+      if (!run.isMissed) mark.addEventListener(&quot;click&quot;, event =&gt; {
         event.stopPropagation();
         selectRun(run);
         mark.classList.add(&quot;is-selected&quot;);
@@ -5332,7 +5455,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     buildFrequentOverlapClusters(laneRuns).forEach(cluster =&gt; {
       const badge = document.createElement(&quot;button&quot;);
       badge.type = &quot;button&quot;;
-      badge.className = &quot;asv-frequency-overlap-badge&quot; + (cluster.hasConflict ? &quot; is-conflict&quot; : &quot;&quot;);
+      badge.className = &quot;asv-frequency-overlap-badge&quot; + (cluster.start &gt;= currentTime ? &quot; is-future&quot; : &quot;&quot;) + (cluster.hasConflict ? &quot; is-conflict&quot; : &quot;&quot;);
       badge.style.left = (cluster.start / day * 100) + &quot;%&quot;;
       badge.textContent = String(cluster.peak);
       badge.title = frequentRunCountLabel(cluster.peak) + &quot; частых одновременно · показать состав&quot;;
