@@ -2493,7 +2493,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-run.is-standalone {
     top: 42px;
     height: 26px;
-    min-width: 2px;
+    min-width: 34px;
     border-radius: 3px;
     background: transparent;
   }
@@ -2762,7 +2762,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     line-height: 1;
     opacity: .78;
     text-align: left;
-    text-overflow: ellipsis;
+    text-overflow: clip;
     white-space: nowrap;
     pointer-events: none;
   }
@@ -4918,6 +4918,18 @@ html&gt;body{padding:0}&lt;/style&gt;
   const conflictTaskPins = new Map();
   const compactTriggerButtons = [];
   const inlineTaskLabels = [];
+  const inlineTaskMeasureContext = document.createElement(&quot;canvas&quot;).getContext(&quot;2d&quot;);
+  const fitInlineTaskName = (name, availableWidth, measureText) =&gt; {
+    const characters = Array.from(name);
+    if (characters.length &lt; 1) return &quot;&quot;;
+    if (measureText(name) &lt;= availableWidth) return name;
+    let fitted = &quot;&quot;;
+    for (let count = 1; count &lt;= characters.length; count++) {
+      const candidate = characters.slice(0, count).join(&quot;&quot;) + &quot;..&quot;;
+      if (measureText(candidate) &lt;= availableWidth) fitted = candidate;
+    }
+    return fitted;
+  };
   const axisHoverRange = document.createElement(&quot;span&quot;);
   axisHoverRange.className = &quot;asv-axis-hover-range&quot;;
   axis.appendChild(axisHoverRange);
@@ -4938,6 +4950,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   const appendInlineTaskName = (segment, task) =&gt; {
     const label = document.createElement(&quot;span&quot;);
     label.className = &quot;asv-task-inline-name&quot;;
+    label.setAttribute(&quot;data-full-task-name&quot;, task.task);
     label.textContent = task.task;
     label.hidden = true;
     segment.appendChild(label);
@@ -4961,7 +4974,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   runs.forEach(run =&gt; {
     const lane = primaryLanes[run.lane];
     const button = document.createElement(&quot;button&quot;);
-    const span = Math.max(run.end - run.start, 60);
+    const span = Math.max(run.end - run.start, 15 * 60);
     const widthPct = span / day * 100;
     const leftPct = run.start / day * 100;
     const actualDuration = Math.max(run.end - run.start, 0);
@@ -5050,7 +5063,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       const statusBadge = document.createElement(&quot;span&quot;);
       statusBadge.className = &quot;asv-run-status-badge text-small&quot;;
       statusBadge.textContent = conflictTask.riskError ? &quot;Риск ошибки&quot; : &quot;Ошибка&quot;;
-      const badgeLeft = Math.max(0, Math.min(100, (conflictTask.end - run.start) / Math.max(run.end - run.start, 1) * 100));
+      const badgeLeft = Math.max(0, Math.min(100, (run.conflictAt - run.start) / Math.max(run.end - run.start, 1) * 100));
       statusBadge.style.left = &quot;calc(&quot; + badgeLeft + &quot;% + 3px)&quot;;
       statusBadge.title = statusBadge.textContent;
       button.appendChild(statusBadge);
@@ -5174,7 +5187,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     run.lane = run.displayLane;
     const lane = secondaryLanes[run.displayLane];
     const button = document.createElement(&quot;button&quot;);
-    const span = Math.max(run.end - run.start, 60);
+    const span = Math.max(run.end - run.start, 15 * 60);
     const widthPct = span / day * 100;
     const leftPct = run.start / day * 100;
     const actualDuration = Math.max(run.end - run.start, 0);
@@ -5259,7 +5272,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       const statusBadge = document.createElement(&quot;span&quot;);
       statusBadge.className = &quot;asv-run-status-badge text-small&quot;;
       statusBadge.textContent = conflictTask.riskError ? &quot;Риск ошибки&quot; : &quot;Ошибка&quot;;
-      const badgeLeft = Math.max(0, Math.min(100, (conflictTask.end - run.start) / Math.max(run.end - run.start, 1) * 100));
+      const badgeLeft = Math.max(0, Math.min(100, (run.conflictAt - run.start) / Math.max(run.end - run.start, 1) * 100));
       statusBadge.style.left = &quot;calc(&quot; + badgeLeft + &quot;% + 3px)&quot;;
       statusBadge.title = statusBadge.textContent;
       button.appendChild(statusBadge);
@@ -5698,8 +5711,20 @@ html&gt;body{padding:0}&lt;/style&gt;
       badge.style.visibility = available &lt; 12 ? &quot;hidden&quot; : &quot;visible&quot;;
     });
     inlineTaskLabels.forEach(({ segment, label }) =&gt; {
-      const minimumLabelWidth = segment.classList.contains(&quot;is-overrun&quot;) ? 36 : 48;
-      label.hidden = segment.getBoundingClientRect().width &lt; minimumLabelWidth;
+      const width = segment.getBoundingClientRect().width;
+      const name = label.getAttribute(&quot;data-full-task-name&quot;) || &quot;&quot;;
+      const style = window.getComputedStyle(label);
+      const horizontalPadding = (Number.parseFloat(style.paddingLeft) || 0) + (Number.parseFloat(style.paddingRight) || 0);
+      const availableWidth = Math.max(0, width - horizontalPadding);
+      const font = style.font || [style.fontWeight, style.fontSize, style.fontFamily].join(&quot; &quot;);
+      const measureText = text =&gt; {
+        if (!inlineTaskMeasureContext) return text.length * 6;
+        inlineTaskMeasureContext.font = font;
+        return inlineTaskMeasureContext.measureText(text).width;
+      };
+      const fittedName = fitInlineTaskName(name, availableWidth, measureText);
+      label.textContent = fittedName;
+      label.hidden = !fittedName;
     });
   };
   requestAnimationFrame(layoutInlineTaskLabels);
