@@ -3857,6 +3857,7 @@ html &gt; body { padding: 0 !important; margin: 0; background: #fff; }
 #asv-real .asv-queue-control-meta { align-items: center; gap: 4px; margin-top: 12px; font-size: 12px; line-height: 16px; }
 #asv-real .asv-queue-count { color: #36393e; margin-right: 6px; }
 #asv-real .asv-queue-remaining { font-size: 11px; }
+#asv-real { --asv-selected: #70757d; --asv-selected-soft: #f2f3f4; --asv-predicted: #a7b1be; }
 #asv-real .asv-axis { background: #f8f8f8; }
 #asv-real .asv-tick { color: #84878e; font-size: 12px; }
 #asv-real .asv-day-label { font-size: 12px; font-weight: 600; }
@@ -3875,6 +3876,10 @@ html &gt; body { padding: 0 !important; margin: 0; background: #fff; }
 #asv-real .asv-segment.asv-error, #asv-real .asv-segment.asv-error.is-past { background: #fceaec; }
 #asv-real .asv-segment.asv-skipped { background: #f4f4f5; }
 #asv-real .asv-running { background: #e2f2ee; }
+#asv-real .asv-predicted, #asv-real .asv-segment.is-forecast-high, #asv-real .asv-queue-task.is-forecast-high { background: #fff; color: #36393e; }
+#asv-real .asv-segment.asv-predicted.is-forecast-low, #asv-real .asv-queue-task.is-forecast-low { background: #fafafa; color: #6f747c; }
+#asv-real .asv-segment.asv-predicted.is-forecast-question, #asv-real .asv-queue-task.is-forecast-question { background-color: #fafafa; background-image: repeating-linear-gradient(135deg, transparent 0 5px, #e9ebee 5px 6px); color: #6f747c; }
+#asv-real .asv-segment.asv-error, #asv-real .asv-segment.asv-error.is-past { background: #fceaec; }
 #asv-real .asv-queue-task { height: 50px; top: 17px; border-radius: 4px; border-color: rgba(54,57,62,.08); }
 #asv-real .asv-task-inline-name, #asv-real .asv-segment.is-past &gt; .asv-task-inline-name, #asv-real .asv-running .asv-task-inline-name, #asv-real .asv-queue-task.is-past .asv-task-inline-name, #asv-real .asv-queue-task.is-current .asv-task-inline-name { position: absolute; left: 0; bottom: 8px; width: 100%; padding: 0 8px; color: #24272e; opacity: 1; font-size: 12px; line-height: 16px; font-weight: 500; }
 #asv-real .asv-task-card-attributes { position: absolute; left: 8px; top: 8px; display: flex; height: 14px; pointer-events: none; }
@@ -3882,7 +3887,8 @@ html &gt; body { padding: 0 !important; margin: 0; background: #fff; }
 #asv-real .asv-task-attribute { width: 14px; height: 14px; }
 #asv-real .asv-task-card-attributes img { opacity: .78; }
 #asv-real .is-narrow-card .asv-task-card-attributes, #asv-real .is-zero-duration .asv-task-card-attributes, #asv-real .is-compact-trigger .asv-task-card-attributes { display: none; }
-#asv-real .is-resumable-card:not(.is-narrow-card) { border-right: 1px dashed #c8cacf; }
+#asv-real .asv-resumable-edge { position: absolute; right: 0; top: 1px; pointer-events: none; }
+#asv-real .is-narrow-card .asv-resumable-edge, #asv-real .is-zero-duration .asv-resumable-edge, #asv-real .is-compact-trigger .asv-resumable-edge { display: none; }
 #asv-real .asv-trigger-caption { bottom: calc(100% + 2px); height: 20px; padding: 1px 4px 1px 2px; border-radius: 5px; background: #fafafa; font-size: 12px; line-height: 16px; }
 #asv-real .asv-trigger-caption-title { align-items: center; gap: 4px; }
 #asv-real .asv-trigger-caption-prefix { font-weight: 400; }
@@ -5107,6 +5113,16 @@ html &gt; body { padding: 0 !important; margin: 0; background: #fff; }
     segment.appendChild(attributes);
     segment.classList.toggle(&quot;is-resumable-card&quot;, taskAttributeProfile(task).resumable);
     segment.classList.toggle(&quot;is-zero-duration&quot;, task.end &lt;= task.start);
+    if (taskAttributeProfile(task).resumable) {
+      const edge = document.createElement(&quot;img&quot;);
+      edge.className = &quot;asv-design-icon asv-resumable-edge&quot;;
+      edge.src = figmaAssets[&quot;05dde&quot;];
+      edge.width = 1;
+      edge.height = 48;
+      edge.alt = &quot;&quot;;
+      edge.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
+      segment.appendChild(edge);
+    }
     const label = document.createElement(&quot;span&quot;);
     label.className = &quot;asv-task-inline-name&quot;;
     label.setAttribute(&quot;data-full-task-name&quot;, task.task);
@@ -5301,7 +5317,7 @@ html &gt; body { padding: 0 !important; margin: 0; background: #fff; }
 
   const queueRemainingSeconds = Math.max(0, queueTasks[queueTasks.length - 1].end - currentTime);
   queueCount.textContent = taskCountLabel(queueTasks.length);
-  queueRemaining.textContent = &quot;Осталось &quot; + formatDuration(queueRemainingSeconds);
+  queueRemaining.textContent = formatDuration(queueRemainingSeconds);
 
   let queueEnabled = true;
   const setQueueEnabled = enabled =&gt; {
@@ -6807,7 +6823,7 @@ html &gt; body { padding: 0 !important; margin: 0; background: #fff; }
     cancelAnimationFrame(scrollFrame);
     scrollFrame = requestAnimationFrame(() =&gt; {
       const width = overview.clientWidth - 22;
-      const day = Math.min(18, 16 + Math.floor((scroll.scrollLeft + 2) / width * 66 / 24));
+      const day = Math.min(18, 16 + Math.floor((scroll.scrollLeft + scroll.clientWidth / 2) / width * 66 / 24));
       dateInput.value = &quot;2026-09-&quot; + day;
       currentDate.textContent = day + &quot; Сен 2026&quot;;
       previous.disabled = day === 16;
