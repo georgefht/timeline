@@ -2279,7 +2279,6 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 
   #asv-real .asv-run.is-frequent-run.is-compact-trigger {
-    --asv-compact-width: 5px !important;
     min-width: 5px;
   }
 
@@ -2468,23 +2467,19 @@ html&gt;body{padding:0}&lt;/style&gt;
     box-shadow: inset 1px 0 0 var(--asv-page);
   }
 
+  /* Short executions use the same 2px task tick as frequent triggers,
+     with a 5px outer trigger shell. Task count never widens the duration. */
   #asv-real .asv-run.is-compact-trigger {
-    width: max(var(--asv-compact-width), var(--asv-run-width)) !important;
-    min-width: 10px;
+    min-width: 5px;
   }
 
   #asv-real .asv-run.is-compact-trigger .asv-segments {
-    inset: 4px 3px;
-    justify-content: center;
-    gap: 2px;
-    overflow: visible;
+    inset: 4px 1px;
+    overflow: hidden;
     background: transparent;
   }
 
   #asv-real .asv-run.is-compact-trigger .asv-segment {
-    width: 2px;
-    min-width: 2px;
-    flex: 0 0 2px !important;
     padding: 0;
     border-radius: 1px;
     box-shadow: none;
@@ -2654,7 +2649,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     width: max-content;
     height: 20px;
     min-width: 0;
-    max-width: var(--asv-caption-max, 100%);
+    max-width: var(--asv-caption-max, 156px);
     box-sizing: border-box;
     align-items: center;
     overflow: hidden;
@@ -2700,8 +2695,9 @@ html&gt;body{padding:0}&lt;/style&gt;
     width: max-content;
     height: auto;
     min-height: 42px;
-    max-width: var(--asv-caption-max, 100%);
+    max-width: var(--asv-caption-hover-max, 320px);
     box-sizing: border-box;
+    transform: translateX(var(--asv-caption-hover-shift, 0px));
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
@@ -2737,7 +2733,8 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 
   #asv-real .asv-segment {
-    position: relative;
+    position: absolute;
+    top: 0;
     display: flex;
     height: 100%;
     min-width: 2px;
@@ -2775,7 +2772,7 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   #asv-real .asv-segment.is-overrun,
   #asv-real .asv-queue-task.is-overrun {
-    position: relative;
+    position: absolute;
     overflow: visible;
   }
 
@@ -2825,14 +2822,14 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 
   #asv-real .asv-run.is-task-inspection-active .asv-segment.is-linked-hover {
-    position: relative;
+    position: absolute;
     z-index: 2;
     filter: brightness(.82);
     transform: scaleY(1.18);
   }
 
   #asv-real .asv-run.is-task-inspection-active .asv-segment.is-linked-selected {
-    position: relative;
+    position: absolute;
     z-index: 1;
     box-shadow: inset 0 0 0 2px var(--asv-selected);
     filter: brightness(.88);
@@ -3022,12 +3019,6 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-frequency-mark.is-single.is-past.is-selected::before,
   #asv-real .asv-frequency-mark.is-single.is-past.is-frequent-list-match::before {
     box-shadow: inset 0 0 0 1px var(--asv-page), 0 0 0 2px var(--asv-text);
-  }
-
-  #asv-real .asv-segment.asv-skipped {
-    flex: 0 0 3px !important;
-    width: 3px;
-    min-width: 3px;
   }
 
   #asv-real.is-frequent-focus .asv-run.is-frequent-run:not(.is-frequent-list-match) { opacity: .1; }
@@ -3484,6 +3475,11 @@ html&gt;body{padding:0}&lt;/style&gt;
     inset: 3px 1px;
     border-radius: 2px;
     pointer-events: none;
+  }
+
+  #asv-real .asv-proportional-task.is-point .asv-proportional-fill {
+    left: 0;
+    right: 0;
   }
 
   #asv-real .asv-proportional-fill.is-overrun::after {
@@ -4270,10 +4266,26 @@ html&gt;body{padding:0}&lt;/style&gt;
   };
 
   const setTaskStatus = (runId, taskName, status) =&gt; {
-    const task = findTask(runId, taskName);
+    const run = [...runs, ...secondaryRuns].find(item =&gt; item.id === runId);
+    const task = run?.tasks.find(item =&gt; item.task === taskName);
     if (!task) return;
     task.status = status;
-    if (status === &quot;SKIPPED&quot;) task.end = Math.min(task.end, task.start + 1);
+    if (status !== &quot;SKIPPED&quot;) return;
+
+    // These tasks are generated as a sequential chain. Shortening a skipped
+    // task must also advance its successors, preserving their own durations
+    // and any existing pauses instead of leaving its former execution slot.
+    const previousEnd = task.end;
+    task.end = Math.min(previousEnd, task.start + 1);
+    const removedDuration = previousEnd - task.end;
+    if (removedDuration &lt;= 0) return;
+    run.tasks.forEach(nextTask =&gt; {
+      if (nextTask === task || nextTask.start &lt; previousEnd) return;
+      nextTask.start -= removedDuration;
+      nextTask.end -= removedDuration;
+      if (Number.isFinite(nextTask.plannedEnd)) nextTask.plannedEnd -= removedDuration;
+    });
+    run.end = Math.max(run.start, ...run.tasks.map(item =&gt; item.end));
   };
 
   const setTaskOverrun = (runId, taskName, seconds) =&gt; {
@@ -4920,7 +4932,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   const conflictTaskSegments = new Map();
   const conflictRunButtons = new Map();
   const conflictTaskPins = new Map();
-  const compactTriggerButtons = [];
+  const triggerButtons = [];
   const inlineTaskLabels = [];
   const inlineTaskMeasureContext = document.createElement(&quot;canvas&quot;).getContext(&quot;2d&quot;);
   const fitInlineTaskName = (name, availableWidth, measureText) =&gt; {
@@ -4966,6 +4978,19 @@ html&gt;body{padding:0}&lt;/style&gt;
       inlineTaskLabels.push({ segment, label: overrunLabel });
     }
   };
+  // Use timestamps for each segment: zero-length tasks stay ticks even inside
+  // long triggers, and gaps between tasks remain visible.
+  const positionTaskSegment = (segment, task, run) =&gt; {
+    const duration = Math.max(0, run.end - run.start);
+    const left = duration &gt; 0
+      ? Math.max(0, Math.min(100, (task.start - run.start) / duration * 100))
+      : 0;
+    const width = duration &gt; 0
+      ? Math.max(0, Math.min(100 - left, (task.end - task.start) / duration * 100))
+      : 0;
+    segment.style.left = &quot;min(&quot; + left + &quot;%, calc(100% - 2px))&quot;;
+    segment.style.width = &quot;min(100%, max(2px, &quot; + width + &quot;%))&quot;;
+  };
   const bindStandaloneTaskTooltip = (button, run) =&gt; {
     const task = run.tasks[0];
     if (!task) return;
@@ -4978,22 +5003,18 @@ html&gt;body{padding:0}&lt;/style&gt;
   runs.forEach(run =&gt; {
     const lane = primaryLanes[run.lane];
     const button = document.createElement(&quot;button&quot;);
-    const span = Math.max(run.end - run.start, 15 * 60);
+    const span = Math.max(run.end - run.start, 0);
     const widthPct = span / day * 100;
     const leftPct = run.start / day * 100;
     const actualDuration = Math.max(run.end - run.start, 0);
-    const compactTrigger = run.isTrigger &amp;&amp; actualDuration &lt; 1200;
+    const compactTrigger = run.isTrigger &amp;&amp; span / day * lane.clientWidth &lt; 16;
     const pointStandalone = !run.isTrigger &amp;&amp; actualDuration &lt; 60;
-    const compactTaskCount = Math.min(run.tasks.length, 4);
     button.type = &quot;button&quot;;
     button.className = &quot;asv-run &quot; + (run.isTrigger ? &quot;is-trigger&quot; : &quot;is-standalone&quot;) + (compactTrigger ? &quot; is-compact-trigger&quot; : &quot;&quot;) + (pointStandalone ? &quot; is-point-run&quot; : &quot;&quot;) + (run.conflictId ? &quot; is-conflict-demo&quot; : &quot;&quot;);
     button.style.left = leftPct + &quot;%&quot;;
     button.style.width = widthPct + &quot;%&quot;;
     button.style.setProperty(&quot;--asv-run-width&quot;, widthPct + &quot;%&quot;);
-    if (compactTrigger) {
-      button.style.setProperty(&quot;--asv-compact-width&quot;, (6 + compactTaskCount * 4) + &quot;px&quot;);
-      compactTriggerButtons.push(button);
-    }
+    if (run.isTrigger) triggerButtons.push(button);
     button.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
     const runType = run.isTrigger ? &quot;Триггер&quot; : &quot;Отдельная задача&quot;;
     const conflictTask = run.conflictId ? conflictTaskForRun(run) : null;
@@ -5010,13 +5031,12 @@ html&gt;body{padding:0}&lt;/style&gt;
 
     const segments = document.createElement(&quot;span&quot;);
     segments.className = &quot;asv-segments&quot;;
-    const runSpan = Math.max(run.end - run.start, 1);
     const visibleTasks = run.tasks;
     visibleTasks.forEach(task =&gt; {
       const segment = document.createElement(&quot;span&quot;);
       segment.className = &quot;asv-segment &quot; + statusClass(task.status);
       if (task.end &lt;= currentTime &amp;&amp; !task.isConflictTask) segment.classList.add(&quot;is-past&quot;);
-      segment.style.flex = Math.max(task.end - task.start, 1) + &quot; 1 0&quot;;
+      positionTaskSegment(segment, task, run);
       applyTaskOverrunVisual(segment, task);
       applyForecastConfidenceVisual(segment, run, task);
       segment.setAttribute(&quot;data-task-id&quot;, String(task.id));
@@ -5190,21 +5210,18 @@ html&gt;body{padding:0}&lt;/style&gt;
     run.lane = run.displayLane;
     const lane = secondaryLanes[run.displayLane];
     const button = document.createElement(&quot;button&quot;);
-    const span = Math.max(run.end - run.start, 15 * 60);
+    const span = Math.max(run.end - run.start, 0);
     const widthPct = span / day * 100;
     const leftPct = run.start / day * 100;
     const actualDuration = Math.max(run.end - run.start, 0);
-    const compactTrigger = run.isTrigger &amp;&amp; actualDuration &lt; 1200;
+    const compactTrigger = run.isTrigger &amp;&amp; span / day * lane.clientWidth &lt; 16;
     const pointStandalone = !run.isTrigger &amp;&amp; actualDuration &lt; 60;
     button.type = &quot;button&quot;;
     button.className = &quot;asv-run is-secondary-node-run &quot; + (run.isTrigger ? &quot;is-trigger&quot; : &quot;is-standalone&quot;) + (compactTrigger ? &quot; is-compact-trigger&quot; : &quot;&quot;) + (pointStandalone ? &quot; is-point-run&quot; : &quot;&quot;) + (run.conflictId ? &quot; is-conflict-demo&quot; : &quot;&quot;);
     button.style.left = leftPct + &quot;%&quot;;
     button.style.width = widthPct + &quot;%&quot;;
     button.style.setProperty(&quot;--asv-run-width&quot;, widthPct + &quot;%&quot;);
-    if (compactTrigger) {
-      button.style.setProperty(&quot;--asv-compact-width&quot;, (6 + Math.min(run.tasks.length, 4) * 4) + &quot;px&quot;);
-      compactTriggerButtons.push(button);
-    }
+    if (run.isTrigger) triggerButtons.push(button);
     button.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
     const conflictTask = run.conflictId ? conflictTaskForRun(run) : null;
     const conflictTaskDescription = conflictTask ? &quot;, конфликтующая задача: &quot; + conflictTask.task : &quot;&quot;;
@@ -5225,7 +5242,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       const segment = document.createElement(&quot;span&quot;);
       segment.className = &quot;asv-segment &quot; + statusClass(task.status);
       if (task.end &lt;= currentTime &amp;&amp; !task.isConflictTask) segment.classList.add(&quot;is-past&quot;);
-      segment.style.flex = Math.max(task.end - task.start, 1) + &quot; 1 0&quot;;
+      positionTaskSegment(segment, task, run);
       applyTaskOverrunVisual(segment, task);
       applyForecastConfidenceVisual(segment, run, task);
       segment.setAttribute(&quot;data-task-id&quot;, String(task.id));
@@ -5685,7 +5702,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     frequentLinks.forEach(({ link, lane, startPercent, endPercent }) =&gt; {
       link.style.width = Math.max(2, (endPercent - startPercent) / 100 * lane.clientWidth) + &quot;px&quot;;
     });
-    compactTriggerButtons.forEach(button =&gt; {
+    triggerButtons.forEach(button =&gt; {
       const laneWidth = button.parentElement?.clientWidth || 0;
       const widthPercent = Number.parseFloat(button.style.width) || 0;
       const proportionalWidth = laneWidth * widthPercent / 100;
@@ -6040,14 +6057,41 @@ html&gt;body{padding:0}&lt;/style&gt;
   });
   updateNodeLayout();
 
+  const positionExpandedCaption = caption =&gt; {
+    const viewport = timelineScroll.getBoundingClientRect();
+    const sidebarLeft = detail.classList.contains(&quot;is-open&quot;)
+      ? detail.getBoundingClientRect().left
+      : viewport.right;
+    const leftEdge = Math.max(0, viewport.left) + 6;
+    const rightEdge = Math.min(window.innerWidth, viewport.right, sidebarLeft) - 6;
+    const available = Math.max(0, rightEdge - leftEdge);
+    caption.style.setProperty(&quot;--asv-caption-hover-max&quot;, Math.min(320, available) + &quot;px&quot;);
+    caption.style.setProperty(&quot;--asv-caption-hover-shift&quot;, &quot;0px&quot;);
+    const box = caption.getBoundingClientRect();
+    const left = Math.max(leftEdge, Math.min(box.left, rightEdge - box.width));
+    caption.style.setProperty(&quot;--asv-caption-hover-shift&quot;, (left - box.left) + &quot;px&quot;);
+  };
   const layoutTriggerCaptions = () =&gt; {
-    const laneWidth = lanesHost.clientWidth;
     triggerCaptions.forEach(({ caption, run, nextStart }) =&gt; {
+      const laneWidth = caption.parentElement.parentElement.clientWidth;
       const available = Math.max(0, (nextStart - run.start) / day * laneWidth - 5);
       caption.style.setProperty(&quot;--asv-caption-max&quot;, available + &quot;px&quot;);
     });
-
+    repositionExpandedCaptions();
   };
+  const repositionExpandedCaptions = () =&gt; {
+    triggerCaptions.forEach(({ caption }) =&gt; {
+      if (caption.parentElement.matches(&quot;:hover, :focus-visible&quot;)) positionExpandedCaption(caption);
+    });
+  };
+  triggerCaptions.forEach(({ caption }) =&gt; {
+    const button = caption.parentElement;
+    button.addEventListener(&quot;mouseenter&quot;, () =&gt; positionExpandedCaption(caption));
+    button.addEventListener(&quot;focus&quot;, () =&gt; positionExpandedCaption(caption));
+  });
+  timelineScroll.addEventListener(&quot;scroll&quot;, repositionExpandedCaptions, { passive: true });
+  window.addEventListener(&quot;resize&quot;, layoutTriggerCaptions, { passive: true });
+  detail.addEventListener(&quot;transitionend&quot;, repositionExpandedCaptions);
   layoutTriggerCaptions();
   if (typeof ResizeObserver !== &quot;undefined&quot;) {
     new ResizeObserver(() =&gt; {
@@ -6077,6 +6121,8 @@ html&gt;body{padding:0}&lt;/style&gt;
     selectedButton.classList.add(&quot;is-task-inspection-active&quot;);
     selectedRun = run;
     detail.classList.add(&quot;is-open&quot;);
+    // Reposition after the sidebar has finished sliding over the timeline.
+    requestAnimationFrame(repositionExpandedCaptions);
     detail.setAttribute(&quot;aria-hidden&quot;, &quot;false&quot;);
     const runDuration = Math.max(run.end - run.start, 0);
     detailKind.textContent = run.isQueueTask
@@ -6091,7 +6137,7 @@ html&gt;body{padding:0}&lt;/style&gt;
 
     const orderedTasks = [...run.tasks].sort((a, b) =&gt; a.start - b.start || a.id - b.id);
     const taskLinks = new Map();
-    const plottingSpan = Math.max(runDuration, 1);
+    const plottingSpan = runDuration &gt; 0 ? runDuration : 1;
     const scale = document.createElement(&quot;div&quot;);
     scale.className = &quot;asv-detail-scale&quot;;
 
@@ -6116,7 +6162,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       const width = Math.max(0, duration / plottingSpan * 100);
       item.type = &quot;button&quot;;
       item.className = &quot;asv-proportional-task&quot; + (width &lt; .35 ? &quot; is-point&quot; : &quot;&quot;);
-      item.style.left = left + &quot;%&quot;;
+      item.style.left = &quot;min(&quot; + left + &quot;%, calc(100% - 2px))&quot;;
       item.style.width = width + &quot;%&quot;;
       item.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
       item.setAttribute(&quot;aria-label&quot;, task.task + &quot;, &quot; + formatDuration(rawDuration));
