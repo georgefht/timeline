@@ -2653,7 +2653,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     display: flex;
     width: max-content;
     height: 20px;
-    min-width: 28px;
+    min-width: 0;
     max-width: var(--asv-caption-max, 156px);
     align-items: center;
     overflow: hidden;
@@ -2693,18 +2693,13 @@ html&gt;body{padding:0}&lt;/style&gt;
     white-space: nowrap;
   }
 
-  #asv-real .asv-run.is-caption-right .asv-trigger-caption {
-    right: 0;
-    left: auto;
-  }
-
   #asv-real .asv-run.is-trigger:hover .asv-trigger-caption,
   #asv-real .asv-run.is-trigger:focus-visible .asv-trigger-caption {
     z-index: 20;
     width: max-content;
     height: auto;
     min-height: 42px;
-    max-width: 280px;
+    max-width: var(--asv-caption-max, 156px);
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
@@ -2768,6 +2763,10 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 
   #asv-real .asv-task-inline-name[hidden] { display: none; }
+  #asv-real .asv-task-inline-name.is-truncated {
+    -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 6px - var(--asv-label-fade, 8px)), transparent calc(100% - 6px), transparent 100%);
+    mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 6px - var(--asv-label-fade, 8px)), transparent calc(100% - 6px), transparent 100%);
+  }
 
   #asv-real .asv-run.is-compact-trigger .asv-segment { padding: 0; }
 
@@ -4899,7 +4898,10 @@ html&gt;body{padding:0}&lt;/style&gt;
   const nextRunStart = new Map();
   [0, ...laneEnds.map((_, index) =&gt; index + 1)].forEach(laneIndex =&gt; {
     const laneRuns = runs.filter(run =&gt; run.lane === laneIndex).sort((a, b) =&gt; a.start - b.start || a.firstId - b.firstId);
-    laneRuns.forEach((run, index) =&gt; nextRunStart.set(run.id, laneRuns[index + 1]?.start ?? day));
+    laneRuns.forEach((run, index) =&gt; {
+      const nextTrigger = laneRuns.slice(index + 1).find(nextRun =&gt; nextRun.isTrigger);
+      nextRunStart.set(run.id, nextTrigger?.start ?? day);
+    });
   });
 
   const primaryLanes = [];
@@ -4926,17 +4928,6 @@ html&gt;body{padding:0}&lt;/style&gt;
   const compactTriggerButtons = [];
   const inlineTaskLabels = [];
   const inlineTaskMeasureContext = document.createElement(&quot;canvas&quot;).getContext(&quot;2d&quot;);
-  const fitInlineTaskName = (name, availableWidth, measureText) =&gt; {
-    const characters = Array.from(name);
-    if (characters.length &lt; 1) return &quot;&quot;;
-    if (measureText(name) &lt;= availableWidth) return name;
-    let fitted = &quot;&quot;;
-    for (let count = 1; count &lt;= characters.length; count++) {
-      const candidate = characters.slice(0, count).join(&quot;&quot;) + &quot;..&quot;;
-      if (measureText(candidate) &lt;= availableWidth) fitted = candidate;
-    }
-    return fitted;
-  };
   const axisHoverRange = document.createElement(&quot;span&quot;);
   axisHoverRange.className = &quot;asv-axis-hover-range&quot;;
   axis.appendChild(axisHoverRange);
@@ -5003,7 +4994,6 @@ html&gt;body{padding:0}&lt;/style&gt;
     const conflictTaskDescription = conflictTask ? &quot;, конфликтующая задача: &quot; + conflictTask.task : &quot;&quot;;
     button.setAttribute(&quot;aria-label&quot;, runType + &quot;: &quot; + run.name + conflictTaskDescription + &quot;, длительность &quot; + formatDuration(run.end - run.start) + &quot;, &quot; + run.tasks.length + &quot; задач&quot;);
     if (run.isTrigger) {
-      if (leftPct &gt; 78) button.classList.add(&quot;is-caption-right&quot;);
       const caption = document.createElement(&quot;span&quot;);
       caption.className = &quot;asv-trigger-caption text-small&quot;;
       caption.innerHTML = '&lt;span class=&quot;asv-trigger-caption-title&quot;&gt;&lt;span class=&quot;asv-trigger-caption-prefix&quot;&gt;T:&lt;/span&gt;&lt;span class=&quot;asv-trigger-caption-name&quot;&gt;' + run.name + '&lt;/span&gt;&lt;/span&gt;' +
@@ -5187,7 +5177,10 @@ html&gt;body{padding:0}&lt;/style&gt;
   const secondaryNextStart = new Map();
   secondaryLanes.forEach((_, laneIndex) =&gt; {
     const laneRuns = secondaryRuns.filter(run =&gt; run.displayLane === laneIndex).sort((a, b) =&gt; a.start - b.start);
-    laneRuns.forEach((run, index) =&gt; secondaryNextStart.set(run.id, laneRuns[index + 1]?.start ?? day));
+    laneRuns.forEach((run, index) =&gt; {
+      const nextTrigger = laneRuns.slice(index + 1).find(nextRun =&gt; nextRun.isTrigger);
+      secondaryNextStart.set(run.id, nextTrigger?.start ?? day);
+    });
   });
 
   secondaryRuns.forEach(run =&gt; {
@@ -5214,7 +5207,6 @@ html&gt;body{padding:0}&lt;/style&gt;
     const conflictTaskDescription = conflictTask ? &quot;, конфликтующая задача: &quot; + conflictTask.task : &quot;&quot;;
     button.setAttribute(&quot;aria-label&quot;, (run.isTrigger ? &quot;Триггер: &quot; : &quot;Отдельная задача: &quot;) + run.name + conflictTaskDescription + &quot;, нода 10.42.108.136, длительность &quot; + formatDuration(run.end - run.start));
     if (run.isTrigger) {
-      if (leftPct &gt; 78) button.classList.add(&quot;is-caption-right&quot;);
       const caption = document.createElement(&quot;span&quot;);
       caption.className = &quot;asv-trigger-caption text-small&quot;;
       caption.innerHTML = '&lt;span class=&quot;asv-trigger-caption-title&quot;&gt;&lt;span class=&quot;asv-trigger-caption-prefix&quot;&gt;T:&lt;/span&gt;&lt;span class=&quot;asv-trigger-caption-name&quot;&gt;' + run.name + '&lt;/span&gt;&lt;/span&gt;' +
@@ -5720,18 +5712,19 @@ html&gt;body{padding:0}&lt;/style&gt;
     inlineTaskLabels.forEach(({ segment, label }) =&gt; {
       const width = segment.getBoundingClientRect().width;
       const name = label.getAttribute(&quot;data-full-task-name&quot;) || &quot;&quot;;
+      label.textContent = name;
       const style = window.getComputedStyle(label);
       const horizontalPadding = (Number.parseFloat(style.paddingLeft) || 0) + (Number.parseFloat(style.paddingRight) || 0);
       const availableWidth = Math.max(0, width - horizontalPadding);
       const font = style.font || [style.fontWeight, style.fontSize, style.fontFamily].join(&quot; &quot;);
-      const measureText = text =&gt; {
-        if (!inlineTaskMeasureContext) return text.length * 6;
-        inlineTaskMeasureContext.font = font;
-        return inlineTaskMeasureContext.measureText(text).width;
-      };
-      const fittedName = fitInlineTaskName(name, availableWidth, measureText);
-      label.textContent = fittedName;
-      label.hidden = !fittedName;
+      if (inlineTaskMeasureContext) inlineTaskMeasureContext.font = font;
+      const measureText = text =&gt; inlineTaskMeasureContext
+        ? inlineTaskMeasureContext.measureText(text).width
+        : Array.from(text).length * 6;
+      const firstCharacter = Array.from(name)[0] || &quot;&quot;;
+      label.hidden = !firstCharacter || availableWidth &lt; measureText(firstCharacter);
+      label.style.setProperty(&quot;--asv-label-fade&quot;, Math.min(8, Math.max(1, availableWidth * .45)) + &quot;px&quot;);
+      label.classList.toggle(&quot;is-truncated&quot;, !label.hidden &amp;&amp; measureText(name) &gt; availableWidth);
     });
   };
   requestAnimationFrame(layoutInlineTaskLabels);
@@ -6048,8 +6041,8 @@ html&gt;body{padding:0}&lt;/style&gt;
   const layoutTriggerCaptions = () =&gt; {
     const laneWidth = lanesHost.clientWidth;
     triggerCaptions.forEach(({ caption, run, nextStart }) =&gt; {
-      const available = Math.max(28, (nextStart - run.start) / day * laneWidth - 5);
-      caption.style.setProperty(&quot;--asv-caption-max&quot;, Math.min(156, available) + &quot;px&quot;);
+      const available = Math.max(0, (nextStart - run.start) / day * laneWidth - 5);
+      caption.style.setProperty(&quot;--asv-caption-max&quot;, available + &quot;px&quot;);
     });
 
   };
