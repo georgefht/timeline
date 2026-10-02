@@ -6325,19 +6325,11 @@ html&gt;body{padding:0}&lt;/style&gt;
   });
   updateNodeLayout();
 
+  // Labels keep their natural timeline position and scroll out with the run.
+  // A fixed maximum width also avoids rewrapping at the viewport edge.
   const positionExpandedCaption = caption =&gt; {
-    const viewport = timelineScroll.getBoundingClientRect();
-    const sidebarLeft = detail.classList.contains(&quot;is-open&quot;)
-      ? detail.getBoundingClientRect().left
-      : viewport.right;
-    const leftEdge = Math.max(0, viewport.left) + 6;
-    const rightEdge = Math.min(window.innerWidth, viewport.right, sidebarLeft) - 6;
-    const available = Math.max(0, rightEdge - leftEdge);
-    caption.style.setProperty(&quot;--asv-caption-hover-max&quot;, Math.min(320, available) + &quot;px&quot;);
+    caption.style.setProperty(&quot;--asv-caption-hover-max&quot;, &quot;320px&quot;);
     caption.style.setProperty(&quot;--asv-caption-hover-shift&quot;, &quot;0px&quot;);
-    const box = caption.getBoundingClientRect();
-    const left = Math.max(leftEdge, Math.min(box.left, rightEdge - box.width));
-    caption.style.setProperty(&quot;--asv-caption-hover-shift&quot;, (left - box.left) + &quot;px&quot;);
   };
   // Horizontal intersections determine the cascade. Earlier launches are
   // above later launches. A 2px overlap stays within the border and padding,
@@ -6358,19 +6350,20 @@ html&gt;body{padding:0}&lt;/style&gt;
   const layoutTriggerCaptions = () =&gt; {
     const viewport = timelineScroll.getBoundingClientRect();
     const sidebarLeft = detail.classList.contains(&quot;is-open&quot;) ? detail.getBoundingClientRect().left : viewport.right;
-    const leftEdge = Math.max(0, viewport.left) + 6;
-    const rightEdge = Math.min(window.innerWidth, viewport.right, sidebarLeft) - 6;
+    const leftEdge = Math.max(0, viewport.left);
+    const rightEdge = Math.min(window.innerWidth, viewport.right, sidebarLeft);
     const lanes = new Map();
     triggerCaptions.forEach(({ caption, run }) =&gt; {
       const button = caption.parentElement;
       const lane = button.parentElement;
       if (lane.classList.contains(&quot;is-frequent-lane&quot;)) return;
-      const box = button.getBoundingClientRect();
-      const visible = !lane.hidden &amp;&amp; box.width &gt; 0 &amp;&amp; rightEdge &gt; leftEdge &amp;&amp; box.right &gt;= leftEdge &amp;&amp; box.left &lt;= rightEdge;
-      button.classList.toggle(&quot;is-caption-offscreen&quot;, !visible);
-      if (!visible) return;
       positionExpandedCaption(caption);
       const rect = caption.getBoundingClientRect();
+      // Continue drawing the part of a label still in view even after a short
+      // task bar has scrolled out. The scroll container clips it naturally.
+      const visible = !lane.hidden &amp;&amp; rect.width &gt; 0 &amp;&amp; rightEdge &gt; leftEdge &amp;&amp; rect.right &gt;= leftEdge &amp;&amp; rect.left &lt;= rightEdge;
+      button.classList.toggle(&quot;is-caption-offscreen&quot;, !visible);
+      if (!visible) return;
       if (!lanes.has(lane)) lanes.set(lane, []);
       lanes.get(lane).push({ caption, button, left: rect.left, width: rect.width, height: rect.height, start: run.start, order: run.firstId });
     });
