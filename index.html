@@ -1649,6 +1649,8 @@ html&gt;body{padding:0}&lt;/style&gt;
     font-variant-numeric: tabular-nums;
   }
 
+  #asv-real .asv-queue-remaining { white-space: nowrap; }
+
   #asv-real .asv-queue-control:not(.is-enabled) {
     background: color-mix(in srgb, var(--asv-group) 65%, transparent);
   }
@@ -1856,7 +1858,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     z-index: 7;
     right: 22px;
     left: 0;
-    background: var(--asv-page);
+    background: var(--asv-history);
     pointer-events: none;
   }
 
@@ -2324,7 +2326,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-queue-task.is-current {
     border-color: var(--asv-selected);
     background: var(--asv-selected-soft);
-    box-shadow: 0 0 0 2px var(--asv-selected), inset 0 0 0 1px var(--asv-page);
+    box-shadow: inset 0 0 0 2px var(--asv-selected);
   }
 
   #asv-real .asv-queue-task.is-forecast-high {
@@ -2357,7 +2359,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 
   #asv-real .asv-queue-task.is-current[aria-pressed=&quot;true&quot;] {
-    box-shadow: 0 0 0 2px var(--asv-selected), inset 0 0 0 1px var(--asv-page);
+    box-shadow: inset 0 0 0 2px var(--asv-selected);
   }
 
   #asv-real .asv-queue-task.is-linked-hover {
@@ -3779,8 +3781,8 @@ html&gt;body{padding:0}&lt;/style&gt;
     #asv-real .asv-node-panel.is-third-node { height: auto; min-height: 0; border-right: 0; border-bottom: 1px solid var(--asv-rule); }
     #asv-real .asv-node-panel.is-collapsed { height: 50px; }
     #asv-real .asv-queue-control { position: static; width: calc(100% + 32px); margin: 20px -16px -18px; }
-    #asv-real .asv-timeline-scroll { height: 520px; }
-    #asv-real .asv-overview { height: 520px; }
+    #asv-real .asv-timeline-scroll { height: var(--asv-timeline-height, 640px); }
+    #asv-real .asv-overview { height: var(--asv-timeline-height, 640px); }
     #asv-real .asv-detail { width: 100%; }
   }
 
@@ -3827,10 +3829,10 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
   #asv-real .asv-trigger-caption-stem {
     position: absolute;
-    left: 2px;
+    left: var(--asv-caption-stem-left, 2px);
     bottom: 100%;
     height: calc(4px + var(--asv-caption-rise, 0px));
-    border-left: 1px solid var(--asv-group-line);
+    border-left: 1px solid color-mix(in srgb, var(--asv-text) 20%, var(--asv-group-line));
     pointer-events: none;
   }
   #asv-real .asv-run.is-caption-offscreen .asv-trigger-caption,
@@ -3863,17 +3865,17 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-queue-task.is-forecast-question {
     background-color: light-dark(#f0f5fd, #1b2737);
     background-image: none;
-    border-radius: 6px;
-    outline: 1px dashed light-dark(#dbe6f5, #344458);
+    border-radius: 4px;
+    outline: 1px dotted light-dark(#acc0db, #59708e);
     outline-offset: -1px;
-    box-shadow: inset 0 0 6px light-dark(#e8f0fc, #243249);
+    box-shadow: none;
   }
   #asv-real .asv-segment.is-forecast-low .asv-task-inline-name,
   #asv-real .asv-queue-task.is-forecast-low .asv-task-inline-name { color: var(--asv-text); }
   #asv-real .asv-segment.is-forecast-question .asv-task-inline-name,
   #asv-real .asv-queue-task.is-forecast-question .asv-task-inline-name {
-    color: light-dark(#6b83a4, #a2b6d0);
-    opacity: .82;
+    color: light-dark(#5b7393, #adc0da);
+    opacity: 1;
   }
   #asv-real .asv-frequency-mark.is-single.is-forecast-low::before {
     background-color: color-mix(in srgb, var(--asv-predicted) 26%, var(--asv-page));
@@ -3904,11 +3906,192 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-task-row-meta { white-space: normal; overflow-wrap: anywhere; }
   #asv-real .asv-detail-meta { white-space: normal; }
 
-  #asv-real .asv-lane.is-reserve-lane { border-bottom: 0; }
+
+  #asv-real .asv-control-bar {
+    position: relative;
+    z-index: 40;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 64px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--asv-rule);
+    background: var(--asv-page);
+    font-size: 12px;
+  }
+  #asv-real .asv-toolbar-left,
+  #asv-real .asv-toolbar-right { display: flex; align-items: center; gap: 8px; }
+  #asv-real .asv-toolbar-right { margin-left: auto; gap: 16px; }
+  #asv-real .asv-date-control { display: flex; height: 34px; border: 1px solid var(--asv-rule); border-radius: 6px; overflow: hidden; }
+  #asv-real .asv-toolbar-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    height: 34px;
+    padding: 0 11px;
+    border: 1px solid var(--asv-rule);
+    border-radius: 6px;
+    background: var(--asv-page);
+    color: var(--asv-text);
+    font: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  #asv-real .asv-toolbar-button:hover { background: var(--asv-group); }
+  #asv-real .asv-toolbar-button:focus-visible,
+  #asv-real .asv-step-select:focus-visible { outline: 2px solid var(--asv-selected); outline-offset: 2px; }
+  #asv-real .asv-toolbar-button:disabled { opacity: .35; cursor: default; }
+  #asv-real .asv-date-control .asv-toolbar-button { height: 32px; border: 0; border-radius: 0; }
+  #asv-real .asv-date-arrow { width: 27px; padding: 0; }
+  #asv-real .asv-date-label { min-width: 138px; padding-right: 11px; font-variant-numeric: tabular-nums; }
+  #asv-real .asv-toolbar-icon { width: 16px; height: 16px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  #asv-real .asv-step-control { position: relative; }
+  #asv-real .asv-step-control &gt; svg { position: absolute; top: 9px; right: 9px; pointer-events: none; color: var(--asv-muted); }
+  #asv-real .asv-step-select { appearance: none; height: 34px; width: 106px; padding: 0 30px 0 11px; border: 1px solid var(--asv-group-line); border-radius: 5px; background: var(--asv-page); color: var(--asv-text); font: inherit; cursor: pointer; }
+  #asv-real .asv-control-bar .asv-timeline-actions { position: static; align-items: center; gap: 8px; }
+  #asv-real .asv-control-bar .asv-frequent-layer-toggle { width: 106px; height: 34px; padding: 0 11px; font: inherit; }
+  #asv-real .asv-control-bar .asv-frequent-layer-toggle-state { font: inherit; }
+  #asv-real .asv-control-bar .asv-zoom-controls { height: 34px; font: inherit; }
+  #asv-real .asv-control-bar .asv-zoom-control { min-width: 34px; padding: 0 9px; font: inherit; }
+  #asv-real .asv-control-bar .asv-zoom-value { min-width: 64px; font: inherit; font-variant-numeric: tabular-nums; }
+  #asv-real .asv-conflicts-toggle { gap: 6px; border-color: transparent; padding: 0 11px; }
+  #asv-real .asv-conflicts-count { display: inline-flex; align-items: center; gap: 3px; height: 20px; min-width: 28px; padding: 0 5px; border-radius: 4px; background: light-dark(#d53b4a, #ba3744); color: #fff; font-size: 11px; font-variant-numeric: tabular-nums; }
+  #asv-real .asv-toolbar-popup { position: fixed; z-index: 60; width: 320px; max-width: calc(100vw - 24px); max-height: min(480px, calc(100vh - 24px)); overflow: auto; padding: 16px; border: 1px solid var(--asv-group-line); border-radius: 10px; background: var(--asv-page); color: var(--asv-text); box-shadow: 0 12px 40px light-dark(#17233a24, #00000070); font-size: 12px; }
+  #asv-real .asv-toolbar-popup[hidden] { display: none; }
+  #asv-real .asv-popup-heading { margin: 0; font-size: 13px; font-weight: 600; }
+  #asv-real .asv-popup-description { margin: 5px 0 14px; color: var(--asv-muted); font-size: 11px; line-height: 1.45; }
+  #asv-real .asv-calendar-modes { display: flex; padding: 3px; gap: 3px; border-radius: 6px; background: var(--asv-group); margin-bottom: 14px; }
+  #asv-real .asv-calendar-mode { flex: 1; height: 28px; border: 0; border-radius: 4px; color: var(--asv-muted); background: transparent; font: inherit; cursor: pointer; }
+  #asv-real .asv-calendar-mode[aria-pressed=&quot;true&quot;] { background: var(--asv-page); color: var(--asv-text); box-shadow: 0 1px 3px #00000014; font-weight: 600; }
+  #asv-real .asv-calendar-month { margin: 0 0 12px; font-weight: 600; }
+  #asv-real .asv-calendar-weekdays,
+  #asv-real .asv-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  #asv-real .asv-calendar-weekdays { margin-bottom: 5px; color: var(--asv-muted); text-align: center; font-size: 10px; }
+  #asv-real .asv-calendar-day { position: relative; height: 32px; padding: 0; border: 0; border-radius: 5px; background: transparent; color: var(--asv-text); font: inherit; cursor: pointer; }
+  #asv-real .asv-calendar-day:disabled { color: var(--asv-muted); opacity: .35; cursor: default; }
+  #asv-real .asv-calendar-day:not(:disabled):hover { background: var(--asv-selected-soft); }
+  #asv-real .asv-calendar-day.is-in-range { border-radius: 2px; background: var(--asv-selected-soft); color: var(--asv-selected); }
+  #asv-real .asv-calendar-day[aria-pressed=&quot;true&quot;] { background: var(--asv-selected); color: var(--asv-page); font-weight: 600; }
+  #asv-real .asv-calendar-day[aria-current=&quot;date&quot;] { box-shadow: inset 0 0 0 1px var(--asv-selected); }
+  #asv-real .asv-calendar-day.has-upcoming-conflicts::after { position: absolute; bottom: 3px; left: calc(50% - 1.5px); width: 3px; height: 3px; content: &quot;&quot;; border-radius: 50%; background: var(--asv-conflict); }
+  #asv-real .asv-calendar-selection { min-height: 31px; margin: 12px 0 8px; color: var(--asv-muted); font-size: 11px; line-height: 1.4; }
+  #asv-real .asv-calendar-footer { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding-top: 12px; border-top: 1px solid var(--asv-rule); }
+  #asv-real .asv-calendar-footer .asv-toolbar-button[hidden] { display: none; }
+  #asv-real .asv-toolbar-button.is-primary { background: var(--asv-selected); color: var(--asv-page); border-color: transparent; }
+  #asv-real .asv-toolbar-button.is-primary:disabled { opacity: .4; }
+  #asv-real .asv-upcoming-popup { width: 420px; padding: 0; }
+  #asv-real .asv-upcoming-head { padding: 16px 16px 0; }
+  #asv-real .asv-upcoming-head .asv-popup-description { margin-bottom: 12px; }
+  #asv-real .asv-conflict-preview { display: block; width: 100%; padding: 12px; border: 0; border-top: 1px solid var(--asv-rule); background: transparent; color: var(--asv-text); font: inherit; text-align: left; cursor: pointer; }
+  #asv-real .asv-conflict-preview:hover { background: var(--asv-sidebar-row-hover); }
+  #asv-real .asv-conflict-preview:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--asv-selected); }
+  #asv-real .asv-conflict-preview-head { display: block; margin-bottom: 4px; line-height: 1.35; }
+  #asv-real .asv-conflict-preview-time { font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  #asv-real .asv-conflict-preview-reason { display: block; margin-bottom: 8px; font-size: 11px; line-height: 1.4; }
+  #asv-real .asv-conflict-preview-tasks { display: grid; gap: 5px; }
+  #asv-real .asv-conflict-preview-task { display: grid; gap: 3px; padding: 8px 10px; border: 1px solid var(--asv-rule); border-radius: 8px; background: transparent; }
+  #asv-real .asv-conflict-preview-task.is-risk { border-color: light-dark(#f0d8dc, #66333a); background: var(--asv-conflict-soft); }
+  #asv-real .asv-conflict-preview-task-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 16px; }
+  #asv-real .asv-conflict-preview-task-node { color: var(--asv-muted); font-size: 11px; font-variant-numeric: tabular-nums; line-height: 1.3; }
+  #asv-real .asv-conflict-preview-task-title { display: flex; align-items: center; gap: 6px; min-width: 0; }
+  #asv-real .asv-conflict-preview-task-name { min-width: 0; font-size: 12px; font-weight: 500; line-height: 1.35; overflow-wrap: anywhere; }
+  #asv-real .asv-conflict-preview-task-attributes { display: inline-flex; flex: 0 0 auto; }
+  #asv-real .asv-conflict-preview-task-trigger { color: color-mix(in srgb, var(--asv-muted) 80%, var(--asv-text)); font-size: 11px; line-height: 1.35; overflow-wrap: anywhere; }
+  #asv-real .asv-conflict-preview-task-time { color: var(--asv-text); font-size: 11px; line-height: 1.35; font-variant-numeric: tabular-nums; }
+  #asv-real .asv-upcoming-footer { padding: 10px 16px; border-top: 1px solid var(--asv-rule); color: var(--asv-muted); background: var(--asv-canvas); font-size: 10px; }
+  #asv-real .asv-overview { min-width: 100%; }
+  #asv-real .asv-day-divider { left: calc((100% - 22px) / 66 * 24); }
+  #asv-real .asv-day-divider.is-second { left: calc((100% - 22px) / 66 * 48); right: auto; }
+  #asv-real .asv-detail { top: var(--asv-toolbar-height, 64px); }
+  @media (max-width: 760px) {
+    #asv-real .asv-control-bar { padding: 12px; gap: 10px; }
+    #asv-real .asv-toolbar-right { width: 100%; justify-content: space-between; gap: 8px; }
+    #asv-real .asv-date-label { min-width: 130px; }
+    #asv-real .asv-step-select { width: 94px; }
+    #asv-real .asv-toolbar-left { gap: 6px; }
+  }
+
+  #asv-real.has-sticky-scroll .asv-timeline-scroll { scrollbar-width: none; }
+  #asv-real.has-sticky-scroll .asv-timeline-scroll::-webkit-scrollbar { display: none; }
+  #asv-real .asv-sticky-scrollbar {
+    position: fixed;
+    z-index: 35;
+    height: 16px;
+    padding: 3px 4px;
+    border-top: 1px solid var(--asv-rule);
+    border-radius: 0 0 8px 8px;
+    background: var(--asv-canvas);
+  }
+  #asv-real .asv-sticky-scrollbar[hidden] { display: none; }
+  #asv-real .asv-sticky-scroll-track {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 8px;
+    border-radius: 999px;
+    background: light-dark(#ededed, #2b2b2b);
+    cursor: pointer;
+    touch-action: none;
+    user-select: none;
+  }
+  #asv-real .asv-sticky-scroll-track:focus,
+  #asv-real .asv-sticky-scroll-track:focus-visible { outline: none; }
+  #asv-real .asv-sticky-scroll-thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: light-dark(#9a9a9a, #666666);
+    cursor: grab;
+  }
+  #asv-real .asv-sticky-scroll-track:hover .asv-sticky-scroll-thumb,
+  #asv-real .asv-sticky-scroll-track:focus-visible .asv-sticky-scroll-thumb { background: light-dark(#828282, #7a7a7a); }
+  #asv-real .asv-sticky-scroll-track.is-dragging .asv-sticky-scroll-thumb { background: light-dark(#707070, #8a8a8a); cursor: grabbing; }
 
 &lt;/style&gt;
 
-&lt;section id=&quot;asv-real&quot; aria-label=&quot;История и прогноз запусков триггеров с 16 сентября по 18 сентября, 14:00&quot;&gt;
+&lt;section id=&quot;asv-real&quot; aria-label=&quot;История и прогноз запусков триггеров с 16 сентября по 18 сентября, 18:00&quot;&gt;
+  &lt;div class=&quot;asv-control-bar&quot; role=&quot;toolbar&quot; aria-label=&quot;Управление таймлайном&quot;&gt;
+    &lt;div class=&quot;asv-toolbar-left&quot;&gt;
+      &lt;div class=&quot;asv-date-control&quot;&gt;
+        &lt;button class=&quot;asv-toolbar-button asv-date-arrow&quot; type=&quot;button&quot; data-date-prev aria-label=&quot;На сутки назад&quot;&gt;&lt;svg class=&quot;asv-toolbar-icon&quot; viewBox=&quot;0 0 20 20&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;m12 5-5 5 5 5&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;
+        &lt;button class=&quot;asv-toolbar-button asv-date-arrow&quot; type=&quot;button&quot; data-date-next aria-label=&quot;На сутки вперёд&quot;&gt;&lt;svg class=&quot;asv-toolbar-icon&quot; viewBox=&quot;0 0 20 20&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;m8 5 5 5-5 5&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;
+        &lt;button class=&quot;asv-toolbar-button asv-date-label&quot; type=&quot;button&quot; data-date-label aria-haspopup=&quot;dialog&quot; aria-controls=&quot;asv-calendar-popup&quot; aria-expanded=&quot;false&quot;&gt;&lt;svg class=&quot;asv-toolbar-icon&quot; viewBox=&quot;0 0 20 20&quot; aria-hidden=&quot;true&quot;&gt;&lt;rect x=&quot;3&quot; y=&quot;4&quot; width=&quot;14&quot; height=&quot;13&quot; rx=&quot;2&quot;/&gt;&lt;path d=&quot;M6 2v4M14 2v4M3 8h14&quot;/&gt;&lt;/svg&gt;&lt;span data-date-value&gt;18 сен 2026&lt;/span&gt;&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;label class=&quot;asv-step-control&quot;&gt;&lt;select class=&quot;asv-step-select&quot; data-time-step aria-label=&quot;Часов в одном делении шкалы&quot;&gt;&lt;option value=&quot;0.5&quot;&gt;30 минут&lt;/option&gt;&lt;option value=&quot;1&quot;&gt;1 час&lt;/option&gt;&lt;option value=&quot;2&quot; selected&gt;2 часа&lt;/option&gt;&lt;option value=&quot;4&quot;&gt;4 часа&lt;/option&gt;&lt;option value=&quot;6&quot;&gt;6 часов&lt;/option&gt;&lt;option value=&quot;12&quot;&gt;12 часов&lt;/option&gt;&lt;/select&gt;&lt;svg class=&quot;asv-toolbar-icon&quot; viewBox=&quot;0 0 20 20&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;m5 7 5 5 5-5&quot;/&gt;&lt;/svg&gt;&lt;/label&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;asv-toolbar-right&quot;&gt;
+      &lt;div class=&quot;asv-timeline-actions&quot; aria-label=&quot;Отображение таймлайна&quot;&gt;
+        &lt;button class=&quot;asv-frequent-layer-toggle&quot; type=&quot;button&quot; data-frequent-layer-toggle aria-pressed=&quot;true&quot; aria-label=&quot;Скрыть частые триггеры и связанные с ними конфликты&quot;&gt;&lt;span&gt;Частые&lt;/span&gt;&lt;span class=&quot;asv-frequent-layer-toggle-state&quot;&gt;вкл&lt;/span&gt;&lt;/button&gt;
+        &lt;div class=&quot;asv-zoom-controls&quot; aria-label=&quot;Масштаб таймлайна&quot;&gt;
+          &lt;button class=&quot;asv-zoom-control&quot; type=&quot;button&quot; data-zoom-out aria-label=&quot;Уменьшить масштаб&quot;&gt;−&lt;/button&gt;
+          &lt;button class=&quot;asv-zoom-control asv-zoom-value text-small&quot; type=&quot;button&quot; data-zoom-reset aria-label=&quot;Сбросить масштаб до 125 процентов&quot;&gt;125%&lt;/button&gt;
+          &lt;button class=&quot;asv-zoom-control&quot; type=&quot;button&quot; data-zoom-in aria-label=&quot;Увеличить масштаб&quot;&gt;+&lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;button class=&quot;asv-toolbar-button asv-conflicts-toggle&quot; type=&quot;button&quot; data-upcoming-toggle aria-haspopup=&quot;dialog&quot; aria-controls=&quot;asv-upcoming-popup&quot; aria-expanded=&quot;false&quot;&gt;&lt;span&gt;Конфликты&lt;/span&gt;&lt;span class=&quot;asv-conflicts-count&quot;&gt;&lt;span aria-hidden=&quot;true&quot;&gt;⚡︎&lt;/span&gt;&lt;span data-upcoming-count&gt;3&lt;/span&gt;&lt;/span&gt;&lt;svg class=&quot;asv-toolbar-icon&quot; viewBox=&quot;0 0 20 20&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;m5 7 5 5 5-5&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;section id=&quot;asv-calendar-popup&quot; class=&quot;asv-toolbar-popup&quot; role=&quot;dialog&quot; aria-label=&quot;Выбор даты или диапазона&quot; hidden&gt;
+      &lt;h2 class=&quot;asv-popup-heading&quot;&gt;Период на таймлайне&lt;/h2&gt;
+      &lt;p class=&quot;asv-popup-description&quot;&gt;Данные доступны за 16–18 сентября 2026.&lt;/p&gt;
+      &lt;div class=&quot;asv-calendar-modes&quot; role=&quot;group&quot; aria-label=&quot;Режим выбора&quot;&gt;&lt;button class=&quot;asv-calendar-mode&quot; type=&quot;button&quot; data-calendar-mode=&quot;single&quot; aria-pressed=&quot;true&quot;&gt;Одна дата&lt;/button&gt;&lt;button class=&quot;asv-calendar-mode&quot; type=&quot;button&quot; data-calendar-mode=&quot;range&quot; aria-pressed=&quot;false&quot;&gt;Диапазон&lt;/button&gt;&lt;/div&gt;
+      &lt;div class=&quot;asv-calendar-month&quot;&gt;Сентябрь 2026&lt;/div&gt;
+      &lt;div class=&quot;asv-calendar-weekdays&quot; aria-hidden=&quot;true&quot;&gt;&lt;span&gt;Пн&lt;/span&gt;&lt;span&gt;Вт&lt;/span&gt;&lt;span&gt;Ср&lt;/span&gt;&lt;span&gt;Чт&lt;/span&gt;&lt;span&gt;Пт&lt;/span&gt;&lt;span&gt;Сб&lt;/span&gt;&lt;span&gt;Вс&lt;/span&gt;&lt;/div&gt;
+      &lt;div class=&quot;asv-calendar-grid&quot; data-calendar-grid role=&quot;group&quot; aria-label=&quot;Даты сентября 2026&quot;&gt;&lt;/div&gt;
+      &lt;div class=&quot;asv-calendar-selection&quot; data-calendar-selection aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
+      &lt;div class=&quot;asv-calendar-footer&quot;&gt;&lt;button class=&quot;asv-toolbar-button&quot; type=&quot;button&quot; data-calendar-cancel&gt;Отмена&lt;/button&gt;&lt;button class=&quot;asv-toolbar-button&quot; type=&quot;button&quot; data-calendar-reset aria-label=&quot;Сбросить период к текущей дате&quot; hidden&gt;&lt;svg class=&quot;asv-toolbar-icon&quot; viewBox=&quot;0 0 20 20&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;M4 8a6 6 0 1 1-.2 5M4 8V3M4 8h5&quot;/&gt;&lt;/svg&gt;&lt;span&gt;Сброс&lt;/span&gt;&lt;/button&gt;&lt;button class=&quot;asv-toolbar-button is-primary&quot; type=&quot;button&quot; data-calendar-apply&gt;Применить&lt;/button&gt;&lt;/div&gt;
+    &lt;/section&gt;
+    &lt;section id=&quot;asv-upcoming-popup&quot; class=&quot;asv-toolbar-popup asv-upcoming-popup&quot; role=&quot;dialog&quot; aria-label=&quot;Предстоящие конфликты&quot; hidden&gt;
+      &lt;div class=&quot;asv-upcoming-head&quot;&gt;&lt;h2 class=&quot;asv-popup-heading&quot;&gt;Предстоящие конфликты&lt;/h2&gt;&lt;p class=&quot;asv-popup-description&quot;&gt;После 18 сентября, 03:00 · по всем нодам&lt;/p&gt;&lt;/div&gt;
+      &lt;div data-upcoming-list&gt;&lt;/div&gt;
+      &lt;div class=&quot;asv-upcoming-footer&quot;&gt;Выберите конфликт, чтобы перейти к нему и открыть подробности.&lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
   &lt;div class=&quot;asv-layout&quot;&gt;
     &lt;div class=&quot;asv-node-stack&quot;&gt;
     &lt;aside class=&quot;asv-node-panel is-primary-node&quot; aria-label=&quot;Сведения о ноде 10.28.98.136&quot;&gt;
@@ -3932,7 +4115,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         &lt;/span&gt;
         &lt;span class=&quot;asv-queue-control-meta text-small&quot;&gt;
           &lt;span class=&quot;asv-queue-count&quot;&gt;7 задач&lt;/span&gt;
-          &lt;span class=&quot;asv-queue-remaining&quot;&gt;Время очереди неизвестно&lt;/span&gt;
+          &lt;span class=&quot;asv-queue-remaining&quot;&gt;Время: неизвестно&lt;/span&gt;
         &lt;/span&gt;
       &lt;/button&gt;
     &lt;/aside&gt;
@@ -3955,18 +4138,16 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;/div&gt;
       &lt;/div&gt;
     &lt;/aside&gt;
+    &lt;aside class=&quot;asv-node-panel is-third-node&quot; aria-label=&quot;Сведения о ноде 10.56.118.136&quot;&gt;
+      &lt;button class=&quot;asv-node-collapse&quot; type=&quot;button&quot; data-node-toggle=&quot;third&quot; aria-expanded=&quot;true&quot; aria-label=&quot;Свернуть ноду 10.56.118.136&quot;&gt;&lt;span class=&quot;asv-node-collapse-chevron&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;/button&gt;
+      &lt;div class=&quot;asv-node-collapsed-summary&quot;&gt;&lt;span class=&quot;asv-node-status-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;10.56.118.136&lt;/span&gt;&lt;/div&gt;
+      &lt;div class=&quot;asv-node-ip&quot;&gt;10.56.118.136&lt;/div&gt;
+      &lt;div class=&quot;asv-node-status&quot;&gt;&lt;span class=&quot;asv-node-status-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;Онлайн&lt;/span&gt;&lt;/div&gt;
+    &lt;/aside&gt;
     &lt;/div&gt;
     &lt;main class=&quot;asv-timeline-pane&quot;&gt;
-      &lt;div class=&quot;asv-timeline-actions&quot; aria-label=&quot;Отображение таймлайна&quot;&gt;
-        &lt;button class=&quot;asv-frequent-layer-toggle&quot; type=&quot;button&quot; data-frequent-layer-toggle aria-pressed=&quot;true&quot; aria-label=&quot;Скрыть частые триггеры и связанные с ними конфликты&quot;&gt;&lt;span&gt;Частые&lt;/span&gt;&lt;span class=&quot;asv-frequent-layer-toggle-state&quot;&gt;вкл&lt;/span&gt;&lt;/button&gt;
-        &lt;div class=&quot;asv-zoom-controls&quot; aria-label=&quot;Масштаб таймлайна&quot;&gt;
-          &lt;button class=&quot;asv-zoom-control&quot; type=&quot;button&quot; data-zoom-out aria-label=&quot;Уменьшить масштаб&quot;&gt;−&lt;/button&gt;
-          &lt;button class=&quot;asv-zoom-control asv-zoom-value text-small&quot; type=&quot;button&quot; data-zoom-reset aria-label=&quot;Вернуть масштаб 100 процентов&quot;&gt;100%&lt;/button&gt;
-          &lt;button class=&quot;asv-zoom-control&quot; type=&quot;button&quot; data-zoom-in aria-label=&quot;Увеличить масштаб&quot;&gt;+&lt;/button&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;asv-timeline-scroll&quot;&gt;
-        &lt;div class=&quot;asv-overview&quot; aria-label=&quot;Шкала истории и прогноза запусков с 16 сентября, 00:00 до 18 сентября, 14:00; текущее время — 18 сентября, 03:00&quot;&gt;
+      &lt;div class=&quot;asv-timeline-scroll&quot; id=&quot;asv-timeline-scroll&quot;&gt;
+        &lt;div class=&quot;asv-overview&quot; aria-label=&quot;Шкала истории и прогноза запусков с 16 сентября, 00:00 до 18 сентября, 18:00; текущее время — 18 сентября, 03:00&quot;&gt;
           &lt;div class=&quot;asv-time-background&quot; aria-hidden=&quot;true&quot;&gt;&lt;span class=&quot;asv-history-zone&quot;&gt;&lt;/span&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-axis&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-grid&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
@@ -3975,6 +4156,8 @@ html&gt;body{padding:0}&lt;/style&gt;
           &lt;div class=&quot;asv-collapsed-node-zone&quot; data-collapsed-zone=&quot;primary&quot; hidden aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-collapsed-node-zone&quot; data-collapsed-zone=&quot;secondary&quot; hidden aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-node-boundary&quot; data-node-boundary=&quot;secondary&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
+          &lt;div class=&quot;asv-collapsed-node-zone&quot; data-collapsed-zone=&quot;third&quot; hidden aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
+          &lt;div class=&quot;asv-node-boundary&quot; data-node-boundary=&quot;third&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-lanes&quot;&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-conflict-layer&quot;&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-now-layer&quot; aria-hidden=&quot;true&quot;&gt;
@@ -4057,8 +4240,9 @@ html&gt;body{padding:0}&lt;/style&gt;
   const day = timelineHours * 60 * 60;
   const currentTime = daySeconds * 2 + 3 * 60 * 60;
   const statusClass = value =&gt; &quot;asv-&quot; + value.toLowerCase();
-  const zoomLevels = [1, 1.25, 1.5, 2, 3, 4, 6, 8];
-  let zoomIndex = 1;
+  const zoomLevels = [1 / 3, .5, .75, 1, 1.25, 1.5, 2, 3, 4, 6, 8];
+  const defaultZoomIndex = zoomLevels.indexOf(1.25);
+  let zoomIndex = defaultZoomIndex;
   let layoutInlineTaskLabels = () =&gt; {};
 
   const currentTimePosition = currentTime / day * 100;
@@ -4456,7 +4640,48 @@ html&gt;body{padding:0}&lt;/style&gt;
     });
   });
 
-  const allRuns = [...runs, ...secondaryRuns];
+  const thirdNodeIp = &quot;10.56.118.136&quot;;
+  const thirdTaskCatalog = {
+    catalogSyncTrigger: [&quot;loadCatalogDelta&quot;, &quot;validateCatalogDelta&quot;, &quot;applyCatalogChanges&quot;],
+    relationRefreshTrigger: [&quot;rebuildRelationLinks&quot;, &quot;warmRelationCache&quot;],
+    archiveMaintenanceTrigger: [&quot;markArchiveCandidates&quot;, &quot;compactArchiveBatch&quot;, &quot;updateArchiveIndex&quot;]
+  };
+  // A small independent node: one track, with its own history and forecasts.
+  const thirdRunSpecs = [
+    { date: 0, hour: 0, minute: 45, name: &quot;catalogSyncTrigger&quot;, minutes: [28, 14, 48] },
+    { date: 0, hour: 9, minute: 40, name: &quot;archiveMaintenanceTrigger&quot;, minutes: [65, 50, 35] },
+    { date: 1, hour: 4, minute: 10, name: &quot;relationRefreshTrigger&quot;, minutes: [30, 45] },
+    { date: 1, hour: 15, minute: 10, name: &quot;catalogSyncTrigger&quot;, minutes: [35, 20, 60] },
+    { date: 2, hour: 1, minute: 45, name: &quot;catalogSyncTrigger&quot;, minutes: [35, 25, 50] },
+    { date: 2, hour: 8, minute: 20, name: &quot;catalogSyncTrigger&quot;, minutes: [25, 15, 65] },
+    { date: 2, hour: 13, minute: 30, name: &quot;archiveMaintenanceTrigger&quot;, minutes: [40, 50, 45], confidence: &quot;low&quot; }
+  ];
+  const thirdRuns = thirdRunSpecs.map((spec, index) =&gt; {
+    const start = spec.date * daySeconds + spec.hour * 3600 + spec.minute * 60;
+    let cursor = start;
+    const tasks = thirdTaskCatalog[spec.name].map((name, taskIndex) =&gt; {
+      const taskStart = cursor;
+      cursor += spec.minutes[taskIndex] * 60;
+      const status = cursor &lt;= currentTime ? &quot;FINISHED&quot; : taskStart &lt;= currentTime ? &quot;RUNNING&quot; : &quot;PREDICTED&quot;;
+      return {
+        id: 900001 + index * 10 + taskIndex,
+        trigger: spec.name,
+        task: name,
+        status,
+        start: taskStart,
+        end: cursor,
+        ...(status === &quot;PREDICTED&quot; ? { forecastConfidence: spec.confidence || &quot;high&quot; } : {})
+      };
+    });
+    return {
+      id: &quot;third-node-&quot; + (index + 1), name: spec.name, nodeIp: thirdNodeIp,
+      isTrigger: true, firstId: tasks[0].id, start, end: cursor, tasks,
+      status: cursor &lt;= currentTime ? &quot;FINISHED&quot; : start &lt;= currentTime ? &quot;RUNNING&quot; : &quot;PREDICTED&quot;,
+      displayLane: 0, lane: 0
+    };
+  });
+
+  const allRuns = [...runs, ...secondaryRuns, ...thirdRuns];
   const conflictTaskForRun = run =&gt; run.tasks.find(task =&gt; task.id === run.conflictTaskId) || run.tasks[0];
   const taskAtTime = (run, at) =&gt; run.tasks.find(task =&gt; task.start &lt;= at &amp;&amp; task.end &gt;= at) || run.tasks[0];
   const attachConflict = ({ id, at, date, participants, forecast = false }) =&gt; {
@@ -4551,7 +4776,6 @@ html&gt;body{padding:0}&lt;/style&gt;
     });
   }
 
-  const thirdRuns = [];
   const stickyDayLabels = [];
 
   const setZoom = nextIndex =&gt; {
@@ -4563,7 +4787,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     const zoom = zoomLevels[zoomIndex];
     overview.style.width = (timelineDays * zoom * 100) + &quot;%&quot;;
     zoomReset.textContent = Math.round(zoom * 100) + &quot;%&quot;;
-    zoomReset.setAttribute(&quot;aria-label&quot;, &quot;Текущий масштаб &quot; + Math.round(zoom * 100) + &quot; процентов. Вернуть масштаб 100 процентов&quot;);
+    zoomReset.setAttribute(&quot;aria-label&quot;, &quot;Текущий масштаб &quot; + Math.round(zoom * 100) + &quot; процентов. Сбросить масштаб до 125 процентов&quot;);
     zoomOut.disabled = zoomIndex === 0;
     zoomIn.disabled = zoomIndex === zoomLevels.length - 1;
     requestAnimationFrame(() =&gt; {
@@ -4585,7 +4809,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   });
   zoomReset.addEventListener(&quot;click&quot;, event =&gt; {
     event.stopPropagation();
-    setZoom(0);
+    setZoom(defaultZoomIndex);
   });
   setZoom(zoomIndex);
   requestAnimationFrame(() =&gt; {
@@ -5069,15 +5293,33 @@ html&gt;body{padding:0}&lt;/style&gt;
   timelineScroll.addEventListener(&quot;scroll&quot;, layoutDayLabels, { passive: true });
   requestAnimationFrame(layoutDayLabels);
 
-  for (let h = 0; h &lt;= timelineHours; h += 2) {
-    const tick = document.createElement(&quot;span&quot;);
-    tick.className = &quot;asv-tick text-small&quot;;
-    if (h === 0) tick.classList.add(&quot;is-first&quot;);
-    if (h === timelineHours) tick.classList.add(&quot;is-last&quot;);
-    tick.style.left = (h / timelineHours * 100) + &quot;%&quot;;
-    tick.textContent = String(h % 24).padStart(2, &quot;0&quot;) + &quot;:00&quot;;
-    axis.appendChild(tick);
-  }
+  let timeStepHours = 2;
+  const layoutTimeScaleLabels = () =&gt; {
+    const spacing = axis.clientWidth * timeStepHours / timelineHours;
+    const every = Math.max(1, Math.ceil(46 / Math.max(1, spacing)));
+    axis.querySelectorAll(&quot;.asv-tick&quot;).forEach((tick, index) =&gt; {
+      tick.hidden = index % every !== 0 &amp;&amp; !tick.classList.contains(&quot;is-last&quot;);
+    });
+  };
+  const renderTimeScale = hours =&gt; {
+    timeStepHours = hours;
+    axis.querySelectorAll(&quot;.asv-tick&quot;).forEach(tick =&gt; tick.remove());
+    const points = [];
+    for (let h = 0; h &lt;= timelineHours; h += hours) points.push(h);
+    if (points[points.length - 1] !== timelineHours) points.push(timelineHours);
+    points.forEach(h =&gt; {
+      const tick = document.createElement(&quot;span&quot;);
+      tick.className = &quot;asv-tick text-small&quot;;
+      if (h === 0) tick.classList.add(&quot;is-first&quot;);
+      if (h === timelineHours) tick.classList.add(&quot;is-last&quot;);
+      tick.style.left = (h / timelineHours * 100) + &quot;%&quot;;
+      tick.textContent = String(Math.floor(h) % 24).padStart(2, &quot;0&quot;) + &quot;:&quot; + (h % 1 ? &quot;30&quot; : &quot;00&quot;);
+      axis.appendChild(tick);
+    });
+    root.querySelector(&quot;.asv-grid&quot;).style.backgroundSize = (hours / timelineHours * 100) + &quot;% 100%&quot;;
+    layoutTimeScaleLabels();
+  };
+  renderTimeScale(2);
 
   const packFrequentRuns = list =&gt; {
     list.forEach(run =&gt; { run.frequentTrack = 0; });
@@ -5302,6 +5544,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   queueControl.style.top = queueTop + &quot;px&quot;;
   lanesHost.appendChild(queueLane);
 
+  const queueTaskGap = 4;
   const queueTaskButtons = [];
   queueTasks.forEach((sourceTask, index) =&gt; {
     const task = { ...sourceTask, trigger: null, isQueueTask: true };
@@ -5319,18 +5562,11 @@ html&gt;body{padding:0}&lt;/style&gt;
     const visualTask = queueDisplay.tasks.find(item =&gt; item.id === task.id);
     runDisplays.set(queueRun, { ...queueRun, start: visualTask.start, end: visualTask.end, tasks: [visualTask] });
     const item = document.createElement(&quot;button&quot;);
-    const left = Math.max(0, visualTask.start / day * 100);
-    const unknownDuration = forecastLevelForTask(task, queueRun) === &quot;question&quot;;
-    const width = unknownDuration
-      ? unknownForecastSeconds / day * 100
-      : Math.max(2.8, (visualTask.end - visualTask.start) / day * 100);
     const currentTask = task.start &lt;= currentTime &amp;&amp; task.end &gt; currentTime;
     item.type = &quot;button&quot;;
     const queueForecastLevel = task.status === &quot;PREDICTED&quot; &amp;&amp; task.start &gt;= currentTime ? taskForecastConfidence(task) : null;
     item.className = &quot;asv-queue-task &quot; + statusClass(task.status) + (task.end &lt;= currentTime ? &quot; is-completed&quot; : &quot;&quot;) + (currentTask ? &quot; is-current&quot; : &quot;&quot;) + (queueForecastLevel ? &quot; is-forecast-&quot; + queueForecastLevel : &quot;&quot;);
     if (task.end &lt;= currentTime &amp;&amp; !task.isConflictTask) item.classList.add(&quot;is-past&quot;);
-    item.style.left = left + &quot;%&quot;;
-    item.style.width = unknownDuration ? width + &quot;%&quot; : &quot;calc(&quot; + width + &quot;% - 4px)&quot;;
     item.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
     item.setAttribute(&quot;aria-label&quot;, (index + 1) + &quot; из &quot; + queueTasks.length + &quot;. &quot; + task.task + &quot;, &quot; + taskDurationText(task, queueRun));
     appendInlineTaskName(item, task);
@@ -5351,11 +5587,26 @@ html&gt;body{padding:0}&lt;/style&gt;
     queueLane.appendChild(item);
   });
 
+  const layoutQueueTasks = () =&gt; {
+    const scale = queueLane.clientWidth / day;
+    if (!scale) return;
+    let left = Math.max(0, queueDisplay.tasks[0].start * scale);
+    queueTaskButtons.forEach((button, index) =&gt; {
+      const task = queueDisplay.tasks[index];
+      const width = Math.max(5, Math.max(0, task.end - task.start) * scale - queueTaskGap);
+      button.style.left = left + &quot;px&quot;;
+      button.style.width = width + &quot;px&quot;;
+      // Use the same gap for every pair, including minimum-width tasks.
+      left += width + queueTaskGap;
+    });
+  };
+  layoutQueueTasks();
+
   const queueRemainingSeconds = Math.max(0, queueTasks[queueTasks.length - 1].end - currentTime);
   queueCount.textContent = taskCountLabel(queueTasks.length);
   const queueForecastLevel = runForecastLevel(queueDisplayRun);
   const queueRemainingText = queueForecastLevel === &quot;question&quot;
-    ? &quot;Время очереди неизвестно&quot;
+    ? &quot;Время: неизвестно&quot;
     : &quot;Осталось &quot; + (queueForecastLevel === &quot;low&quot; ? &quot;≈ &quot; : &quot;&quot;) + formatDuration(queueRemainingSeconds);
   queueRemaining.textContent = queueRemainingText;
 
@@ -5378,7 +5629,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   const secondaryTop = expandedPrimaryHeight;
   const secondaryTopInset = 12;
   const secondaryLaneHeight = 86;
-  const secondaryBottomInset = 120;
+  const secondaryBottomInset = 32;
   const secondaryDisplayLanes = new Map();
   const secondaryDisplayEnds = [];
   secondaryRuns.filter(run =&gt; !run.isFrequent).slice().sort((a, b) =&gt; a.start - b.start || a.firstId - b.firstId).forEach(run =&gt; {
@@ -5392,8 +5643,8 @@ html&gt;body{padding:0}&lt;/style&gt;
   });
   const secondaryRegularLaneCount = Math.max(1, ...Array.from(secondaryDisplayLanes.values(), lane =&gt; lane + 1));
   const secondaryLaneCount = secondaryRegularLaneCount + 1;
-  // Caption rows consume the empty bottom track before changing node height.
-  // Keep any expanded budget when scrolling back to a less crowded viewport.
+  // Keep a small cushion inside the last active track for caption cascades.
+  // Preserve an expanded height when scrolling back to sparse content.
   let secondaryRegularHeightBudget = secondaryLaneHeight * secondaryRegularLaneCount + secondaryBottomInset;
   const expandedSecondaryHeight = secondaryTopInset + secondaryFrequentHeight + secondaryLaneHeight * secondaryRegularLaneCount + secondaryBottomInset;
   const timelineHeight = secondaryTop + expandedSecondaryHeight;
@@ -5410,12 +5661,6 @@ html&gt;body{padding:0}&lt;/style&gt;
     lanesHost.appendChild(lane);
     return lane;
   });
-  const secondaryReserveLane = document.createElement(&quot;div&quot;);
-  secondaryReserveLane.className = &quot;asv-lane is-secondary-lane is-reserve-lane&quot;;
-  secondaryReserveLane.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
-  secondaryReserveLane.style.top = (secondaryTop + expandedSecondaryHeight - secondaryBottomInset) + &quot;px&quot;;
-  secondaryReserveLane.style.height = secondaryBottomInset + &quot;px&quot;;
-  lanesHost.appendChild(secondaryReserveLane);
   secondaryRuns.forEach(run =&gt; {
     run.displayLane = run.isFrequent ? 0 : secondaryDisplayLanes.get(run.id) + 1;
   });
@@ -5428,9 +5673,22 @@ html&gt;body{padding:0}&lt;/style&gt;
     });
   });
 
-  secondaryRuns.forEach(run =&gt; {
+  const thirdTopInset = 12;
+  const thirdBottomInset = 28;
+  let thirdRegularHeightBudget = 86 + thirdBottomInset;
+  const thirdLane = document.createElement(&quot;div&quot;);
+  thirdLane.className = &quot;asv-lane is-third-lane&quot;;
+  thirdLane.setAttribute(&quot;aria-label&quot;, &quot;Триггеры ноды &quot; + thirdNodeIp);
+  lanesHost.appendChild(thirdLane);
+  const thirdNextStart = new Map();
+  thirdRuns.forEach((run, index) =&gt; {
+    thirdNextStart.set(run.id, thirdRuns[index + 1]?.start ?? day);
+  });
+
+  [...secondaryRuns, ...thirdRuns].forEach(run =&gt; {
     run.lane = run.displayLane;
-    const lane = secondaryLanes[run.displayLane];
+    const thirdNodeRun = run.nodeIp === thirdNodeIp;
+    const lane = thirdNodeRun ? thirdLane : secondaryLanes[run.displayLane];
     const button = document.createElement(&quot;button&quot;);
     const visualRun = getRunDisplay(run);
     const span = Math.max(visualRun.end - visualRun.start, 0);
@@ -5440,7 +5698,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     const compactTrigger = run.isTrigger &amp;&amp; span / day * lane.clientWidth &lt; 16;
     const pointStandalone = !run.isTrigger &amp;&amp; actualDuration &lt; 60;
     button.type = &quot;button&quot;;
-    button.className = &quot;asv-run is-secondary-node-run &quot; + (run.isTrigger ? &quot;is-trigger&quot; : &quot;is-standalone&quot;) + (compactTrigger ? &quot; is-compact-trigger&quot; : &quot;&quot;) + (pointStandalone ? &quot; is-point-run&quot; : &quot;&quot;) + (run.conflictId ? &quot; is-conflict-demo&quot; : &quot;&quot;) + (runForecastLevel(run) === &quot;question&quot; ? &quot; has-unknown-duration&quot; : &quot;&quot;);
+    button.className = &quot;asv-run &quot; + (thirdNodeRun ? &quot;is-third-node-run &quot; : &quot;is-secondary-node-run &quot;) + (run.isTrigger ? &quot;is-trigger&quot; : &quot;is-standalone&quot;) + (compactTrigger ? &quot; is-compact-trigger&quot; : &quot;&quot;) + (pointStandalone ? &quot; is-point-run&quot; : &quot;&quot;) + (run.conflictId ? &quot; is-conflict-demo&quot; : &quot;&quot;) + (runForecastLevel(run) === &quot;question&quot; ? &quot; has-unknown-duration&quot; : &quot;&quot;);
     button.style.left = leftPct + &quot;%&quot;;
     button.style.width = widthPct + &quot;%&quot;;
     button.style.setProperty(&quot;--asv-run-width&quot;, widthPct + &quot;%&quot;);
@@ -5448,7 +5706,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     button.setAttribute(&quot;aria-pressed&quot;, &quot;false&quot;);
     const conflictTask = run.conflictId ? conflictTaskForRun(run) : null;
     const conflictTaskDescription = conflictTask ? &quot;, конфликтующая задача: &quot; + conflictTask.task : &quot;&quot;;
-    button.setAttribute(&quot;aria-label&quot;, (run.isTrigger ? &quot;Триггер: &quot; : &quot;Отдельная задача: &quot;) + run.name + conflictTaskDescription + &quot;, нода 10.42.108.136, длительность &quot; + runDurationText(run));
+    button.setAttribute(&quot;aria-label&quot;, (run.isTrigger ? &quot;Триггер: &quot; : &quot;Отдельная задача: &quot;) + run.name + conflictTaskDescription + &quot;, нода &quot; + run.nodeIp + &quot;, длительность &quot; + runDurationText(run));
     if (run.isTrigger) {
       const caption = document.createElement(&quot;span&quot;);
       caption.className = &quot;asv-trigger-caption text-small&quot;;
@@ -5459,7 +5717,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       captionStem.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
       button.appendChild(captionStem);
       button.appendChild(caption);
-      triggerCaptions.push({ caption, run, nextStart: secondaryNextStart.get(run.id) });
+      triggerCaptions.push({ caption, run, nextStart: (thirdNodeRun ? thirdNextStart : secondaryNextStart).get(run.id) });
     } else bindStandaloneTaskTooltip(button, run);
 
     const segments = document.createElement(&quot;span&quot;);
@@ -5916,6 +6174,8 @@ html&gt;body{padding:0}&lt;/style&gt;
 
 
   layoutInlineTaskLabels = () =&gt; {
+    layoutQueueTasks();
+    layoutTimeScaleLabels();
     frequentBars.forEach(({ mark, lane, run }) =&gt; {
       mark.style.setProperty(&quot;--asv-frequency-duration&quot;, ((getRunDisplay(run).end - getRunDisplay(run).start) / day * lane.clientWidth) + &quot;px&quot;);
     });
@@ -5973,6 +6233,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   requestAnimationFrame(layoutInlineTaskLabels);
   window.addEventListener(&quot;resize&quot;, () =&gt; requestAnimationFrame(layoutInlineTaskLabels), { passive: true });
 
+  const conflictNavigationTargets = new Map();
   const conflictGroups = new Map();
   allRuns.filter(run =&gt; run.conflictId).forEach(run =&gt; {
     if (!conflictGroups.has(run.conflictId)) {
@@ -6084,6 +6345,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         frequentGroups.get(run.id)?.classList.toggle(&quot;is-conflict-hovered&quot;, highlighted);
       });
     };
+    conflictNavigationTargets.set(conflict.id, { conflict, bolt, setHighlight });
     frequentConflictActions.set(conflict.id, { conflict, setHighlight });
     (frequentConflictBolts.get(conflict.id) || []).forEach(localBolt =&gt; {
       localBolt.addEventListener(&quot;mouseenter&quot;, () =&gt; setHighlight(true));
@@ -6206,15 +6468,18 @@ html&gt;body{padding:0}&lt;/style&gt;
   const collapsedNodeHeight = 50;
   const nodePanels = {
     primary: root.querySelector(&quot;.is-primary-node&quot;),
-    secondary: root.querySelector(&quot;.is-secondary-node&quot;)
+    secondary: root.querySelector(&quot;.is-secondary-node&quot;),
+    third: root.querySelector(&quot;.is-third-node&quot;)
   };
   const collapsedZones = {
     primary: root.querySelector(&quot;[data-collapsed-zone=&#x27;primary&#x27;]&quot;),
-    secondary: root.querySelector(&quot;[data-collapsed-zone=&#x27;secondary&#x27;]&quot;)
+    secondary: root.querySelector(&quot;[data-collapsed-zone=&#x27;secondary&#x27;]&quot;),
+    third: root.querySelector(&quot;[data-collapsed-zone=&#x27;third&#x27;]&quot;)
   };
   const secondaryNodeBoundary = root.querySelector(&quot;[data-node-boundary=&#x27;secondary&#x27;]&quot;);
-  const nodeCollapseState = { primary: false, secondary: false };
-  const nodeIps = { primary: &quot;10.28.98.136&quot;, secondary: &quot;10.42.108.136&quot; };
+  const thirdNodeBoundary = root.querySelector(&quot;[data-node-boundary=&#x27;third&#x27;]&quot;);
+  const nodeCollapseState = { primary: false, secondary: false, third: false };
+  const nodeIps = { primary: &quot;10.28.98.136&quot;, secondary: &quot;10.42.108.136&quot;, third: thirdNodeIp };
 
   const updateNodeLayout = () =&gt; {
     const visiblePrimaryFrequentHeight = frequentLayerVisible ? frequentLaneHeight : 0;
@@ -6224,16 +6489,22 @@ html&gt;body{padding:0}&lt;/style&gt;
     const secondaryRegularHeight = secondaryLanes.slice(1).reduce((sum, lane) =&gt; sum + laneHeight(lane), 0);
     const visibleQueueTop = 54 + visiblePrimaryFrequentHeight + primaryRegularHeight;
     const visibleExpandedPrimaryHeight = visibleQueueTop + 66;
-    if (secondaryRegularHeight + 24 &gt; secondaryRegularHeightBudget) {
-      secondaryRegularHeightBudget = Math.ceil((secondaryRegularHeight + secondaryBottomInset) / 48) * 48;
+    if (secondaryRegularHeight &gt; secondaryRegularHeightBudget) {
+      secondaryRegularHeightBudget = Math.ceil((secondaryRegularHeight + secondaryBottomInset) / 24) * 24;
     }
-    const secondaryReserveHeight = secondaryRegularHeightBudget - secondaryRegularHeight;
+    const secondaryPaddingHeight = secondaryRegularHeightBudget - secondaryRegularHeight;
     const visibleExpandedSecondaryHeight = secondaryTopInset + visibleSecondaryFrequentHeight + secondaryRegularHeightBudget;
     const primaryHeight = nodeCollapseState.primary ? collapsedNodeHeight : visibleExpandedPrimaryHeight;
     const secondaryHeight = nodeCollapseState.secondary ? collapsedNodeHeight : visibleExpandedSecondaryHeight;
+    const thirdRegularHeight = laneHeight(thirdLane);
+    if (thirdRegularHeight + 12 &gt; thirdRegularHeightBudget) {
+      thirdRegularHeightBudget = Math.ceil((thirdRegularHeight + thirdBottomInset) / 24) * 24;
+    }
+    const thirdHeight = nodeCollapseState.third ? collapsedNodeHeight : thirdTopInset + thirdRegularHeightBudget;
     root.style.setProperty(&quot;--asv-primary-node-height&quot;, primaryHeight + &quot;px&quot;);
     root.style.setProperty(&quot;--asv-secondary-node-height&quot;, secondaryHeight + &quot;px&quot;);
-    root.style.setProperty(&quot;--asv-timeline-height&quot;, (primaryHeight + secondaryHeight) + &quot;px&quot;);
+    root.style.setProperty(&quot;--asv-third-node-height&quot;, thirdHeight + &quot;px&quot;);
+    root.style.setProperty(&quot;--asv-timeline-height&quot;, (primaryHeight + secondaryHeight + thirdHeight) + &quot;px&quot;);
 
     let primaryTop = 54 + visiblePrimaryFrequentHeight;
     primaryLanes.forEach((lane, index) =&gt; {
@@ -6254,14 +6525,16 @@ html&gt;body{padding:0}&lt;/style&gt;
       if (index === 0) lane.style.top = (primaryHeight + secondaryTopInset) + &quot;px&quot;;
       else {
         lane.style.top = secondaryTop + &quot;px&quot;;
-        lane.style.height = laneHeight(lane) + &quot;px&quot;;
+        const bottomPadding = index === secondaryLanes.length - 1 ? secondaryPaddingHeight : 0;
+        lane.style.height = (laneHeight(lane) + bottomPadding) + &quot;px&quot;;
         secondaryTop += laneHeight(lane);
       }
     });
-    secondaryReserveLane.hidden = nodeCollapseState.secondary;
-    secondaryReserveLane.style.top = secondaryTop + &quot;px&quot;;
-    secondaryReserveLane.style.height = secondaryReserveHeight + &quot;px&quot;;
     secondaryNodeBoundary.style.top = primaryHeight + &quot;px&quot;;
+    thirdNodeBoundary.style.top = (primaryHeight + secondaryHeight) + &quot;px&quot;;
+    thirdLane.hidden = nodeCollapseState.third;
+    thirdLane.style.top = (primaryHeight + secondaryHeight + thirdTopInset) + &quot;px&quot;;
+    thirdLane.style.height = thirdRegularHeight + &quot;px&quot;;
 
     collapsedZones.primary.hidden = !nodeCollapseState.primary;
     collapsedZones.primary.style.top = &quot;42px&quot;;
@@ -6269,6 +6542,9 @@ html&gt;body{padding:0}&lt;/style&gt;
     collapsedZones.secondary.hidden = !nodeCollapseState.secondary;
     collapsedZones.secondary.style.top = primaryHeight + &quot;px&quot;;
     collapsedZones.secondary.style.height = secondaryHeight + &quot;px&quot;;
+    collapsedZones.third.hidden = !nodeCollapseState.third;
+    collapsedZones.third.style.top = (primaryHeight + secondaryHeight) + &quot;px&quot;;
+    collapsedZones.third.style.height = thirdHeight + &quot;px&quot;;
 
     Object.entries(nodePanels).forEach(([key, panel]) =&gt; {
       const collapsed = nodeCollapseState[key];
@@ -6276,6 +6552,8 @@ html&gt;body{padding:0}&lt;/style&gt;
       panel.classList.toggle(&quot;is-collapsed&quot;, collapsed);
       toggle.setAttribute(&quot;aria-expanded&quot;, String(!collapsed));
       toggle.setAttribute(&quot;aria-label&quot;, (collapsed ? &quot;Развернуть ноду &quot; : &quot;Свернуть ноду &quot;) + nodeIps[key]);
+      const heading = panel.querySelector(collapsed ? &quot;.asv-node-collapsed-summary&quot; : key === &quot;primary&quot; ? &quot;.asv-node-tag&quot; : &quot;.asv-node-ip&quot;);
+      toggle.style.top = (heading.offsetTop + (heading.offsetHeight - toggle.offsetHeight) / 2) + &quot;px&quot;;
     });
     requestAnimationFrame(() =&gt; {
       layoutConflictLines();
@@ -6338,6 +6616,12 @@ html&gt;body{padding:0}&lt;/style&gt;
     const box = caption.getBoundingClientRect();
     const left = Math.max(leftEdge, Math.min(box.left, rightEdge - box.width));
     caption.style.setProperty(&quot;--asv-caption-hover-shift&quot;, (left - box.left) + &quot;px&quot;);
+    // Keep the connector under the visible caption and inside its own task bar,
+    // even when scrolling or the sidebar moves the caption away from run start.
+    const button = caption.parentElement;
+    const runBox = button.getBoundingClientRect();
+    const stemLeft = Math.max(0, Math.min(Math.max(0, runBox.width - 1), left - runBox.left + 2));
+    button.style.setProperty(&quot;--asv-caption-stem-left&quot;, stemLeft + &quot;px&quot;);
   };
   // Horizontal intersections determine the cascade. Earlier launches are
   // above later launches. A 2px overlap stays within the border and padding,
@@ -6375,7 +6659,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       lanes.get(lane).push({ caption, button, left: rect.left, width: rect.width, height: rect.height, start: run.start, order: run.firstId });
     });
     let spaceChanged = false;
-    [...primaryLanes.slice(1), ...secondaryLanes.slice(1)].forEach(lane =&gt; {
+    [...primaryLanes.slice(1), ...secondaryLanes.slice(1), thirdLane].forEach(lane =&gt; {
       const placed = packTriggerCaptions(lanes.get(lane) || []);
       let stackHeight = 0;
       placed.forEach(entry =&gt; {
@@ -6588,6 +6872,439 @@ html&gt;body{padding:0}&lt;/style&gt;
       pair.row.addEventListener(&quot;click&quot;, () =&gt; selectLinkedTask(taskId, false));
     });
   }
+
+  // Timeline controls use the dates and conflicts present in this demo.
+  const toolbar = root.querySelector(&#x27;.asv-control-bar&#x27;);
+  const datePrev = toolbar.querySelector(&#x27;[data-date-prev]&#x27;);
+  const dateNext = toolbar.querySelector(&#x27;[data-date-next]&#x27;);
+  const dateLabel = toolbar.querySelector(&#x27;[data-date-label]&#x27;);
+  const dateValue = dateLabel.querySelector(&#x27;[data-date-value]&#x27;);
+  const calendarPopup = toolbar.querySelector(&#x27;#asv-calendar-popup&#x27;);
+  const calendarGrid = toolbar.querySelector(&#x27;[data-calendar-grid]&#x27;);
+  const calendarSelection = toolbar.querySelector(&#x27;[data-calendar-selection]&#x27;);
+  const calendarApply = toolbar.querySelector(&#x27;[data-calendar-apply]&#x27;);
+  const calendarReset = toolbar.querySelector(&#x27;[data-calendar-reset]&#x27;);
+  const calendarCancel = toolbar.querySelector(&#x27;[data-calendar-cancel]&#x27;);
+  const calendarModes = [...toolbar.querySelectorAll(&#x27;[data-calendar-mode]&#x27;)];
+  const stepSelect = toolbar.querySelector(&#x27;[data-time-step]&#x27;);
+  const upcomingToggle = toolbar.querySelector(&#x27;[data-upcoming-toggle]&#x27;);
+  const upcomingPopup = toolbar.querySelector(&#x27;#asv-upcoming-popup&#x27;);
+  const upcomingList = toolbar.querySelector(&#x27;[data-upcoming-list]&#x27;);
+  const upcomingConflicts = [...conflictGroups.values()].filter(conflict =&gt; conflict.at &gt;= currentTime).sort((a, b) =&gt; a.at - b.at);
+  toolbar.querySelector(&#x27;[data-upcoming-count]&#x27;).textContent = upcomingConflicts.length;
+  upcomingToggle.setAttribute(&#x27;aria-label&#x27;, &#x27;Предстоящие конфликты: &#x27; + upcomingConflicts.length);
+  const defaultDateIndex = Math.floor(currentTime / daySeconds);
+  let selectedDates = [defaultDateIndex, defaultDateIndex];
+  let calendarMode = &#x27;single&#x27;;
+  let draftStart = defaultDateIndex;
+  let draftEnd = defaultDateIndex;
+  let openToolbarPopup = null;
+  let toolbarPopupTrigger = null;
+
+  const datePeriodText = (start, end) =&gt; start === end
+    ? (16 + start) + &#x27; сен 2026&#x27;
+    : (16 + start) + &#x27;–&#x27; + (16 + end) + &#x27; сен 2026&#x27;;
+  const renderDateControls = () =&gt; {
+    dateValue.textContent = datePeriodText(...selectedDates);
+    datePrev.disabled = selectedDates[0] === 0;
+    dateNext.disabled = selectedDates[1] === 2;
+    dateLabel.setAttribute(&#x27;aria-label&#x27;, &#x27;Выбран период: &#x27; + dateValue.textContent + &#x27;. Открыть календарь&#x27;);
+  };
+  const positionToolbarPopup = () =&gt; {
+    if (!openToolbarPopup || !toolbarPopupTrigger) return;
+    const anchor = toolbarPopupTrigger.getBoundingClientRect();
+    const box = openToolbarPopup.getBoundingClientRect();
+    const preferredLeft = openToolbarPopup === upcomingPopup ? anchor.right - box.width : anchor.left;
+    openToolbarPopup.style.left = Math.max(12, Math.min(preferredLeft, window.innerWidth - box.width - 12)) + &#x27;px&#x27;;
+    openToolbarPopup.style.top = Math.max(12, Math.min(anchor.bottom + 8, window.innerHeight - box.height - 12)) + &#x27;px&#x27;;
+  };
+  const closeToolbarPopups = (restoreFocus = false) =&gt; {
+    const trigger = toolbarPopupTrigger;
+    calendarPopup.hidden = true;
+    upcomingPopup.hidden = true;
+    [dateLabel, upcomingToggle].forEach(button =&gt; button.setAttribute(&#x27;aria-expanded&#x27;, &#x27;false&#x27;));
+    openToolbarPopup = null;
+    toolbarPopupTrigger = null;
+    if (restoreFocus &amp;&amp; trigger) trigger.focus({ preventScroll: true });
+  };
+  const openToolbarPanel = (popup, trigger) =&gt; {
+    if (openToolbarPopup === popup) { closeToolbarPopups(true); return; }
+    closeToolbarPopups();
+    closeConflict(false);
+    closeFrequentOverlapPopover(false);
+    popup.hidden = false;
+    openToolbarPopup = popup;
+    toolbarPopupTrigger = trigger;
+    trigger.setAttribute(&#x27;aria-expanded&#x27;, &#x27;true&#x27;);
+    if (popup === calendarPopup) {
+      dateLabel.setAttribute(&#x27;aria-expanded&#x27;, &#x27;true&#x27;);
+    }
+    positionToolbarPopup();
+    const first = popup.querySelector(&#x27;button:not(:disabled)&#x27;);
+    first?.focus({ preventScroll: true });
+  };
+  const fitDateWindow = () =&gt; {
+    closeConflict(false);
+    const start = selectedDates[0] * daySeconds;
+    const end = Math.min(day, (selectedDates[1] + 1) * daySeconds);
+    const span = end - start;
+    const width = timelineScroll.clientWidth * day / span + 22;
+    const zoom = width / Math.max(1, timelineScroll.clientWidth) / timelineDays;
+    overview.style.width = width + &#x27;px&#x27;;
+    zoomIndex = zoomLevels.reduce((best, value, index) =&gt; Math.abs(value - zoom) &lt; Math.abs(zoomLevels[best] - zoom) ? index : best, 0);
+    zoomReset.textContent = Math.round(zoom * 100) + &#x27;%&#x27;;
+    zoomReset.setAttribute(&#x27;aria-label&#x27;, &#x27;Текущий масштаб &#x27; + Math.round(zoom * 100) + &#x27; процентов. Сбросить масштаб до 125 процентов&#x27;);
+    zoomOut.disabled = zoom &lt;= zoomLevels[0];
+    zoomIn.disabled = zoom &gt;= zoomLevels[zoomLevels.length - 1];
+    renderDateControls();
+    requestAnimationFrame(() =&gt; {
+      timelineScroll.scrollLeft = start / day * axis.clientWidth;
+      layoutDayLabels();
+      layoutInlineTaskLabels();
+      layoutTriggerCaptions();
+      layoutConflictLines();
+    });
+  };
+  const shiftDateWindow = direction =&gt; {
+    const start = selectedDates[0] + direction;
+    const end = selectedDates[1] + direction;
+    if (start &lt; 0 || end &gt; 2) return;
+    selectedDates = [start, end];
+    closeToolbarPopups();
+    fitDateWindow();
+  };
+  datePrev.addEventListener(&#x27;click&#x27;, () =&gt; shiftDateWindow(-1));
+  dateNext.addEventListener(&#x27;click&#x27;, () =&gt; shiftDateWindow(1));
+
+  const renderCalendar = () =&gt; {
+    calendarGrid.replaceChildren();
+    calendarModes.forEach(button =&gt; button.setAttribute(&#x27;aria-pressed&#x27;, String(button.dataset.calendarMode === calendarMode)));
+    const monthOffset = (new Date(Date.UTC(2026, 8, 1)).getUTCDay() + 6) % 7;
+    for (let cell = 0; cell &lt; 35; cell++) {
+      const date = cell - monthOffset + 1;
+      const button = document.createElement(&#x27;button&#x27;);
+      button.type = &#x27;button&#x27;;
+      button.className = &#x27;asv-calendar-day&#x27;;
+      button.textContent = date &gt;= 1 &amp;&amp; date &lt;= 30 ? String(date) : &#x27;&#x27;;
+      const index = date - 16;
+      button.disabled = index &lt; 0 || index &gt; 2;
+      button.setAttribute(&#x27;aria-label&#x27;, date &gt;= 1 &amp;&amp; date &lt;= 30 ? date + &#x27; сентября 2026&#x27; : &#x27;Нет даты&#x27;);
+      if (!button.disabled) {
+        button.dataset.dateIndex = index;
+        const endpoint = index === draftStart || index === draftEnd;
+        button.setAttribute(&#x27;aria-pressed&#x27;, String(endpoint));
+        button.classList.toggle(&#x27;is-in-range&#x27;, draftEnd !== null &amp;&amp; index &gt; draftStart &amp;&amp; index &lt; draftEnd);
+        if (index === defaultDateIndex) button.setAttribute(&#x27;aria-current&#x27;, &#x27;date&#x27;);
+        button.classList.toggle(&#x27;has-upcoming-conflicts&#x27;, upcomingConflicts.some(conflict =&gt; Math.floor(conflict.at / daySeconds) === index));
+        button.addEventListener(&#x27;click&#x27;, () =&gt; {
+          if (calendarMode === &#x27;single&#x27;) draftStart = draftEnd = index;
+          else if (draftStart === null || draftEnd !== null) { draftStart = index; draftEnd = null; }
+          else { draftEnd = Math.max(draftStart, index); draftStart = Math.min(draftStart, index); }
+          renderCalendar();
+          calendarGrid.querySelector(&#x27;[data-date-index=&quot;&#x27; + index + &#x27;&quot;]&#x27;)?.focus({ preventScroll: true });
+        });
+      }
+      calendarGrid.appendChild(button);
+    }
+    calendarApply.disabled = draftEnd === null;
+    const hasNonDefaultDate = [...selectedDates, draftStart, draftEnd].some(index =&gt; index !== null &amp;&amp; index !== defaultDateIndex);
+    calendarReset.hidden = !hasNonDefaultDate;
+    calendarCancel.hidden = hasNonDefaultDate;
+    calendarSelection.textContent = draftStart === null ? &#x27;Выберите начало диапазона.&#x27; : draftEnd === null
+      ? &#x27;Начало: &#x27; + datePeriodText(draftStart, draftStart) + &#x27;. Выберите конец диапазона.&#x27;
+      : datePeriodText(draftStart, draftEnd) + (draftStart === draftEnd ? &#x27; · один день&#x27; : &#x27; · &#x27; + (draftEnd - draftStart + 1) + &#x27; дня&#x27;);
+  };
+  const openCalendar = trigger =&gt; {
+    if (openToolbarPopup !== calendarPopup) {
+      [draftStart, draftEnd] = selectedDates;
+      calendarMode = draftStart === draftEnd ? &#x27;single&#x27; : &#x27;range&#x27;;
+      renderCalendar();
+    }
+    openToolbarPanel(calendarPopup, trigger);
+  };
+  dateLabel.addEventListener(&#x27;click&#x27;, () =&gt; openCalendar(dateLabel));
+  calendarModes.forEach(button =&gt; button.addEventListener(&#x27;click&#x27;, () =&gt; {
+    calendarMode = button.dataset.calendarMode;
+    if (calendarMode === &#x27;single&#x27;) {
+      draftStart = draftStart ?? selectedDates[0];
+      draftEnd = draftStart;
+    } else draftStart = draftEnd = null;
+    renderCalendar();
+  }));
+  calendarApply.addEventListener(&#x27;click&#x27;, () =&gt; {
+    if (draftEnd === null) return;
+    selectedDates = [draftStart, draftEnd];
+    closeToolbarPopups(true);
+    fitDateWindow();
+  });
+  calendarCancel.addEventListener(&#x27;click&#x27;, () =&gt; closeToolbarPopups(true));
+  calendarReset.addEventListener(&#x27;click&#x27;, () =&gt; {
+    selectedDates = [defaultDateIndex, defaultDateIndex];
+    draftStart = draftEnd = defaultDateIndex;
+    calendarMode = &#x27;single&#x27;;
+    renderCalendar();
+    renderDateControls();
+    closeToolbarPopups(true);
+    closeConflict(false);
+    setZoom(defaultZoomIndex);
+    requestAnimationFrame(() =&gt; {
+      timelineScroll.scrollLeft = defaultDateIndex * daySeconds / day * axis.clientWidth;
+      layoutDayLabels();
+      layoutInlineTaskLabels();
+      layoutTriggerCaptions();
+      layoutConflictLines();
+    });
+  });
+  stepSelect.addEventListener(&#x27;change&#x27;, () =&gt; {
+    const hours = Number(stepSelect.value);
+    if (![.5, 1, 2, 4, 6, 12].includes(hours)) return;
+    renderTimeScale(hours);
+    const targetZoom = 2.5 / hours;
+    const nearest = zoomLevels.reduce((best, value, index) =&gt; Math.abs(value - targetZoom) &lt; Math.abs(zoomLevels[best] - targetZoom) ? index : best, 0);
+    setZoom(nearest);
+  });
+
+  const activateUpcomingConflict = conflict =&gt; {
+    const target = conflictNavigationTargets.get(conflict.id);
+    if (!target) return;
+    closeToolbarPopups();
+    closeDetail(false);
+    clearFrequentListSelection();
+    if (conflict.hasFrequentParticipant &amp;&amp; !frequentLayerVisible) setFrequentLayerVisibility(true);
+    conflict.runs.forEach(run =&gt; {
+      const key = run.nodeIp === nodeIps.primary ? &#x27;primary&#x27; : &#x27;secondary&#x27;;
+      nodeCollapseState[key] = false;
+    });
+    updateNodeLayout();
+    selectedDates = [Math.floor(conflict.at / daySeconds), Math.floor(conflict.at / daySeconds)];
+    renderDateControls();
+    requestAnimationFrame(() =&gt; {
+      timelineScroll.scrollLeft = Math.max(0, conflict.at / day * axis.clientWidth - timelineScroll.clientWidth * .3);
+      layoutTriggerCaptions();
+      layoutConflictLines();
+      openConflict(conflict, target.bolt, target.setHighlight);
+      target.bolt.focus({ preventScroll: true });
+      target.bolt.scrollIntoView({ block: &#x27;nearest&#x27;, inline: &#x27;nearest&#x27; });
+    });
+  };
+  const renderUpcomingConflicts = () =&gt; {
+    upcomingList.replaceChildren();
+    upcomingConflicts.forEach(conflict =&gt; {
+      const button = document.createElement(&#x27;button&#x27;);
+      button.type = &#x27;button&#x27;;
+      button.className = &#x27;asv-conflict-preview&#x27;;
+      button.dataset.conflictId = conflict.id;
+      const head = document.createElement(&#x27;span&#x27;);
+      head.className = &#x27;asv-conflict-preview-head&#x27;;
+      const time = document.createElement(&#x27;span&#x27;);
+      time.className = &#x27;asv-conflict-preview-time&#x27;;
+      time.textContent = (16 + Math.floor(conflict.at / daySeconds)) + &#x27; сен 2026 · &#x27; + formatClockShort(conflict.at);
+      head.appendChild(time);
+      const reason = document.createElement(&#x27;span&#x27;);
+      reason.className = &#x27;asv-conflict-preview-reason&#x27;;
+      reason.textContent = &#x27;Параллельная работа конфликтующих задач&#x27;;
+      const tasks = document.createElement(&#x27;span&#x27;);
+      tasks.className = &#x27;asv-conflict-preview-tasks&#x27;;
+      const isRisk = run =&gt; run.conflictRole === &#x27;cause&#x27; || run.conflictOutcome === &#x27;error&#x27; || run.conflictOutcome === &#x27;predicted-error&#x27;;
+      const descriptions = [];
+      [...conflict.runs].sort((a, b) =&gt; Number(isRisk(a)) - Number(isRisk(b)) || (a.conflictOrder || 0) - (b.conflictOrder || 0)).forEach(run =&gt; {
+        const task = conflictTaskForRun(run);
+        const risk = isRisk(run);
+        const section = document.createElement(&#x27;span&#x27;);
+        section.className = &#x27;asv-conflict-preview-task &#x27; + (risk ? &#x27;is-risk&#x27; : &#x27;is-normal&#x27;);
+        const row = document.createElement(&#x27;span&#x27;);
+        row.className = &#x27;asv-conflict-preview-task-head&#x27;;
+        const node = document.createElement(&#x27;span&#x27;);
+        node.className = &#x27;asv-conflict-preview-task-node&#x27;;
+        node.textContent = run.nodeIp;
+        row.appendChild(node);
+        if (risk) {
+          const badge = document.createElement(&#x27;span&#x27;);
+          badge.className = &#x27;asv-conflict-preview-task-status asv-conflict-state is-error&#x27;;
+          badge.textContent = &#x27;Риск ошибки&#x27;;
+          row.appendChild(badge);
+        }
+        const title = document.createElement(&#x27;span&#x27;);
+        title.className = &#x27;asv-conflict-preview-task-title&#x27;;
+        const name = document.createElement(&#x27;span&#x27;);
+        name.className = &#x27;asv-conflict-preview-task-name&#x27;;
+        name.textContent = task.task;
+        const attributes = taskAttributeProfile(task);
+        const icons = document.createElement(&#x27;span&#x27;);
+        icons.className = &#x27;asv-conflict-preview-task-attributes&#x27;;
+        icons.innerHTML = taskAttributeIcons(attributes);
+        title.append(name, icons);
+        const trigger = document.createElement(&#x27;span&#x27;);
+        trigger.className = &#x27;asv-conflict-preview-task-trigger&#x27;;
+        trigger.textContent = &#x27;Триггер: &#x27; + run.name;
+        const duration = document.createElement(&#x27;span&#x27;);
+        duration.className = &#x27;asv-conflict-preview-task-time&#x27;;
+        duration.textContent = taskDurationText(task, run);
+        section.append(row, title, trigger, duration);
+        tasks.appendChild(section);
+        descriptions.push(&#x27;Нода &#x27; + run.nodeIp + &#x27;, задача &#x27; + task.task + &#x27;, &#x27; + (attributes.conflict ? &#x27;конфликтная&#x27; : &#x27;неконфликтная&#x27;) + &#x27;, &#x27; + (attributes.resumable ? &#x27;возобновляемая&#x27; : &#x27;невозобновляемая&#x27;) + &#x27;, триггер &#x27; + run.name + &#x27;, &#x27; + duration.textContent + &#x27;, &#x27; + (risk ? &#x27;риск ошибки&#x27; : &#x27;без риска ошибки&#x27;));
+      });
+      button.append(head, reason, tasks);
+      button.setAttribute(&#x27;aria-label&#x27;, time.textContent + &#x27;. &#x27; + reason.textContent + &#x27;. &#x27; + descriptions.join(&#x27;. &#x27;) + &#x27;. Перейти к конфликту&#x27;);
+      button.addEventListener(&#x27;click&#x27;, () =&gt; activateUpcomingConflict(conflict));
+      upcomingList.appendChild(button);
+    });
+  };
+  upcomingToggle.addEventListener(&#x27;click&#x27;, () =&gt; {
+    renderUpcomingConflicts();
+    openToolbarPanel(upcomingPopup, upcomingToggle);
+  });
+  toolbar.addEventListener(&#x27;click&#x27;, event =&gt; event.stopPropagation());
+  toolbar.addEventListener(&#x27;keydown&#x27;, event =&gt; {
+    if (event.key === &#x27;Escape&#x27; &amp;&amp; openToolbarPopup) {
+      event.preventDefault();
+      event.stopPropagation();
+      closeToolbarPopups(true);
+    }
+  });
+  document.addEventListener(&#x27;pointerdown&#x27;, event =&gt; {
+    if (!toolbar.contains(event.target)) closeToolbarPopups();
+  });
+  const updateToolbarGeometry = () =&gt; {
+    root.style.setProperty(&#x27;--asv-toolbar-height&#x27;, toolbar.offsetHeight + &#x27;px&#x27;);
+    positionToolbarPopup();
+  };
+  window.addEventListener(&#x27;resize&#x27;, updateToolbarGeometry, { passive: true });
+  window.addEventListener(&#x27;scroll&#x27;, positionToolbarPopup, { passive: true });
+  if (typeof ResizeObserver !== &#x27;undefined&#x27;) new ResizeObserver(updateToolbarGeometry).observe(toolbar);
+  renderDateControls();
+  updateToolbarGeometry();
+
+  // A persistent scrollbar follows the visible browser viewport, including
+  // when this document is inside the standalone file&#x27;s auto-sized iframe.
+  const stickyScrollBar = document.createElement(&#x27;div&#x27;);
+  stickyScrollBar.className = &#x27;asv-sticky-scrollbar&#x27;;
+  stickyScrollBar.hidden = true;
+  const stickyScrollTrack = document.createElement(&#x27;div&#x27;);
+  stickyScrollTrack.className = &#x27;asv-sticky-scroll-track&#x27;;
+  stickyScrollTrack.tabIndex = 0;
+  stickyScrollTrack.setAttribute(&#x27;role&#x27;, &#x27;scrollbar&#x27;);
+  stickyScrollTrack.setAttribute(&#x27;aria-label&#x27;, &#x27;Горизонтальная прокрутка таймлайна&#x27;);
+  stickyScrollTrack.setAttribute(&#x27;aria-orientation&#x27;, &#x27;horizontal&#x27;);
+  stickyScrollTrack.setAttribute(&#x27;aria-controls&#x27;, &#x27;asv-timeline-scroll&#x27;);
+  stickyScrollTrack.setAttribute(&#x27;aria-valuemin&#x27;, &#x27;0&#x27;);
+  const stickyScrollThumb = document.createElement(&#x27;span&#x27;);
+  stickyScrollThumb.className = &#x27;asv-sticky-scroll-thumb&#x27;;
+  stickyScrollThumb.setAttribute(&#x27;aria-hidden&#x27;, &#x27;true&#x27;);
+  stickyScrollTrack.appendChild(stickyScrollThumb);
+  stickyScrollBar.appendChild(stickyScrollTrack);
+  root.appendChild(stickyScrollBar);
+  root.classList.add(&#x27;has-sticky-scroll&#x27;);
+
+  let stickyScrollHostViewport = null;
+  let stickyScrollFrame = 0;
+  let stickyScrollPointer = null;
+  let stickyScrollDragOffset = 0;
+  let stickyScrollThumbWidth = 0;
+  const stickyScrollHeight = 16;
+  const stickyScrollClamp = (value, min, max) =&gt; Math.max(min, Math.min(value, max));
+  const stickyScrollMax = () =&gt; Math.max(0, timelineScroll.scrollWidth - timelineScroll.clientWidth);
+  const updateStickyScrollbar = () =&gt; {
+    stickyScrollFrame = 0;
+    const visual = window.visualViewport;
+    const viewport = stickyScrollHostViewport || { top: visual?.offsetTop || 0, bottom: (visual?.offsetTop || 0) + (visual?.height || window.innerHeight) };
+    const box = timelineScroll.getBoundingClientRect();
+    const rootBox = root.getBoundingClientRect();
+    const left = Math.max(0, box.left);
+    const sidebarLeft = detail.classList.contains(&#x27;is-open&#x27;) ? rootBox.right - detail.offsetWidth : box.right;
+    const right = Math.min(window.innerWidth, box.right, sidebarLeft);
+    const top = Math.max(viewport.top, box.top);
+    const bottom = Math.min(viewport.bottom, box.bottom);
+    const max = stickyScrollMax();
+    stickyScrollBar.hidden = max &lt;= 1 || right - left &lt; 64 || bottom - top &lt; stickyScrollHeight + 12;
+    if (stickyScrollBar.hidden) return;
+    stickyScrollBar.style.left = left + &#x27;px&#x27;;
+    stickyScrollBar.style.top = (bottom - stickyScrollHeight) + &#x27;px&#x27;;
+    stickyScrollBar.style.width = (right - left) + &#x27;px&#x27;;
+    const width = stickyScrollTrack.clientWidth;
+    stickyScrollThumbWidth = Math.min(width, Math.max(32, width * timelineScroll.clientWidth / timelineScroll.scrollWidth));
+    const ratio = stickyScrollClamp(timelineScroll.scrollLeft / max, 0, 1);
+    stickyScrollThumb.style.width = stickyScrollThumbWidth + &#x27;px&#x27;;
+    stickyScrollThumb.style.left = ((width - stickyScrollThumbWidth) * ratio) + &#x27;px&#x27;;
+    stickyScrollTrack.setAttribute(&#x27;aria-valuemax&#x27;, String(Math.round(max)));
+    stickyScrollTrack.setAttribute(&#x27;aria-valuenow&#x27;, String(Math.round(ratio * max)));
+    stickyScrollTrack.setAttribute(&#x27;aria-valuetext&#x27;, &#x27;Позиция &#x27; + Math.round(ratio * 100) + &#x27;%&#x27;);
+  };
+  const scheduleStickyScrollbar = () =&gt; {
+    if (!stickyScrollFrame) stickyScrollFrame = requestAnimationFrame(updateStickyScrollbar);
+  };
+  const scrollFromStickyPointer = clientX =&gt; {
+    const box = stickyScrollTrack.getBoundingClientRect();
+    const travel = stickyScrollTrack.clientWidth - stickyScrollThumbWidth;
+    if (travel &lt;= 0) return;
+    timelineScroll.scrollLeft = stickyScrollClamp((clientX - box.left - stickyScrollDragOffset) / travel, 0, 1) * stickyScrollMax();
+    updateStickyScrollbar();
+  };
+  stickyScrollTrack.addEventListener(&#x27;pointerdown&#x27;, event =&gt; {
+    if (event.button !== 0) return;
+    event.preventDefault();
+    event.stopPropagation();
+    updateStickyScrollbar();
+    stickyScrollTrack.focus({ preventScroll: true });
+    stickyScrollPointer = event.pointerId;
+    const thumbBox = stickyScrollThumb.getBoundingClientRect();
+    stickyScrollDragOffset = event.target === stickyScrollThumb ? event.clientX - thumbBox.left : stickyScrollThumbWidth / 2;
+    stickyScrollTrack.setPointerCapture(event.pointerId);
+    stickyScrollTrack.classList.add(&#x27;is-dragging&#x27;);
+    scrollFromStickyPointer(event.clientX);
+  });
+  stickyScrollTrack.addEventListener(&#x27;pointermove&#x27;, event =&gt; {
+    if (stickyScrollPointer === event.pointerId) scrollFromStickyPointer(event.clientX);
+  });
+  const endStickyScrollDrag = event =&gt; {
+    if (stickyScrollPointer !== event.pointerId) return;
+    stickyScrollPointer = null;
+    stickyScrollTrack.classList.remove(&#x27;is-dragging&#x27;);
+    if (stickyScrollTrack.hasPointerCapture(event.pointerId)) stickyScrollTrack.releasePointerCapture(event.pointerId);
+  };
+  [&#x27;pointerup&#x27;, &#x27;pointercancel&#x27;, &#x27;lostpointercapture&#x27;].forEach(type =&gt; stickyScrollTrack.addEventListener(type, endStickyScrollDrag));
+  stickyScrollTrack.addEventListener(&#x27;keydown&#x27;, event =&gt; {
+    const max = stickyScrollMax();
+    const page = timelineScroll.clientWidth * .9;
+    const target = {
+      ArrowLeft: timelineScroll.scrollLeft - 48, ArrowRight: timelineScroll.scrollLeft + 48,
+      PageUp: timelineScroll.scrollLeft - page, PageDown: timelineScroll.scrollLeft + page,
+      Home: 0, End: max
+    }[event.key];
+    if (target === undefined) return;
+    event.preventDefault();
+    event.stopPropagation();
+    timelineScroll.scrollLeft = stickyScrollClamp(target, 0, max);
+    updateStickyScrollbar();
+  });
+  stickyScrollBar.addEventListener(&#x27;wheel&#x27;, event =&gt; {
+    const delta = (event.deltaX || event.deltaY) * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? timelineScroll.clientWidth : 1);
+    if (!delta || !stickyScrollMax()) return;
+    event.preventDefault();
+    timelineScroll.scrollLeft = stickyScrollClamp(timelineScroll.scrollLeft + delta, 0, stickyScrollMax());
+    updateStickyScrollbar();
+  }, { passive: false });
+  stickyScrollBar.addEventListener(&#x27;click&#x27;, event =&gt; event.stopPropagation());
+  timelineScroll.addEventListener(&#x27;scroll&#x27;, scheduleStickyScrollbar, { passive: true });
+  window.addEventListener(&#x27;scroll&#x27;, scheduleStickyScrollbar, { passive: true });
+  window.addEventListener(&#x27;resize&#x27;, scheduleStickyScrollbar, { passive: true });
+  window.visualViewport?.addEventListener(&#x27;resize&#x27;, scheduleStickyScrollbar, { passive: true });
+  window.visualViewport?.addEventListener(&#x27;scroll&#x27;, scheduleStickyScrollbar, { passive: true });
+  detail.addEventListener(&#x27;transitionend&#x27;, scheduleStickyScrollbar);
+  if (typeof ResizeObserver !== &#x27;undefined&#x27;) {
+    const observer = new ResizeObserver(scheduleStickyScrollbar);
+    [timelineScroll, overview, root].forEach(element =&gt; observer.observe(element));
+  }
+  if (typeof MutationObserver !== &#x27;undefined&#x27;) new MutationObserver(scheduleStickyScrollbar).observe(detail, { attributes: true, attributeFilter: [&#x27;class&#x27;] });
+  window.addEventListener(&#x27;message&#x27;, event =&gt; {
+    const data = event.data;
+    if (event.source !== window.parent || window.parent === window || data?.type !== &#x27;asv-horizontal-scroll-viewport&#x27;) return;
+    if (![data.top, data.bottom].every(Number.isFinite) || data.top &lt; 0 || data.bottom &lt; data.top) return;
+    stickyScrollHostViewport = { top: data.top, bottom: data.bottom };
+    scheduleStickyScrollbar();
+  });
+  updateStickyScrollbar();
+  if (window.parent !== window) window.parent.postMessage({ type: &#x27;asv-horizontal-scroll-ready&#x27; }, &#x27;*&#x27;);
 
 })();
 &lt;/script&gt;
@@ -7142,6 +7859,36 @@ html&gt;body{padding:0}&lt;/style&gt;
       "<\/script>",
   );
   delete frame.dataset.srcdoc;
+})();
+</script>
+<script id="asv-sticky-scroll-host">
+(() => {
+  const frame = document.getElementById('codex-visualization');
+  if (!frame) return;
+  let pending = 0;
+  const publishViewport = () => {
+    pending = 0;
+    const box = frame.getBoundingClientRect();
+    const visual = window.visualViewport;
+    const top = visual?.offsetTop || 0;
+    const bottom = top + (visual?.height || window.innerHeight);
+    frame.contentWindow?.postMessage({
+      type: 'asv-horizontal-scroll-viewport',
+      top: Math.max(0, Math.min(box.height, top - box.top)),
+      bottom: Math.max(0, Math.min(box.height, bottom - box.top))
+    }, '*');
+  };
+  const schedule = () => { if (!pending) pending = requestAnimationFrame(publishViewport); };
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', schedule, { passive: true });
+  window.visualViewport?.addEventListener('scroll', schedule, { passive: true });
+  window.visualViewport?.addEventListener('resize', schedule, { passive: true });
+  frame.addEventListener('load', schedule);
+  if (typeof ResizeObserver !== 'undefined') new ResizeObserver(schedule).observe(frame);
+  window.addEventListener('message', event => {
+    if (event.source === frame.contentWindow && event.data?.type === 'asv-horizontal-scroll-ready') schedule();
+  });
+  schedule();
 })();
 </script>
 </body>
