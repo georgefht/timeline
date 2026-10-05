@@ -5643,7 +5643,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   });
   const secondaryRegularLaneCount = Math.max(1, ...Array.from(secondaryDisplayLanes.values(), lane =&gt; lane + 1));
   const secondaryLaneCount = secondaryRegularLaneCount + 1;
-  // Keep a small cushion inside the last active track for caption cascades.
+  // Share caption space among regular tracks instead of stretching the last one.
   // Preserve an expanded height when scrolling back to sparse content.
   let secondaryRegularHeightBudget = secondaryLaneHeight * secondaryRegularLaneCount + secondaryBottomInset;
   const expandedSecondaryHeight = secondaryTopInset + secondaryFrequentHeight + secondaryLaneHeight * secondaryRegularLaneCount + secondaryBottomInset;
@@ -6492,7 +6492,13 @@ html&gt;body{padding:0}&lt;/style&gt;
     if (secondaryRegularHeight &gt; secondaryRegularHeightBudget) {
       secondaryRegularHeightBudget = Math.ceil((secondaryRegularHeight + secondaryBottomInset) / 24) * 24;
     }
-    const secondaryPaddingHeight = secondaryRegularHeightBudget - secondaryRegularHeight;
+    const secondaryRequiredHeights = secondaryLanes.slice(1).map(laneHeight).sort((a, b) =&gt; b - a);
+    let secondaryAvailableHeight = secondaryRegularHeightBudget;
+    let secondarySharedTrackHeight = secondaryAvailableHeight / secondaryRequiredHeights.length;
+    for (let index = 0; index &lt; secondaryRequiredHeights.length - 1 &amp;&amp; secondaryRequiredHeights[index] &gt; secondarySharedTrackHeight; index++) {
+      secondaryAvailableHeight -= secondaryRequiredHeights[index];
+      secondarySharedTrackHeight = secondaryAvailableHeight / (secondaryRequiredHeights.length - index - 1);
+    }
     const visibleExpandedSecondaryHeight = secondaryTopInset + visibleSecondaryFrequentHeight + secondaryRegularHeightBudget;
     const primaryHeight = nodeCollapseState.primary ? collapsedNodeHeight : visibleExpandedPrimaryHeight;
     const secondaryHeight = nodeCollapseState.secondary ? collapsedNodeHeight : visibleExpandedSecondaryHeight;
@@ -6525,9 +6531,9 @@ html&gt;body{padding:0}&lt;/style&gt;
       if (index === 0) lane.style.top = (primaryHeight + secondaryTopInset) + &quot;px&quot;;
       else {
         lane.style.top = secondaryTop + &quot;px&quot;;
-        const bottomPadding = index === secondaryLanes.length - 1 ? secondaryPaddingHeight : 0;
-        lane.style.height = (laneHeight(lane) + bottomPadding) + &quot;px&quot;;
-        secondaryTop += laneHeight(lane);
+        const trackHeight = Math.max(laneHeight(lane), secondarySharedTrackHeight);
+        lane.style.height = trackHeight + &quot;px&quot;;
+        secondaryTop += trackHeight;
       }
     });
     secondaryNodeBoundary.style.top = primaryHeight + &quot;px&quot;;
