@@ -1342,6 +1342,9 @@ html&gt;body{padding:0}&lt;/style&gt;
     --asv-grid: light-dark(#e8eaee, #292c32);
     --asv-group: light-dark(#eef1f4, #22252b);
     --asv-group-line: light-dark(#d8dce2, #3a3e46);
+    --asv-task-radius: 3px;
+    --asv-predicted-fill: color-mix(in srgb, var(--asv-predicted) 50%, #ffffff);
+    --asv-task-stroke: color-mix(in srgb, var(--asv-muted) 18%, transparent);
     --asv-ok: light-dark(#25866b, #4fb895);
     --asv-ok-soft: light-dark(#dcefe8, #193e34);
     --asv-error: light-dark(#d84a55, #f16b75);
@@ -1585,8 +1588,8 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 
   #asv-real .asv-frequent-item.is-active {
-    background: #F2F6FD;
-    box-shadow: inset 2px 0 0 color-mix(in srgb, var(--asv-muted) 58%, transparent);
+    background: transparent;
+    box-shadow: none;
   }
 
   #asv-real .asv-frequent-item-name {
@@ -2034,11 +2037,11 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
   #asv-real .asv-frequent-item.is-active .asv-frequent-item-name {
     color: var(--asv-text);
-    font-weight: 600;
+    font-weight: 400;
   }
-  #asv-real.is-frequent-focus .asv-frequency-mark:not(.is-frequent-list-match),
-  #asv-real.is-frequent-focus .asv-frequency-bolt:not(.is-frequent-list-match) { opacity: .12; }
-  #asv-real.is-frequent-focus .asv-frequency-overlap-badge:not(.is-frequent-list-match) { opacity: .12; }
+  #asv-real .asv-lane.is-frequent-focus .asv-frequency-mark:not(.is-frequent-list-match),
+  #asv-real .asv-lane.is-frequent-focus .asv-frequency-bolt:not(.is-frequent-list-match) { opacity: .12; }
+  #asv-real .asv-lane.is-frequent-focus .asv-frequency-overlap-badge:not(.is-frequent-list-match) { opacity: .12; }
 
   #asv-real .asv-frequency-overlap-badge {
     position: absolute;
@@ -2310,8 +2313,8 @@ html&gt;body{padding:0}&lt;/style&gt;
     min-width: 5px;
     overflow: hidden;
     padding: 0;
-    border: 0;
-    border-radius: 2px;
+    border: 1px solid var(--asv-task-stroke);
+    border-radius: var(--asv-task-radius);
     background: var(--asv-group);
     color: var(--asv-text);
     text-align: left;
@@ -2462,11 +2465,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-run.is-trigger .asv-segments {
     inset: 3px;
     overflow: hidden;
-    border-radius: 2px;
-  }
-
-  #asv-real .asv-run.is-trigger .asv-segment + .asv-segment {
-    box-shadow: inset 1px 0 0 var(--asv-page);
+    border-radius: var(--asv-task-radius);
   }
 
   /* Short executions use the same 2px task tick as frequent triggers,
@@ -2483,7 +2482,7 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   #asv-real .asv-run.is-compact-trigger .asv-segment {
     padding: 0;
-    border-radius: 1px;
+    border-radius: var(--asv-task-radius);
     box-shadow: none;
   }
 
@@ -2496,7 +2495,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 
   #asv-real .asv-run.is-standalone .asv-segments { inset: 0; }
-  #asv-real .asv-run.is-standalone .asv-segment { border-radius: 2px; }
+  #asv-real .asv-run.is-standalone .asv-segment { border-radius: var(--asv-task-radius); }
 
   #asv-real .asv-standalone-caption {
     position: absolute;
@@ -2559,7 +2558,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 
   #asv-real .asv-run.is-conflict-demo .asv-segment {
-    border-radius: 3px;
+    border-radius: var(--asv-task-radius);
     transition: box-shadow 120ms ease;
   }
 
@@ -2749,6 +2748,8 @@ html&gt;body{padding:0}&lt;/style&gt;
     align-items: center;
     overflow: hidden;
     padding: 0;
+    border: 1px solid var(--asv-task-stroke);
+    border-radius: var(--asv-task-radius);
   }
 
   #asv-real .asv-task-inline-name {
@@ -2798,9 +2799,8 @@ html&gt;body{padding:0}&lt;/style&gt;
     bottom: 0;
     box-sizing: border-box;
     width: max(var(--asv-overrun-share), 4px);
-    border-right: 1.5px dashed var(--asv-overrun);
-    border-left: 1.5px dashed var(--asv-overrun);
-    border-radius: 0;
+    border-bottom: 1px dashed var(--asv-overrun);
+    border-radius: 0 calc(var(--asv-task-radius) - 1px) calc(var(--asv-task-radius) - 1px) 0;
     background: var(--asv-overrun-soft);
     pointer-events: none;
   }
@@ -2975,7 +2975,6 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-finished { background: var(--asv-ok); }
   #asv-real .asv-running {
     background: var(--asv-selected-soft);
-    box-shadow: inset 0 0 0 1px var(--asv-selected) !important;
   }
   #asv-real .asv-running .asv-task-inline-name {
     color: var(--asv-selected);
@@ -2986,11 +2985,31 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-conflicted { background: var(--asv-conflict); }
   #asv-real .asv-predicted { background: var(--asv-predicted); }
 
+  /* One visible 2px border for every executing task, without stacking shadows. */
+  #asv-real .asv-segment.asv-running,
+  #asv-real .asv-queue-task.is-current,
+  #asv-real .asv-proportional-fill.asv-running {
+    border: 2px solid var(--asv-selected);
+    border-radius: var(--asv-task-radius);
+    box-shadow: none !important;
+  }
+
+  /* Lighten only the confident forecast fill; leave its existing edge color. */
+  #asv-real .asv-segment.asv-predicted,
+  #asv-real .asv-proportional-fill.asv-predicted,
+  #asv-real .asv-queue-task.is-forecast-high {
+    background-color: var(--asv-predicted-fill);
+  }
+  #asv-real .asv-segment.asv-predicted:not(.is-forecast-low):not(.is-forecast-question) .asv-task-inline-name,
+  #asv-real .asv-queue-task.is-forecast-high .asv-task-inline-name {
+    color: #24364c;
+    opacity: .95;
+  }
+
   /* Completed history is visually neutral on the timeline; conflict participants
      and the yellow overrun window retain their own emphasis. */
   #asv-real .asv-segment.is-past {
     background: color-mix(in srgb, var(--asv-muted) 26%, var(--asv-page));
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--asv-muted) 18%, transparent);
   }
   #asv-real .asv-segment.is-past &gt; .asv-task-inline-name {
     color: var(--asv-muted);
@@ -3033,8 +3052,8 @@ html&gt;body{padding:0}&lt;/style&gt;
     box-shadow: inset 0 0 0 1px var(--asv-page), 0 0 0 2px var(--asv-text);
   }
 
-  #asv-real.is-frequent-focus .asv-run.is-frequent-run:not(.is-frequent-list-match) { opacity: .1; }
-  #asv-real.is-frequent-focus .asv-run.is-frequent-list-match { opacity: 1; }
+  #asv-real .asv-lane.is-frequent-focus .asv-run.is-frequent-run:not(.is-frequent-list-match) { opacity: .1; }
+  #asv-real .asv-lane.is-frequent-focus .asv-run.is-frequent-list-match { opacity: 1; }
 
   #asv-real .asv-run.is-frequent-list-match {
     z-index: 28;
@@ -3478,14 +3497,15 @@ html&gt;body{padding:0}&lt;/style&gt;
     min-width: 2px;
     padding: 0;
     border: 0;
-    border-radius: 2px;
+    border-radius: var(--asv-task-radius);
     cursor: pointer;
   }
 
   #asv-real .asv-proportional-fill {
     position: absolute;
     inset: 3px 1px;
-    border-radius: 2px;
+    border-radius: var(--asv-task-radius);
+    border: 1px solid var(--asv-task-stroke);
     pointer-events: none;
   }
 
@@ -3502,7 +3522,8 @@ html&gt;body{padding:0}&lt;/style&gt;
     bottom: -2px;
     box-sizing: border-box;
     width: max(var(--asv-overrun-share), 4px);
-    border: 1.5px dashed var(--asv-overrun);
+    border: 0;
+    border-bottom: 1px dashed var(--asv-overrun);
     border-radius: 3px;
     background: var(--asv-overrun-soft);
   }
@@ -3536,13 +3557,13 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   #asv-real .asv-proportional-task.is-point {
     width: 3px !important;
-    border-radius: 2px;
+    border-radius: var(--asv-task-radius);
   }
 
   #asv-real .asv-proportional-task.is-point .asv-proportional-fill {
     right: 0;
     left: 0;
-    border-radius: 1px;
+    border-radius: var(--asv-task-radius);
   }
 
   #asv-real .asv-task-list {
@@ -3848,9 +3869,6 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   /* Duration conveys forecast certainty; no separate confidence chips. */
   #asv-real .asv-forecast-confidence { display: none; }
-  /* Horizontal insets must not make the fixed 20-minute placeholders vary
-     with the duration of their containing trigger. */
-  #asv-real .asv-run.has-unknown-duration .asv-segments { left: 0; right: 0; }
   #asv-real .asv-run.has-unknown-duration.is-standalone { min-width: 2px; }
   #asv-real .asv-segment.asv-predicted.is-forecast-low,
   #asv-real .asv-proportional-fill.asv-predicted.is-forecast-low,
@@ -3865,8 +3883,8 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-queue-task.is-forecast-question {
     background-color: light-dark(#f0f5fd, #1b2737);
     background-image: none;
-    border-radius: 4px;
-    outline: 1px dotted light-dark(#acc0db, #59708e);
+    border-radius: var(--asv-task-radius);
+    outline: 1px dashed light-dark(#acc0db, #59708e);
     outline-offset: -1px;
     box-shadow: none;
   }
@@ -3941,16 +3959,12 @@ html&gt;body{padding:0}&lt;/style&gt;
     white-space: nowrap;
   }
   #asv-real .asv-toolbar-button:hover { background: var(--asv-group); }
-  #asv-real .asv-toolbar-button:focus-visible,
-  #asv-real .asv-step-select:focus-visible { outline: 2px solid var(--asv-selected); outline-offset: 2px; }
+  #asv-real .asv-toolbar-button:focus-visible { outline: 2px solid var(--asv-selected); outline-offset: 2px; }
   #asv-real .asv-toolbar-button:disabled { opacity: .35; cursor: default; }
   #asv-real .asv-date-control .asv-toolbar-button { height: 32px; border: 0; border-radius: 0; }
   #asv-real .asv-date-arrow { width: 27px; padding: 0; }
   #asv-real .asv-date-label { min-width: 138px; padding-right: 11px; font-variant-numeric: tabular-nums; }
   #asv-real .asv-toolbar-icon { width: 16px; height: 16px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-  #asv-real .asv-step-control { position: relative; }
-  #asv-real .asv-step-control &gt; svg { position: absolute; top: 9px; right: 9px; pointer-events: none; color: var(--asv-muted); }
-  #asv-real .asv-step-select { appearance: none; height: 34px; width: 106px; padding: 0 30px 0 11px; border: 1px solid var(--asv-group-line); border-radius: 5px; background: var(--asv-page); color: var(--asv-text); font: inherit; cursor: pointer; }
   #asv-real .asv-control-bar .asv-timeline-actions { position: static; align-items: center; gap: 8px; }
   #asv-real .asv-control-bar .asv-frequent-layer-toggle { width: 106px; height: 34px; padding: 0 11px; font: inherit; }
   #asv-real .asv-control-bar .asv-frequent-layer-toggle-state { font: inherit; }
@@ -3991,9 +4005,10 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-conflict-preview-head { display: block; margin-bottom: 4px; line-height: 1.35; }
   #asv-real .asv-conflict-preview-time { font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
   #asv-real .asv-conflict-preview-reason { display: block; margin-bottom: 8px; font-size: 11px; line-height: 1.4; }
-  #asv-real .asv-conflict-preview-tasks { display: grid; gap: 5px; }
-  #asv-real .asv-conflict-preview-task { display: grid; gap: 3px; padding: 8px 10px; border: 1px solid var(--asv-rule); border-radius: 8px; background: transparent; }
-  #asv-real .asv-conflict-preview-task.is-risk { border-color: light-dark(#f0d8dc, #66333a); background: var(--asv-conflict-soft); }
+  #asv-real .asv-conflict-preview-tasks { display: grid; gap: 0; overflow: hidden; border: 1px solid var(--asv-rule); border-radius: 8px; background: var(--asv-page); }
+  #asv-real .asv-conflict-preview-task { display: grid; gap: 3px; padding: 8px 10px; border: 0; border-radius: 0; background: transparent; }
+  #asv-real .asv-conflict-preview-task + .asv-conflict-preview-task { border-top: 1px solid var(--asv-rule); }
+  #asv-real .asv-conflict-preview-task.is-risk { background: var(--asv-conflict-soft); }
   #asv-real .asv-conflict-preview-task-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 16px; }
   #asv-real .asv-conflict-preview-task-node { color: var(--asv-muted); font-size: 11px; font-variant-numeric: tabular-nums; line-height: 1.3; }
   #asv-real .asv-conflict-preview-task-title { display: flex; align-items: center; gap: 6px; min-width: 0; }
@@ -4010,7 +4025,6 @@ html&gt;body{padding:0}&lt;/style&gt;
     #asv-real .asv-control-bar { padding: 12px; gap: 10px; }
     #asv-real .asv-toolbar-right { width: 100%; justify-content: space-between; gap: 8px; }
     #asv-real .asv-date-label { min-width: 130px; }
-    #asv-real .asv-step-select { width: 94px; }
     #asv-real .asv-toolbar-left { gap: 6px; }
   }
 
@@ -4052,6 +4066,103 @@ html&gt;body{padding:0}&lt;/style&gt;
   #asv-real .asv-sticky-scroll-track:focus-visible .asv-sticky-scroll-thumb { background: light-dark(#828282, #7a7a7a); }
   #asv-real .asv-sticky-scroll-track.is-dragging .asv-sticky-scroll-thumb { background: light-dark(#707070, #8a8a8a); cursor: grabbing; }
 
+
+  #asv-real .asv-detail-close,
+  #asv-real .asv-conflict-popover-close {
+    display: inline-grid;
+    width: 28px;
+    height: 28px;
+    place-items: center;
+    border-radius: 4px;
+  }
+  #asv-real .asv-detail-close {
+    margin-right: -8px;
+  }
+  #asv-real .asv-close-icon {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    pointer-events: none;
+  }
+  #asv-real .asv-detail-close:hover,
+  #asv-real .asv-conflict-popover-close:hover {
+    background: color-mix(in srgb, var(--asv-muted) 10%, transparent);
+    color: var(--asv-text);
+  }
+  #asv-real .asv-detail-close:focus-visible,
+  #asv-real .asv-conflict-popover-close:focus-visible {
+    outline: 2px solid var(--asv-selected);
+    outline-offset: 2px;
+  }
+
+  /* Expand the label itself, without changing the cascade or the track height. */
+  #asv-real .asv-trigger-caption {
+    text-align: left;
+  }
+  #asv-real .asv-run.is-trigger .asv-trigger-caption:hover,
+  #asv-real .asv-run.is-trigger:focus-visible .asv-trigger-caption {
+    z-index: 20;
+    flex-direction: column;
+    gap: 3px;
+    padding: 4px 5px;
+    border-color: color-mix(in srgb, var(--asv-text) 36%, var(--asv-group-line));
+  }
+  #asv-real .asv-run.is-trigger .asv-trigger-caption:hover .asv-trigger-caption-time,
+  #asv-real .asv-run.is-trigger:focus-visible .asv-trigger-caption-time {
+    display: block;
+    /* The duration wraps to the existing label width, rather than widening it. */
+    width: 0;
+    min-width: 100%;
+    max-width: 100%;
+    color: var(--asv-muted);
+    font-size: 11px;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  #asv-real .is-primary-node.is-collapsed { padding-top: 42px; }
+  #asv-real .asv-collapsed-node-zone { overflow: hidden; }
+  #asv-real .asv-collapsed-upcoming {
+    position: absolute;
+    top: 50%;
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 12px;
+    overflow: hidden;
+    transform: translateY(-50%);
+    color: var(--asv-muted);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    pointer-events: auto;
+  }
+  #asv-real .asv-upcoming-summary-label,
+  #asv-real .asv-upcoming-summary-time,
+  #asv-real .asv-upcoming-summary-count,
+  #asv-real .asv-upcoming-summary-conflicts { flex: 0 0 auto; }
+  #asv-real .asv-upcoming-summary-name {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--asv-text);
+    text-overflow: ellipsis;
+  }
+  #asv-real .asv-upcoming-summary-count { margin-left: auto; }
+  #asv-real .asv-upcoming-summary-conflicts {
+    padding: 2px 5px;
+    border-radius: 3px;
+    background: var(--asv-conflict-soft);
+    color: var(--asv-conflict-outline);
+  }
+  #asv-real .asv-collapsed-upcoming.is-compact .asv-upcoming-summary-label,
+  #asv-real .asv-collapsed-upcoming.is-compact .asv-upcoming-summary-count { display: none; }
+  @media (max-width: 700px) {
+    #asv-real .is-primary-node.is-collapsed { height: 50px; padding-top: 0; }
+  }
 &lt;/style&gt;
 
 &lt;section id=&quot;asv-real&quot; aria-label=&quot;История и прогноз запусков триггеров с 16 сентября по 18 сентября, 18:00&quot;&gt;
@@ -4062,7 +4173,6 @@ html&gt;body{padding:0}&lt;/style&gt;
         &lt;button class=&quot;asv-toolbar-button asv-date-arrow&quot; type=&quot;button&quot; data-date-next aria-label=&quot;На сутки вперёд&quot;&gt;&lt;svg class=&quot;asv-toolbar-icon&quot; viewBox=&quot;0 0 20 20&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;m8 5 5 5-5 5&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;
         &lt;button class=&quot;asv-toolbar-button asv-date-label&quot; type=&quot;button&quot; data-date-label aria-haspopup=&quot;dialog&quot; aria-controls=&quot;asv-calendar-popup&quot; aria-expanded=&quot;false&quot;&gt;&lt;svg class=&quot;asv-toolbar-icon&quot; viewBox=&quot;0 0 20 20&quot; aria-hidden=&quot;true&quot;&gt;&lt;rect x=&quot;3&quot; y=&quot;4&quot; width=&quot;14&quot; height=&quot;13&quot; rx=&quot;2&quot;/&gt;&lt;path d=&quot;M6 2v4M14 2v4M3 8h14&quot;/&gt;&lt;/svg&gt;&lt;span data-date-value&gt;18 сен 2026&lt;/span&gt;&lt;/button&gt;
       &lt;/div&gt;
-      &lt;label class=&quot;asv-step-control&quot;&gt;&lt;select class=&quot;asv-step-select&quot; data-time-step aria-label=&quot;Часов в одном делении шкалы&quot;&gt;&lt;option value=&quot;0.5&quot;&gt;30 минут&lt;/option&gt;&lt;option value=&quot;1&quot;&gt;1 час&lt;/option&gt;&lt;option value=&quot;2&quot; selected&gt;2 часа&lt;/option&gt;&lt;option value=&quot;4&quot;&gt;4 часа&lt;/option&gt;&lt;option value=&quot;6&quot;&gt;6 часов&lt;/option&gt;&lt;option value=&quot;12&quot;&gt;12 часов&lt;/option&gt;&lt;/select&gt;&lt;svg class=&quot;asv-toolbar-icon&quot; viewBox=&quot;0 0 20 20&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;m5 7 5 5 5-5&quot;/&gt;&lt;/svg&gt;&lt;/label&gt;
     &lt;/div&gt;
     &lt;div class=&quot;asv-toolbar-right&quot;&gt;
       &lt;div class=&quot;asv-timeline-actions&quot; aria-label=&quot;Отображение таймлайна&quot;&gt;
@@ -4094,7 +4204,7 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   &lt;div class=&quot;asv-layout&quot;&gt;
     &lt;div class=&quot;asv-node-stack&quot;&gt;
-    &lt;aside class=&quot;asv-node-panel is-primary-node&quot; aria-label=&quot;Сведения о ноде 10.28.98.136&quot;&gt;
+    &lt;aside class=&quot;asv-node-panel is-primary-node&quot; data-node-ip=&quot;10.28.98.136&quot; aria-label=&quot;Сведения о ноде 10.28.98.136&quot;&gt;
       &lt;button class=&quot;asv-node-collapse&quot; type=&quot;button&quot; data-node-toggle=&quot;primary&quot; aria-expanded=&quot;true&quot; aria-label=&quot;Свернуть ноду 10.28.98.136&quot;&gt;&lt;span class=&quot;asv-node-collapse-chevron&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;/button&gt;
       &lt;div class=&quot;asv-node-collapsed-summary&quot;&gt;&lt;span class=&quot;asv-node-status-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;10.28.98.136&lt;/span&gt;&lt;/div&gt;
       &lt;div class=&quot;asv-node-tag text-small&quot;&gt;нода для задач&lt;/div&gt;
@@ -4119,7 +4229,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         &lt;/span&gt;
       &lt;/button&gt;
     &lt;/aside&gt;
-    &lt;aside class=&quot;asv-node-panel is-secondary-node&quot; aria-label=&quot;Сведения о ноде 10.42.108.136&quot;&gt;
+    &lt;aside class=&quot;asv-node-panel is-secondary-node&quot; data-node-ip=&quot;10.42.108.136&quot; aria-label=&quot;Сведения о ноде 10.42.108.136&quot;&gt;
       &lt;button class=&quot;asv-node-collapse&quot; type=&quot;button&quot; data-node-toggle=&quot;secondary&quot; aria-expanded=&quot;true&quot; aria-label=&quot;Свернуть ноду 10.42.108.136&quot;&gt;&lt;span class=&quot;asv-node-collapse-chevron&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;/button&gt;
       &lt;div class=&quot;asv-node-collapsed-summary&quot;&gt;&lt;span class=&quot;asv-node-status-dot is-support-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;10.42.108.136&lt;/span&gt;&lt;/div&gt;
       &lt;div class=&quot;asv-node-ip&quot;&gt;10.42.108.136&lt;/div&gt;
@@ -4138,7 +4248,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;/div&gt;
       &lt;/div&gt;
     &lt;/aside&gt;
-    &lt;aside class=&quot;asv-node-panel is-third-node&quot; aria-label=&quot;Сведения о ноде 10.56.118.136&quot;&gt;
+    &lt;aside class=&quot;asv-node-panel is-third-node&quot; data-node-ip=&quot;10.56.118.136&quot; aria-label=&quot;Сведения о ноде 10.56.118.136&quot;&gt;
       &lt;button class=&quot;asv-node-collapse&quot; type=&quot;button&quot; data-node-toggle=&quot;third&quot; aria-expanded=&quot;true&quot; aria-label=&quot;Свернуть ноду 10.56.118.136&quot;&gt;&lt;span class=&quot;asv-node-collapse-chevron&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;/button&gt;
       &lt;div class=&quot;asv-node-collapsed-summary&quot;&gt;&lt;span class=&quot;asv-node-status-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;10.56.118.136&lt;/span&gt;&lt;/div&gt;
       &lt;div class=&quot;asv-node-ip&quot;&gt;10.56.118.136&lt;/div&gt;
@@ -4153,10 +4263,10 @@ html&gt;body{padding:0}&lt;/style&gt;
           &lt;div class=&quot;asv-grid&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-day-divider&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-day-divider is-second&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
-          &lt;div class=&quot;asv-collapsed-node-zone&quot; data-collapsed-zone=&quot;primary&quot; hidden aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
-          &lt;div class=&quot;asv-collapsed-node-zone&quot; data-collapsed-zone=&quot;secondary&quot; hidden aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
+          &lt;div class=&quot;asv-collapsed-node-zone&quot; data-collapsed-zone=&quot;primary&quot; hidden&gt;&lt;/div&gt;
+          &lt;div class=&quot;asv-collapsed-node-zone&quot; data-collapsed-zone=&quot;secondary&quot; hidden&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-node-boundary&quot; data-node-boundary=&quot;secondary&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
-          &lt;div class=&quot;asv-collapsed-node-zone&quot; data-collapsed-zone=&quot;third&quot; hidden aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
+          &lt;div class=&quot;asv-collapsed-node-zone&quot; data-collapsed-zone=&quot;third&quot; hidden&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-node-boundary&quot; data-node-boundary=&quot;third&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-lanes&quot;&gt;&lt;/div&gt;
           &lt;div class=&quot;asv-conflict-layer&quot;&gt;&lt;/div&gt;
@@ -4179,7 +4289,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         &lt;/div&gt;
         &lt;h2 class=&quot;asv-conflict-popover-title&quot;&gt;Параллельная работа конфликтующих задач&lt;/h2&gt;
       &lt;/div&gt;
-      &lt;button class=&quot;asv-conflict-popover-close text-small&quot; type=&quot;button&quot;&gt;Закрыть&lt;/button&gt;
+      &lt;button class=&quot;asv-conflict-popover-close text-small&quot; type=&quot;button&quot; aria-label=&quot;Закрыть конфликт&quot; title=&quot;Закрыть&quot;&gt;&lt;svg class=&quot;asv-close-icon&quot; viewBox=&quot;0 0 16 16&quot; aria-hidden=&quot;true&quot; focusable=&quot;false&quot;&gt;&lt;path d=&quot;M4 4l8 8M12 4l-8 8&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;
     &lt;/div&gt;
     &lt;div class=&quot;asv-conflict-divider&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
     &lt;div class=&quot;asv-conflict-cards&quot;&gt;&lt;/div&gt;
@@ -4191,7 +4301,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         &lt;div class=&quot;asv-detail-meta text-small&quot;&gt;&lt;/div&gt;
         &lt;div class=&quot;asv-detail-name&quot;&gt;&lt;/div&gt;
       &lt;/div&gt;
-      &lt;button class=&quot;asv-detail-close text-small&quot; type=&quot;button&quot;&gt;Закрыть&lt;/button&gt;
+      &lt;button class=&quot;asv-detail-close text-small&quot; type=&quot;button&quot; aria-label=&quot;Закрыть сайдбар&quot; title=&quot;Закрыть&quot;&gt;&lt;svg class=&quot;asv-close-icon&quot; viewBox=&quot;0 0 16 16&quot; aria-hidden=&quot;true&quot; focusable=&quot;false&quot;&gt;&lt;path d=&quot;M4 4l8 8M12 4l-8 8&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;
     &lt;/div&gt;
     &lt;div class=&quot;asv-detail-track&quot;&gt;&lt;/div&gt;
   &lt;/aside&gt;
@@ -4214,8 +4324,10 @@ html&gt;body{padding:0}&lt;/style&gt;
   const queueRemaining = root.querySelector(&quot;.asv-queue-remaining&quot;);
   let frequentLayerVisible = true;
   let activeFrequentTriggerName = null;
+  let activeFrequentNodeIp = null;
   const isFrequentConflictFilteredOut = conflict =&gt; Boolean(activeFrequentTriggerName) &amp;&amp;
-    conflict.hasFrequentParticipant &amp;&amp;
+    conflict.runs.every(run =&gt; run.nodeIp === activeFrequentNodeIp) &amp;&amp;
+    conflict.runs.some(run =&gt; run.isFrequent) &amp;&amp;
     !conflict.runs.some(run =&gt; run.isFrequent &amp;&amp; run.name === activeFrequentTriggerName);
   const axis = root.querySelector(&quot;.asv-axis&quot;);
   const lanesHost = root.querySelector(&quot;.asv-lanes&quot;);
@@ -4851,6 +4963,31 @@ html&gt;body{padding:0}&lt;/style&gt;
     return m + &quot; мин&quot; + (s ? &quot; &quot; + s + &quot; сек&quot; : &quot;&quot;);
   };
 
+  const formatForecastDuration = seconds =&gt; {
+    if (seconds &lt; 0) return &quot;0 сек (−&quot; + Math.round(Math.abs(seconds) * 1000) + &quot; мс в данных)&quot;;
+    if (seconds === 0) return &quot;0 сек&quot;;
+    if (seconds &lt; 1) {
+      const milliseconds = Math.max(1, Math.round(seconds * 1000));
+      return milliseconds &lt; 1000 ? milliseconds + &quot; мс&quot; : &quot;1 сек&quot;;
+    }
+    // Text precision follows the duration; source times and geometry stay exact.
+    const step = seconds &lt; 60 ? 1
+      : seconds &lt; 10 * 60 ? 10
+      : seconds &lt; 60 * 60 ? 60
+      : seconds &lt; 6 * 60 * 60 ? 5 * 60
+      : seconds &lt; 24 * 60 * 60 ? 15 * 60
+      : 60 * 60;
+    const rounded = Math.round(seconds / step) * step;
+    const hours = Math.floor(rounded / 3600);
+    const minutes = Math.floor((rounded % 3600) / 60);
+    const remainingSeconds = rounded % 60;
+    const parts = [];
+    if (hours) parts.push(hours + &quot; ч&quot;);
+    if (minutes) parts.push(minutes + &quot; мин&quot;);
+    if (remainingSeconds) parts.push(remainingSeconds + &quot; сек&quot;);
+    return parts.join(&quot; &quot;);
+  };
+
   const taskCountLabel = count =&gt; {
     const mod100 = count % 100;
     const mod10 = count % 10;
@@ -4978,7 +5115,8 @@ html&gt;body{padding:0}&lt;/style&gt;
   const taskDurationText = (task, run = null) =&gt; {
     const level = forecastLevelForTask(task, run);
     if (level === &quot;question&quot;) return unknownExecutionTime;
-    return (level === &quot;low&quot; ? &quot;≈ &quot; : &quot;&quot;) + formatDuration(task.end - task.start);
+    const formatter = isFutureTask(task) ? formatForecastDuration : formatDuration;
+    return (level === &quot;low&quot; ? &quot;≈ &quot; : &quot;&quot;) + formatter(task.end - task.start);
   };
   const runForecastLevel = run =&gt; {
     let level = null;
@@ -4991,7 +5129,9 @@ html&gt;body{padding:0}&lt;/style&gt;
   const runDurationText = run =&gt; {
     const level = runForecastLevel(run);
     if (level === &quot;question&quot;) return unknownExecutionTime;
-    return (level === &quot;low&quot; ? &quot;≈ &quot; : &quot;&quot;) + formatDuration(run.end - run.start);
+    const futureRun = run.status === &quot;PREDICTED&quot; || run.start &gt;= currentTime;
+    const formatter = futureRun ? formatForecastDuration : formatDuration;
+    return (level === &quot;low&quot; ? &quot;≈ &quot; : &quot;&quot;) + formatter(run.end - run.start);
   };
   const runTimeText = run =&gt; {
     const level = runForecastLevel(run);
@@ -5253,7 +5393,13 @@ html&gt;body{padding:0}&lt;/style&gt;
     requestAnimationFrame(repositionExpandedCaptions);
   };
 
-  detailClose.addEventListener(&quot;click&quot;, closeDetail);
+  detailClose.addEventListener(&quot;click&quot;, () =&gt; closeDetail(true));
+  // Dismiss before task handlers, so the same outside click cannot reopen it.
+  root.addEventListener(&quot;click&quot;, event =&gt; {
+    if (!detail.classList.contains(&quot;is-open&quot;) || detail.contains(event.target)) return;
+    closeDetail(false);
+    event.stopPropagation();
+  }, true);
   conflictPopoverClose.addEventListener(&quot;click&quot;, () =&gt; closeConflict(true));
   conflictPopover.addEventListener(&quot;click&quot;, event =&gt; event.stopPropagation());
   root.addEventListener(&quot;click&quot;, () =&gt; {
@@ -5293,33 +5439,48 @@ html&gt;body{padding:0}&lt;/style&gt;
   timelineScroll.addEventListener(&quot;scroll&quot;, layoutDayLabels, { passive: true });
   requestAnimationFrame(layoutDayLabels);
 
-  let timeStepHours = 2;
-  const layoutTimeScaleLabels = () =&gt; {
-    const spacing = axis.clientWidth * timeStepHours / timelineHours;
-    const every = Math.max(1, Math.ceil(46 / Math.max(1, spacing)));
-    axis.querySelectorAll(&quot;.asv-tick&quot;).forEach((tick, index) =&gt; {
-      tick.hidden = index % every !== 0 &amp;&amp; !tick.classList.contains(&quot;is-last&quot;);
-    });
-  };
-  const renderTimeScale = hours =&gt; {
-    timeStepHours = hours;
+  // Pick the smallest readable interval using the actual zoomed axis width.
+  const timeScaleStepsMinutes = [5, 10, 15, 30, 60, 120, 180, 240, 360, 720, 1440];
+  const timeScaleMinSpacing = 88;
+  const timelineMinutes = Math.round(timelineHours * 60);
+  let timeStepMinutes = 0;
+  const renderTimeScale = minutes =&gt; {
+    timeStepMinutes = minutes;
     axis.querySelectorAll(&quot;.asv-tick&quot;).forEach(tick =&gt; tick.remove());
     const points = [];
-    for (let h = 0; h &lt;= timelineHours; h += hours) points.push(h);
-    if (points[points.length - 1] !== timelineHours) points.push(timelineHours);
-    points.forEach(h =&gt; {
+    for (let minute = 0; minute &lt;= timelineMinutes; minute += minutes) points.push(minute);
+    if (points[points.length - 1] !== timelineMinutes) points.push(timelineMinutes);
+    points.forEach(minute =&gt; {
       const tick = document.createElement(&quot;span&quot;);
       tick.className = &quot;asv-tick text-small&quot;;
-      if (h === 0) tick.classList.add(&quot;is-first&quot;);
-      if (h === timelineHours) tick.classList.add(&quot;is-last&quot;);
-      tick.style.left = (h / timelineHours * 100) + &quot;%&quot;;
-      tick.textContent = String(Math.floor(h) % 24).padStart(2, &quot;0&quot;) + &quot;:&quot; + (h % 1 ? &quot;30&quot; : &quot;00&quot;);
+      tick.dataset.timeMinute = minute;
+      if (minute === 0) tick.classList.add(&quot;is-first&quot;);
+      if (minute === timelineMinutes) tick.classList.add(&quot;is-last&quot;);
+      tick.style.left = (minute / timelineMinutes * 100) + &quot;%&quot;;
+      tick.textContent = String(Math.floor(minute / 60) % 24).padStart(2, &quot;0&quot;) + &quot;:&quot; + String(minute % 60).padStart(2, &quot;0&quot;);
       axis.appendChild(tick);
     });
-    root.querySelector(&quot;.asv-grid&quot;).style.backgroundSize = (hours / timelineHours * 100) + &quot;% 100%&quot;;
-    layoutTimeScaleLabels();
+    root.querySelector(&quot;.asv-grid&quot;).style.backgroundSize = (minutes / timelineMinutes * 100) + &quot;% 100%&quot;;
   };
-  renderTimeScale(2);
+  const layoutTimeScaleLabels = () =&gt; {
+    const width = axis.clientWidth;
+    if (width &lt;= 0) return;
+    const step = timeScaleStepsMinutes.find(minutes =&gt; width * minutes / timelineMinutes &gt;= timeScaleMinSpacing)
+      || timeScaleStepsMinutes[timeScaleStepsMinutes.length - 1];
+    if (step !== timeStepMinutes) renderTimeScale(step);
+    const ticks = [...axis.querySelectorAll(&quot;.asv-tick&quot;)];
+    ticks.forEach(tick =&gt; { tick.hidden = false; });
+    // A partial final interval still shows the exact end of the loaded data.
+    // Hide only the preceding label if it would collide with that endpoint.
+    if (ticks.length &gt; 2) {
+      const previous = ticks[ticks.length - 2];
+      const last = ticks[ticks.length - 1];
+      const gap = (timelineMinutes - Number(previous.dataset.timeMinute)) / timelineMinutes * width;
+      const requiredGap = (last.offsetWidth || 36) + (previous.offsetWidth || 36) / 2 + 8;
+      previous.hidden = gap &lt; requiredGap;
+    }
+  };
+  layoutTimeScaleLabels();
 
   const packFrequentRuns = list =&gt; {
     list.forEach(run =&gt; { run.frequentTrack = 0; });
@@ -5453,7 +5614,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       const caption = document.createElement(&quot;span&quot;);
       caption.className = &quot;asv-trigger-caption text-small&quot;;
       caption.innerHTML = &#x27;&lt;span class=&quot;asv-trigger-caption-title&quot;&gt;&lt;span class=&quot;asv-trigger-caption-prefix&quot;&gt;T:&lt;/span&gt;&lt;span class=&quot;asv-trigger-caption-name&quot;&gt;&#x27; + run.name + &#x27;&lt;/span&gt;&lt;/span&gt;&#x27; +
-        &#x27;&lt;span class=&quot;asv-trigger-caption-time text-small&quot;&gt;&#x27; + runDurationText(run) + &#x27;&lt;/span&gt;&#x27;;
+        &#x27;&lt;span class=&quot;asv-trigger-caption-time text-small&quot;&gt;&#x27; + (runForecastLevel(run) === &quot;question&quot; ? &quot;время неизвестно&quot; : runDurationText(run)) + &#x27;&lt;/span&gt;&#x27;;
       const captionStem = document.createElement(&quot;span&quot;);
       captionStem.className = &quot;asv-trigger-caption-stem&quot;;
       captionStem.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
@@ -5544,7 +5705,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   queueControl.style.top = queueTop + &quot;px&quot;;
   lanesHost.appendChild(queueLane);
 
-  const queueTaskGap = 4;
+  const queueTaskGap = 2;
   const queueTaskButtons = [];
   queueTasks.forEach((sourceTask, index) =&gt; {
     const task = { ...sourceTask, trigger: null, isQueueTask: true };
@@ -5607,7 +5768,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   const queueForecastLevel = runForecastLevel(queueDisplayRun);
   const queueRemainingText = queueForecastLevel === &quot;question&quot;
     ? &quot;Время: неизвестно&quot;
-    : &quot;Осталось &quot; + (queueForecastLevel === &quot;low&quot; ? &quot;≈ &quot; : &quot;&quot;) + formatDuration(queueRemainingSeconds);
+    : &quot;Осталось &quot; + (queueForecastLevel === &quot;low&quot; ? &quot;≈ &quot; : &quot;&quot;) + formatForecastDuration(queueRemainingSeconds);
   queueRemaining.textContent = queueRemainingText;
 
   let queueEnabled = true;
@@ -5711,7 +5872,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       const caption = document.createElement(&quot;span&quot;);
       caption.className = &quot;asv-trigger-caption text-small&quot;;
       caption.innerHTML = &#x27;&lt;span class=&quot;asv-trigger-caption-title&quot;&gt;&lt;span class=&quot;asv-trigger-caption-prefix&quot;&gt;T:&lt;/span&gt;&lt;span class=&quot;asv-trigger-caption-name&quot;&gt;&#x27; + run.name + &#x27;&lt;/span&gt;&lt;/span&gt;&#x27; +
-        &#x27;&lt;span class=&quot;asv-trigger-caption-time text-small&quot;&gt;&#x27; + runDurationText(run) + &#x27;&lt;/span&gt;&#x27;;
+        &#x27;&lt;span class=&quot;asv-trigger-caption-time text-small&quot;&gt;&#x27; + (runForecastLevel(run) === &quot;question&quot; ? &quot;время неизвестно&quot; : runDurationText(run)) + &#x27;&lt;/span&gt;&#x27;;
       const captionStem = document.createElement(&quot;span&quot;);
       captionStem.className = &quot;asv-trigger-caption-stem&quot;;
       captionStem.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
@@ -5880,6 +6041,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         const bolt = document.createElement(&quot;button&quot;);
         bolt.type = &quot;button&quot;;
         bolt.className = &quot;asv-frequency-bolt&quot;;
+        bolt.setAttribute(&quot;data-node-ip&quot;, run.nodeIp);
         bolt.style.left = ((run.conflictAt - run.start) / day * lane.clientWidth) + &quot;px&quot;;
         bolt.innerHTML = &quot;&amp;#9889;&amp;#65038;&quot;;
         bolt.title = frequentStatus(run);
@@ -6110,10 +6272,12 @@ html&gt;body{padding:0}&lt;/style&gt;
     });
   });
 
+  const frequentLaneByNode = new Map([[&quot;10.28.98.136&quot;, primaryFrequentLane], [&quot;10.42.108.136&quot;, secondaryLanes[0]]]);
   const clearFrequentListSelection = () =&gt; {
     closeFrequentOverlapPopover(false);
     activeFrequentTriggerName = null;
-    root.classList.remove(&quot;is-frequent-focus&quot;);
+    activeFrequentNodeIp = null;
+    frequentLaneByNode.forEach(lane =&gt; lane.classList.remove(&quot;is-frequent-focus&quot;));
     frequentListItems.forEach(item =&gt; {
       item.classList.remove(&quot;is-active&quot;);
       const reset = item.parentElement.querySelector(&quot;.asv-frequent-reset&quot;);
@@ -6148,22 +6312,26 @@ html&gt;body{padding:0}&lt;/style&gt;
     item.addEventListener(&quot;click&quot;, event =&gt; {
       event.stopPropagation();
       const triggerName = item.getAttribute(&quot;data-frequent-trigger-name&quot;);
-      const matchingRuns = [...runs, ...secondaryRuns]
-        .filter(run =&gt; run.isFrequent &amp;&amp; run.name === triggerName)
+      const nodeIp = item.closest(&quot;.asv-node-panel&quot;).getAttribute(&quot;data-node-ip&quot;);
+      const matchingRuns = allRuns
+        .filter(run =&gt; run.isFrequent &amp;&amp; run.nodeIp === nodeIp &amp;&amp; run.name === triggerName)
         .sort((a, b) =&gt; a.start - b.start);
       if (!matchingRuns.length) return;
       clearFrequentListSelection();
       activeFrequentTriggerName = triggerName;
+      activeFrequentNodeIp = nodeIp;
       item.classList.add(&quot;is-active&quot;);
       item.setAttribute(&quot;aria-pressed&quot;, &quot;true&quot;);
       matchingRuns.forEach(run =&gt; buttons.get(run.id)?.classList.add(&quot;is-frequent-list-match&quot;));
       matchingRuns.forEach(run =&gt; frequentGroups.get(run.id)?.classList.add(&quot;is-frequent-list-match&quot;));
-      matchingRuns.forEach(run =&gt; (frequentConflictBolts.get(run.conflictId) || []).forEach(bolt =&gt; bolt.classList.add(&quot;is-frequent-list-match&quot;)));
+      matchingRuns.forEach(run =&gt; (frequentConflictBolts.get(run.conflictId) || []).forEach(bolt =&gt; {
+        if (bolt.getAttribute(&quot;data-node-ip&quot;) === nodeIp) bolt.classList.add(&quot;is-frequent-list-match&quot;);
+      }));
       const matchingRunIds = new Set(matchingRuns.map(run =&gt; run.id));
       frequentOverlapBadges.forEach(({ badge, cluster }) =&gt; {
         if (cluster.runs.some(run =&gt; matchingRunIds.has(run.id))) badge.classList.add(&quot;is-frequent-list-match&quot;);
       });
-      root.classList.add(&quot;is-frequent-focus&quot;);
+      frequentLaneByNode.get(nodeIp)?.classList.add(&quot;is-frequent-focus&quot;);
       reset.hidden = false;
       closeDetail(false);
       closeConflict(false);
@@ -6218,7 +6386,9 @@ html&gt;body{padding:0}&lt;/style&gt;
       label.textContent = name;
       const style = window.getComputedStyle(label);
       const horizontalPadding = (Number.parseFloat(style.paddingLeft) || 0) + (Number.parseFloat(style.paddingRight) || 0);
-      const availableWidth = Math.max(0, width - horizontalPadding);
+      const segmentStyle = window.getComputedStyle(segment);
+      const horizontalBorder = (Number.parseFloat(segmentStyle.borderLeftWidth) || 0) + (Number.parseFloat(segmentStyle.borderRightWidth) || 0);
+      const availableWidth = Math.max(0, width - horizontalPadding - horizontalBorder);
       const font = style.font || [style.fontWeight, style.fontSize, style.fontFamily].join(&quot; &quot;);
       if (inlineTaskMeasureContext) inlineTaskMeasureContext.font = font;
       const measureText = text =&gt; inlineTaskMeasureContext
@@ -6428,8 +6598,6 @@ html&gt;body{padding:0}&lt;/style&gt;
       const hidden = filteredOut || (!frequentLayerVisible &amp;&amp; conflict.hasFrequentParticipant);
       // The local lightning belongs to a frequent trigger. When another type is
       // dimmed by the filter, remove that lightning instead of dimming it too.
-      const localBoltHidden = hidden || (Boolean(activeFrequentTriggerName) &amp;&amp;
-        conflict.runs.some(run =&gt; run.isFrequent &amp;&amp; run.name !== activeFrequentTriggerName));
       anchor.hidden = hidden;
       const globalBolt = anchor.querySelector(&quot;.asv-conflict-bolt&quot;);
       if (globalBolt) {
@@ -6438,6 +6606,9 @@ html&gt;body{padding:0}&lt;/style&gt;
         if (hidden) globalBolt.setAttribute(&quot;aria-expanded&quot;, &quot;false&quot;);
       }
       (frequentConflictBolts.get(conflict.id) || []).forEach(localBolt =&gt; {
+        const localBoltHidden = !frequentLayerVisible || (Boolean(activeFrequentTriggerName) &amp;&amp;
+          localBolt.getAttribute(&quot;data-node-ip&quot;) === activeFrequentNodeIp &amp;&amp;
+          conflict.runs.some(run =&gt; run.isFrequent &amp;&amp; run.nodeIp === activeFrequentNodeIp &amp;&amp; run.name !== activeFrequentTriggerName));
         localBolt.hidden = localBoltHidden;
         localBolt.setAttribute(&quot;aria-hidden&quot;, String(localBoltHidden));
         localBolt.setAttribute(&quot;aria-disabled&quot;, String(localBoltHidden));
@@ -6481,7 +6652,72 @@ html&gt;body{padding:0}&lt;/style&gt;
   const nodeCollapseState = { primary: false, secondary: false, third: false };
   const nodeIps = { primary: &quot;10.28.98.136&quot;, secondary: &quot;10.42.108.136&quot;, third: thirdNodeIp };
 
+  const buildNodeUpcomingSummary = nodeIp =&gt; {
+    const upcoming = allRuns.filter(run =&gt; run.nodeIp === nodeIp &amp;&amp; run.start &gt; currentTime &amp;&amp;
+      !run.isMissed &amp;&amp; (frequentLayerVisible || !run.isFrequent))
+      .sort((a, b) =&gt; a.start - b.start || a.firstId - b.firstId);
+    const conflicts = [...conflictGroups.values()].filter(conflict =&gt; conflict.at &gt;= currentTime &amp;&amp;
+      (frequentLayerVisible || !conflict.hasFrequentParticipant) &amp;&amp;
+      conflict.runs.some(run =&gt; run.nodeIp === nodeIp)).length;
+    return { next: upcoming[0] || null, count: upcoming.length, conflicts };
+  };
+  const collapsedSummaryLines = new Map();
+  Object.entries(nodeIps).forEach(([key]) =&gt; {
+    const line = document.createElement(&quot;span&quot;);
+    line.className = &quot;asv-collapsed-upcoming text-small&quot;;
+    collapsedZones[key].appendChild(line);
+    collapsedSummaryLines.set(key, line);
+  });
+  const refreshCollapsedSummaries = () =&gt; {
+    Object.entries(nodeIps).forEach(([key, nodeIp]) =&gt; {
+      const line = collapsedSummaryLines.get(key);
+      const summary = buildNodeUpcomingSummary(nodeIp);
+      line.replaceChildren();
+      if (!summary.next) {
+        line.textContent = &quot;Предстоящих запусков нет&quot;;
+        line.title = line.textContent;
+        line.setAttribute(&quot;aria-label&quot;, line.title);
+        return;
+      }
+      const add = (className, text) =&gt; {
+        const part = document.createElement(&quot;span&quot;);
+        part.className = className;
+        part.textContent = text;
+        line.appendChild(part);
+      };
+      const date = (16 + Math.floor(summary.next.start / daySeconds)) + &quot; сен&quot;;
+      add(&quot;asv-upcoming-summary-label&quot;, &quot;Ближайший запуск&quot;);
+      add(&quot;asv-upcoming-summary-time&quot;, date + &quot; · &quot; + formatClockShort(summary.next.start));
+      add(&quot;asv-upcoming-summary-name&quot;, summary.next.name);
+      add(&quot;asv-upcoming-summary-count&quot;, frequentRunCountLabel(summary.count) + &quot; впереди&quot;);
+      if (summary.conflicts) add(&quot;asv-upcoming-summary-conflicts&quot;, &quot;⚡︎ &quot; + summary.conflicts);
+      line.title = &quot;Ближайший запуск: &quot; + date + &quot; · &quot; + formatClock(summary.next.start) +
+        &quot; · &quot; + summary.next.name + &quot;; &quot; + frequentRunCountLabel(summary.count) +
+        &quot; впереди&quot; + (summary.conflicts ? &quot;; конфликтов: &quot; + summary.conflicts : &quot;&quot;);
+      line.setAttribute(&quot;aria-label&quot;, line.title);
+    });
+  };
+  const layoutCollapsedSummaries = () =&gt; {
+    const viewport = timelineScroll.getBoundingClientRect();
+    const sidebarEdge = detail.classList.contains(&quot;is-open&quot;)
+      ? detail.getBoundingClientRect().left - 8 : viewport.right;
+    const left = Math.max(0, viewport.left) + 12;
+    const right = Math.min(window.innerWidth, viewport.right - 22, sidebarEdge) - 12;
+    const width = Math.max(0, right - left);
+    collapsedSummaryLines.forEach(line =&gt; {
+      line.style.left = (timelineScroll.scrollLeft + left - viewport.left) + &quot;px&quot;;
+      line.style.width = width + &quot;px&quot;;
+      line.classList.toggle(&quot;is-compact&quot;, width &lt; 520);
+    });
+  };
+  timelineScroll.addEventListener(&quot;scroll&quot;, layoutCollapsedSummaries, { passive: true });
+  window.addEventListener(&quot;resize&quot;, layoutCollapsedSummaries, { passive: true });
+  detail.addEventListener(&quot;transitionend&quot;, layoutCollapsedSummaries);
+
+
   const updateNodeLayout = () =&gt; {
+    refreshCollapsedSummaries();
+    requestAnimationFrame(layoutCollapsedSummaries);
     const visiblePrimaryFrequentHeight = frequentLayerVisible ? frequentLaneHeight : 0;
     const visibleSecondaryFrequentHeight = frequentLayerVisible ? secondaryFrequentHeight : 0;
     const laneHeight = lane =&gt; 86 + (captionSpace.get(lane) || 0);
@@ -6500,7 +6736,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       secondarySharedTrackHeight = secondaryAvailableHeight / (secondaryRequiredHeights.length - index - 1);
     }
     const visibleExpandedSecondaryHeight = secondaryTopInset + visibleSecondaryFrequentHeight + secondaryRegularHeightBudget;
-    const primaryHeight = nodeCollapseState.primary ? collapsedNodeHeight : visibleExpandedPrimaryHeight;
+    const primaryHeight = nodeCollapseState.primary ? 42 + collapsedNodeHeight : visibleExpandedPrimaryHeight;
     const secondaryHeight = nodeCollapseState.secondary ? collapsedNodeHeight : visibleExpandedSecondaryHeight;
     const thirdRegularHeight = laneHeight(thirdLane);
     if (thirdRegularHeight + 12 &gt; thirdRegularHeightBudget) {
@@ -6662,7 +6898,9 @@ html&gt;body{padding:0}&lt;/style&gt;
       positionExpandedCaption(caption);
       const rect = caption.getBoundingClientRect();
       if (!lanes.has(lane)) lanes.set(lane, []);
-      lanes.get(lane).push({ caption, button, left: rect.left, width: rect.width, height: rect.height, start: run.start, order: run.firstId });
+      const title = caption.querySelector(&quot;.asv-trigger-caption-title&quot;);
+      const collapsedHeight = Math.max(20, title.getBoundingClientRect().height + 6);
+      lanes.get(lane).push({ caption, button, left: rect.left, width: rect.width, height: collapsedHeight, start: run.start, order: run.firstId });
     });
     let spaceChanged = false;
     [...primaryLanes.slice(1), ...secondaryLanes.slice(1), thirdLane].forEach(lane =&gt; {
@@ -6690,7 +6928,8 @@ html&gt;body{padding:0}&lt;/style&gt;
   };
   triggerCaptions.forEach(({ caption }) =&gt; {
     const button = caption.parentElement;
-    button.addEventListener(&quot;mouseenter&quot;, () =&gt; positionExpandedCaption(caption));
+    caption.addEventListener(&quot;mouseenter&quot;, () =&gt; positionExpandedCaption(caption));
+    caption.addEventListener(&quot;mouseleave&quot;, () =&gt; positionExpandedCaption(caption));
     button.addEventListener(&quot;focus&quot;, () =&gt; positionExpandedCaption(caption));
   });
   timelineScroll.addEventListener(&quot;scroll&quot;, repositionExpandedCaptions, { passive: true });
@@ -6892,7 +7131,6 @@ html&gt;body{padding:0}&lt;/style&gt;
   const calendarReset = toolbar.querySelector(&#x27;[data-calendar-reset]&#x27;);
   const calendarCancel = toolbar.querySelector(&#x27;[data-calendar-cancel]&#x27;);
   const calendarModes = [...toolbar.querySelectorAll(&#x27;[data-calendar-mode]&#x27;)];
-  const stepSelect = toolbar.querySelector(&#x27;[data-time-step]&#x27;);
   const upcomingToggle = toolbar.querySelector(&#x27;[data-upcoming-toggle]&#x27;);
   const upcomingPopup = toolbar.querySelector(&#x27;#asv-upcoming-popup&#x27;);
   const upcomingList = toolbar.querySelector(&#x27;[data-upcoming-list]&#x27;);
@@ -7061,15 +7299,6 @@ html&gt;body{padding:0}&lt;/style&gt;
       layoutConflictLines();
     });
   });
-  stepSelect.addEventListener(&#x27;change&#x27;, () =&gt; {
-    const hours = Number(stepSelect.value);
-    if (![.5, 1, 2, 4, 6, 12].includes(hours)) return;
-    renderTimeScale(hours);
-    const targetZoom = 2.5 / hours;
-    const nearest = zoomLevels.reduce((best, value, index) =&gt; Math.abs(value - targetZoom) &lt; Math.abs(zoomLevels[best] - targetZoom) ? index : best, 0);
-    setZoom(nearest);
-  });
-
   const activateUpcomingConflict = conflict =&gt; {
     const target = conflictNavigationTargets.get(conflict.id);
     if (!target) return;
