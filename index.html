@@ -4164,33 +4164,6 @@ html&gt;body{padding:0}&lt;/style&gt;
     #asv-real .is-primary-node.is-collapsed { height: 50px; padding-top: 0; }
   }
 
-  #asv-real .asv-detail-task-nav {
-    display: flex;
-    flex: 0 0 auto;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 9px 18px;
-    border-bottom: 1px solid var(--asv-rule);
-  }
-  #asv-real .asv-detail-task-nav[hidden] { display: none; }
-  #asv-real .asv-detail-task-count { color: var(--asv-muted); font-size: 12px; font-variant-numeric: tabular-nums; }
-  #asv-real .asv-detail-task-arrow {
-    display: grid;
-    width: 28px;
-    height: 28px;
-    padding: 0;
-    place-items: center;
-    border: 1px solid var(--asv-rule);
-    border-radius: 4px;
-    background: var(--asv-page);
-    color: var(--asv-text);
-    font-size: 17px;
-    cursor: pointer;
-  }
-  #asv-real .asv-detail-task-arrow:hover:not(:disabled) { background: var(--asv-group); }
-  #asv-real .asv-detail-task-arrow:disabled { opacity: .35; cursor: default; }
-  #asv-real .asv-detail-task-arrow:focus-visible { outline: 2px solid var(--asv-selected); outline-offset: 2px; }
   #asv-real .asv-run.is-trigger .asv-segment.is-minimum-task { z-index: 3; }
 &lt;/style&gt;
 
@@ -4332,11 +4305,6 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;/div&gt;
       &lt;button class=&quot;asv-detail-close text-small&quot; type=&quot;button&quot; aria-label=&quot;Закрыть сайдбар&quot; title=&quot;Закрыть&quot;&gt;&lt;svg class=&quot;asv-close-icon&quot; viewBox=&quot;0 0 16 16&quot; aria-hidden=&quot;true&quot; focusable=&quot;false&quot;&gt;&lt;path d=&quot;M4 4l8 8M12 4l-8 8&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;
     &lt;/div&gt;
-    &lt;div class=&quot;asv-detail-task-nav&quot; role=&quot;group&quot; aria-label=&quot;Переключение задач триггера&quot; hidden&gt;
-      &lt;button class=&quot;asv-detail-task-arrow&quot; type=&quot;button&quot; data-task-previous aria-label=&quot;Предыдущая задача&quot; aria-keyshortcuts=&quot;ArrowLeft&quot; title=&quot;Предыдущая задача (←)&quot;&gt;←&lt;/button&gt;
-      &lt;span class=&quot;asv-detail-task-count&quot; data-task-navigation-count aria-live=&quot;polite&quot;&gt;&lt;/span&gt;
-      &lt;button class=&quot;asv-detail-task-arrow&quot; type=&quot;button&quot; data-task-next aria-label=&quot;Следующая задача&quot; aria-keyshortcuts=&quot;ArrowRight&quot; title=&quot;Следующая задача (→)&quot;&gt;→&lt;/button&gt;
-    &lt;/div&gt;
     &lt;div class=&quot;asv-detail-track&quot;&gt;&lt;/div&gt;
   &lt;/aside&gt;
 &lt;/section&gt;
@@ -4371,10 +4339,6 @@ html&gt;body{padding:0}&lt;/style&gt;
   const detailMeta = root.querySelector(&quot;.asv-detail-meta&quot;);
   const detailTrack = root.querySelector(&quot;.asv-detail-track&quot;);
   const detailClose = root.querySelector(&quot;.asv-detail-close&quot;);
-  const taskNavigation = root.querySelector(&quot;.asv-detail-task-nav&quot;);
-  const taskPrevious = root.querySelector(&quot;[data-task-previous]&quot;);
-  const taskNext = root.querySelector(&quot;[data-task-next]&quot;);
-  const taskNavigationCount = root.querySelector(&quot;[data-task-navigation-count]&quot;);
   const conflictLayer = root.querySelector(&quot;.asv-conflict-layer&quot;);
   const conflictPopover = root.querySelector(&quot;.asv-conflict-popover&quot;);
   const conflictPopoverClose = root.querySelector(&quot;.asv-conflict-popover-close&quot;);
@@ -5420,7 +5384,6 @@ html&gt;body{padding:0}&lt;/style&gt;
       activeTaskLinker.selectLinkedTask(null, false);
     }
     activeTaskLinker = null;
-    taskNavigation.hidden = true;
     detail.classList.remove(&quot;is-open&quot;);
     detail.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
     buttons.forEach(button =&gt; {
@@ -5433,8 +5396,6 @@ html&gt;body{padding:0}&lt;/style&gt;
   };
 
   detailClose.addEventListener(&quot;click&quot;, () =&gt; closeDetail(true));
-  taskPrevious.addEventListener(&quot;click&quot;, () =&gt; activeTaskLinker?.selectAdjacentTask(-1));
-  taskNext.addEventListener(&quot;click&quot;, () =&gt; activeTaskLinker?.selectAdjacentTask(1));
   // Dismiss before task handlers, so the same outside click cannot reopen it.
   root.addEventListener(&quot;click&quot;, event =&gt; {
     if (!detail.classList.contains(&quot;is-open&quot;) || detail.contains(event.target)) return;
@@ -7155,17 +7116,8 @@ html&gt;body{padding:0}&lt;/style&gt;
         if (current.mainSegment) current.mainSegment.classList.add(&quot;is-linked-selected&quot;);
         if (shouldScroll) requestAnimationFrame(() =&gt; scrollRowToCenter(current.row));
       }
-      updateTaskNavigation();
     };
 
-    const updateTaskNavigation = () =&gt; {
-      const index = orderedTasks.findIndex(task =&gt; task.id === selectedTaskId);
-      taskNavigation.hidden = !run.isTrigger || orderedTasks.length &lt; 2;
-      taskPrevious.disabled = index &lt;= 0;
-      taskNext.disabled = index &gt;= orderedTasks.length - 1;
-      taskNavigationCount.textContent = index &lt; 0 ? &quot;Задачи: &quot; + orderedTasks.length
-        : &quot;Задача &quot; + (index + 1) + &quot; из &quot; + orderedTasks.length;
-    };
     const selectAdjacentTask = direction =&gt; {
       if (!run.isTrigger || orderedTasks.length &lt; 2) return;
       const index = orderedTasks.findIndex(task =&gt; task.id === selectedTaskId);
@@ -7214,7 +7166,6 @@ html&gt;body{padding:0}&lt;/style&gt;
       pair.row.addEventListener(&quot;click&quot;, () =&gt; selectLinkedTask(taskId, false));
     });
     if (run.isTrigger &amp;&amp; orderedTasks.length) selectLinkedTask(orderedTasks[0].id, false);
-    else updateTaskNavigation();
     const focusAnchor = run.isFrequent ? frequentGroups.get(run.id) : selectedButton;
     focusAnchor?.focus({ preventScroll: true });
   }
