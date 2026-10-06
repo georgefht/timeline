@@ -4163,6 +4163,35 @@ html&gt;body{padding:0}&lt;/style&gt;
   @media (max-width: 700px) {
     #asv-real .is-primary-node.is-collapsed { height: 50px; padding-top: 0; }
   }
+
+  #asv-real .asv-detail-task-nav {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 9px 18px;
+    border-bottom: 1px solid var(--asv-rule);
+  }
+  #asv-real .asv-detail-task-nav[hidden] { display: none; }
+  #asv-real .asv-detail-task-count { color: var(--asv-muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  #asv-real .asv-detail-task-arrow {
+    display: grid;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    place-items: center;
+    border: 1px solid var(--asv-rule);
+    border-radius: 4px;
+    background: var(--asv-page);
+    color: var(--asv-text);
+    font-size: 17px;
+    cursor: pointer;
+  }
+  #asv-real .asv-detail-task-arrow:hover:not(:disabled) { background: var(--asv-group); }
+  #asv-real .asv-detail-task-arrow:disabled { opacity: .35; cursor: default; }
+  #asv-real .asv-detail-task-arrow:focus-visible { outline: 2px solid var(--asv-selected); outline-offset: 2px; }
+  #asv-real .asv-run.is-trigger .asv-segment.is-minimum-task { z-index: 3; }
 &lt;/style&gt;
 
 &lt;section id=&quot;asv-real&quot; aria-label=&quot;История и прогноз запусков триггеров с 16 сентября по 18 сентября, 18:00&quot;&gt;
@@ -4303,6 +4332,11 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;/div&gt;
       &lt;button class=&quot;asv-detail-close text-small&quot; type=&quot;button&quot; aria-label=&quot;Закрыть сайдбар&quot; title=&quot;Закрыть&quot;&gt;&lt;svg class=&quot;asv-close-icon&quot; viewBox=&quot;0 0 16 16&quot; aria-hidden=&quot;true&quot; focusable=&quot;false&quot;&gt;&lt;path d=&quot;M4 4l8 8M12 4l-8 8&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;
     &lt;/div&gt;
+    &lt;div class=&quot;asv-detail-task-nav&quot; role=&quot;group&quot; aria-label=&quot;Переключение задач триггера&quot; hidden&gt;
+      &lt;button class=&quot;asv-detail-task-arrow&quot; type=&quot;button&quot; data-task-previous aria-label=&quot;Предыдущая задача&quot; aria-keyshortcuts=&quot;ArrowLeft&quot; title=&quot;Предыдущая задача (←)&quot;&gt;←&lt;/button&gt;
+      &lt;span class=&quot;asv-detail-task-count&quot; data-task-navigation-count aria-live=&quot;polite&quot;&gt;&lt;/span&gt;
+      &lt;button class=&quot;asv-detail-task-arrow&quot; type=&quot;button&quot; data-task-next aria-label=&quot;Следующая задача&quot; aria-keyshortcuts=&quot;ArrowRight&quot; title=&quot;Следующая задача (→)&quot;&gt;→&lt;/button&gt;
+    &lt;/div&gt;
     &lt;div class=&quot;asv-detail-track&quot;&gt;&lt;/div&gt;
   &lt;/aside&gt;
 &lt;/section&gt;
@@ -4337,6 +4371,10 @@ html&gt;body{padding:0}&lt;/style&gt;
   const detailMeta = root.querySelector(&quot;.asv-detail-meta&quot;);
   const detailTrack = root.querySelector(&quot;.asv-detail-track&quot;);
   const detailClose = root.querySelector(&quot;.asv-detail-close&quot;);
+  const taskNavigation = root.querySelector(&quot;.asv-detail-task-nav&quot;);
+  const taskPrevious = root.querySelector(&quot;[data-task-previous]&quot;);
+  const taskNext = root.querySelector(&quot;[data-task-next]&quot;);
+  const taskNavigationCount = root.querySelector(&quot;[data-task-navigation-count]&quot;);
   const conflictLayer = root.querySelector(&quot;.asv-conflict-layer&quot;);
   const conflictPopover = root.querySelector(&quot;.asv-conflict-popover&quot;);
   const conflictPopoverClose = root.querySelector(&quot;.asv-conflict-popover-close&quot;);
@@ -5382,6 +5420,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       activeTaskLinker.selectLinkedTask(null, false);
     }
     activeTaskLinker = null;
+    taskNavigation.hidden = true;
     detail.classList.remove(&quot;is-open&quot;);
     detail.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
     buttons.forEach(button =&gt; {
@@ -5394,6 +5433,8 @@ html&gt;body{padding:0}&lt;/style&gt;
   };
 
   detailClose.addEventListener(&quot;click&quot;, () =&gt; closeDetail(true));
+  taskPrevious.addEventListener(&quot;click&quot;, () =&gt; activeTaskLinker?.selectAdjacentTask(-1));
+  taskNext.addEventListener(&quot;click&quot;, () =&gt; activeTaskLinker?.selectAdjacentTask(1));
   // Dismiss before task handlers, so the same outside click cannot reopen it.
   root.addEventListener(&quot;click&quot;, event =&gt; {
     if (!detail.classList.contains(&quot;is-open&quot;) || detail.contains(event.target)) return;
@@ -5407,6 +5448,18 @@ html&gt;body{padding:0}&lt;/style&gt;
     closeFrequentOverlapPopover(false);
   });
   root.addEventListener(&quot;keydown&quot;, event =&gt; {
+    if (event.key === &quot;ArrowLeft&quot; || event.key === &quot;ArrowRight&quot;) {
+      if (!detail.classList.contains(&quot;is-open&quot;) || !activeTaskLinker?.canNavigateTasks ||
+          event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+      const target = event.target;
+      if (target.closest(&quot;input, textarea, select, [contenteditable=&#x27;true&#x27;]&quot;)) return;
+      const selectedButton = selectedRun?.isFrequent ? frequentGroups.get(selectedRun.id) : buttons.get(selectedRun?.id);
+      if (!detail.contains(target) &amp;&amp; !selectedButton?.contains(target)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      activeTaskLinker.selectAdjacentTask(event.key === &quot;ArrowRight&quot; ? 1 : -1);
+      return;
+    }
     if (event.key !== &quot;Escape&quot;) return;
     if (closeFrequentOverlapPopover(true)) return;
     if (conflictPopover.classList.contains(&quot;is-open&quot;)) closeConflict(true);
@@ -5579,6 +5632,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       : 0;
     segment.style.left = &quot;min(&quot; + left + &quot;%, calc(100% - 2px))&quot;;
     segment.style.width = &quot;min(100%, max(2px, &quot; + width + &quot;%))&quot;;
+    segment.dataset.taskWidthFraction = String(width / 100);
   };
   const bindStandaloneTaskTooltip = (button, run) =&gt; {
     const task = run.tasks[0];
@@ -6382,6 +6436,10 @@ html&gt;body{padding:0}&lt;/style&gt;
     });
     inlineTaskLabels.forEach(({ segment, label }) =&gt; {
       const width = segment.getBoundingClientRect().width;
+      if (segment.dataset.taskWidthFraction !== undefined) {
+        const naturalWidth = segment.parentElement.clientWidth * Number(segment.dataset.taskWidthFraction);
+        segment.classList.toggle(&quot;is-minimum-task&quot;, naturalWidth &lt; 2);
+      }
       const name = label.getAttribute(&quot;data-full-task-name&quot;) || &quot;&quot;;
       label.textContent = name;
       const style = window.getComputedStyle(label);
@@ -7097,9 +7155,48 @@ html&gt;body{padding:0}&lt;/style&gt;
         if (current.mainSegment) current.mainSegment.classList.add(&quot;is-linked-selected&quot;);
         if (shouldScroll) requestAnimationFrame(() =&gt; scrollRowToCenter(current.row));
       }
+      updateTaskNavigation();
     };
 
-    activeTaskLinker = { setLinkedTask, selectLinkedTask };
+    const updateTaskNavigation = () =&gt; {
+      const index = orderedTasks.findIndex(task =&gt; task.id === selectedTaskId);
+      taskNavigation.hidden = !run.isTrigger || orderedTasks.length &lt; 2;
+      taskPrevious.disabled = index &lt;= 0;
+      taskNext.disabled = index &gt;= orderedTasks.length - 1;
+      taskNavigationCount.textContent = index &lt; 0 ? &quot;Задачи: &quot; + orderedTasks.length
+        : &quot;Задача &quot; + (index + 1) + &quot; из &quot; + orderedTasks.length;
+    };
+    const selectAdjacentTask = direction =&gt; {
+      if (!run.isTrigger || orderedTasks.length &lt; 2) return;
+      const index = orderedTasks.findIndex(task =&gt; task.id === selectedTaskId);
+      const nextIndex = index &lt; 0 ? (direction &gt; 0 ? 0 : orderedTasks.length - 1) : index + direction;
+      if (nextIndex &lt; 0 || nextIndex &gt;= orderedTasks.length) return;
+      const task = orderedTasks[nextIndex];
+      const pair = taskLinks.get(task.id);
+      setLinkedTask(null, false);
+      selectLinkedTask(task.id, true);
+      pair.row.focus({ preventScroll: true });
+      // A short task is reachable even if its main segment is narrower than a pixel.
+      const anchor = run.isFrequent ? frequentGroups.get(run.id) : pair.mainSegment;
+      if (!anchor) return;
+      const viewport = timelineScroll.getBoundingClientRect();
+      const left = Math.max(0, viewport.left) + 8;
+      const right = Math.min(window.innerWidth, viewport.right, detail.getBoundingClientRect().left) - 8;
+      if (right &lt;= left) { hideMainTaskTooltip(); return; }
+      const box = anchor.getBoundingClientRect();
+      if (box.left &lt; left) timelineScroll.scrollLeft += box.left - left;
+      else if (box.right &gt; right) timelineScroll.scrollLeft += box.right - right;
+      requestAnimationFrame(() =&gt; {
+        if (selectedRun?.id === run.id &amp;&amp; selectedTaskId === task.id &amp;&amp;
+            activeTaskLinker?.selectAdjacentTask === selectAdjacentTask) {
+          showMainTaskTooltip(anchor, task, run);
+        }
+      });
+    };
+    activeTaskLinker = {
+      setLinkedTask, selectLinkedTask, selectAdjacentTask,
+      canNavigateTasks: run.isTrigger &amp;&amp; orderedTasks.length &gt; 1
+    };
 
     taskLinks.forEach((pair, taskId) =&gt; {
       pair.segment.addEventListener(&quot;mouseenter&quot;, () =&gt; setLinkedTask(taskId));
@@ -7116,6 +7213,10 @@ html&gt;body{padding:0}&lt;/style&gt;
       });
       pair.row.addEventListener(&quot;click&quot;, () =&gt; selectLinkedTask(taskId, false));
     });
+    if (run.isTrigger &amp;&amp; orderedTasks.length) selectLinkedTask(orderedTasks[0].id, false);
+    else updateTaskNavigation();
+    const focusAnchor = run.isFrequent ? frequentGroups.get(run.id) : selectedButton;
+    focusAnchor?.focus({ preventScroll: true });
   }
 
   // Timeline controls use the dates and conflicts present in this demo.
