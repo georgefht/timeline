@@ -4664,6 +4664,8 @@ html, body, button, input, select, textarea, code, pre,
 }
 #asv-real .asv-trigger-caption:hover { box-shadow: var(--kit-shadow-normal); }
 #asv-real .asv-trigger-caption-time { color: var(--kit-dark-500); font-size: 13px; font-weight: 400; line-height: 18px; }
+/* Keep the current-time line above node separators (z-index: 8). */
+#asv-real .asv-now-layer { z-index: 9; }
 #asv-real .asv-now-marker {
   --kit-now-label-top: 2px;
   --kit-now-label-height: 18px;
@@ -4677,7 +4679,11 @@ html, body, button, input, select, textarea, code, pre,
 #asv-real .asv-now-line {
   top: calc(var(--kit-now-label-top) + var(--kit-now-label-height));
 }
-#asv-real .asv-task-inline-name { color: var(--kit-white); font-size: 12px; font-weight: 400; line-height: 16px; opacity: 1; }
+#asv-real .asv-task-inline-name { padding: 0 var(--asv-label-padding, 6px); color: var(--kit-white); font-size: 12px; font-weight: 400; line-height: 16px; opacity: 1; }
+#asv-real .asv-task-inline-name.is-truncated {
+  -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - var(--asv-label-padding, 6px) - var(--asv-label-fade, 8px)), transparent calc(100% - var(--asv-label-padding, 6px)), transparent 100%);
+  mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - var(--asv-label-padding, 6px) - var(--asv-label-fade, 8px)), transparent calc(100% - var(--asv-label-padding, 6px)), transparent 100%);
+}
 #asv-real .asv-skipped .asv-task-inline-name,
 #asv-real .asv-segment.asv-skipped .asv-task-inline-name { color: var(--kit-dark-600); opacity: 1; }
 #asv-real .asv-segment.is-past,
@@ -4968,10 +4974,53 @@ html, body, button, input, select, textarea, code, pre,
 #asv-real .asv-conflict-preview-time,
 #asv-real .asv-conflict-popover-title,
 #asv-real .asv-popup-title { font-size: 14px; font-weight: 500; line-height: 18px; }
+/* CalendarPanel from the local showcase: 264px panel, 16/8px padding, 32px cells. */
+#asv-real #asv-calendar-popup { width: 264px; max-height: calc(100vh - 24px); padding: 0; }
+#asv-real .asv-calendar-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 16px 16px 0; }
+#asv-real .asv-calendar-heading .asv-popup-heading { font-size: 13px; font-weight: 500; line-height: 18px; }
+#asv-real #asv-calendar-popup .asv-popup-description { margin: 4px 16px 16px; font-size: 11px; line-height: 16px; }
+#asv-real .asv-date-clear { display: grid; place-items: center; flex: 0 0 24px; width: 24px; height: 30px; padding: 0; border: 0; background: transparent; color: var(--kit-dark-500); cursor: pointer; }
+#asv-real .asv-date-clear[hidden] { display: none; }
+#asv-real .asv-date-clear:hover { background: var(--kit-dark-100); color: var(--kit-dark-600); }
+#asv-real .asv-date-clear .asv-close-icon { width: 12px; height: 12px; }
+#asv-real .asv-date-clear:focus-visible { outline: 2px solid var(--kit-accent-main); outline-offset: -2px; }
+#asv-real #asv-calendar-popup.is-two-months { width: 528px; }
+#asv-real .asv-calendar-panels { display: grid; grid-template-columns: minmax(0, 1fr); }
+#asv-real .asv-calendar-panels[data-months=&quot;2&quot;] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+#asv-real .asv-calendar-panel + .asv-calendar-panel { border-left: 1px solid var(--kit-dark-200); }
+#asv-real .asv-calendar-modes { margin: 0 16px; }
 #asv-real .asv-calendar-mode { font-size: 13px; line-height: 18px; border-radius: 4px; }
 #asv-real .asv-calendar-mode[aria-pressed=&quot;true&quot;] { box-shadow: var(--kit-shadow-micro); }
-#asv-real .asv-calendar-day { border-radius: 4px; font-size: 13px; line-height: 18px; }
-#asv-real .asv-calendar-day[aria-pressed=&quot;true&quot;] { color: var(--kit-white); }
+#asv-real .asv-calendar-panel { min-width: 0; padding: 16px 8px; }
+#asv-real .asv-calendar-header { display: flex; align-items: center; justify-content: space-between; height: 24px; margin-bottom: 8px; }
+#asv-real .asv-calendar-month { display: flex; align-items: center; justify-content: center; gap: 8px; height: 24px; margin: 0; color: var(--kit-dark-600); font-size: 14px; font-weight: 500; line-height: 18px; }
+#asv-real .asv-calendar-nav { display: inline-flex; align-items: center; justify-content: center; padding: 3px 4px; border: 0; border-radius: 4px; background: transparent; color: var(--kit-dark-600); font-size: 14px; font-weight: 500; line-height: 18px; cursor: pointer; }
+#asv-real .asv-calendar-nav:hover { background: var(--kit-accent-300); }
+#asv-real .asv-calendar-arrow { width: 24px; height: 24px; padding: 0; }
+#asv-real .asv-calendar-arrow img { display: block; width: 5.9px; height: 10.4px; }
+#asv-real .asv-calendar-nav:disabled { opacity: .35; cursor: default; background: transparent; }
+#asv-real .asv-calendar-choices { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px 6px; }
+#asv-real .asv-calendar-choices .asv-calendar-choice { width: 100%; }
+#asv-real .asv-calendar-weekdays,
+#asv-real .asv-calendar-grid { grid-template-columns: repeat(7, 32px); justify-content: space-between; gap: 4px 0; }
+#asv-real .asv-calendar-weekdays { margin: 0; color: var(--kit-dark-600); font-size: 14px; line-height: 18px; }
+#asv-real .asv-calendar-weekdays span { display: grid; place-items: center; height: 32px; font-weight: 500; }
+#asv-real .asv-calendar-day { width: 32px; height: 32px; padding: 0; border: 1px solid transparent; border-radius: 4px; background: var(--kit-white); color: var(--kit-dark-600); font-size: 14px; font-weight: 400; line-height: 18px; letter-spacing: .2px; }
+#asv-real .asv-calendar-day[data-weekend=&quot;true&quot;] { color: var(--kit-critical-main); }
+#asv-real .asv-calendar-day:disabled { color: var(--kit-dark-400); opacity: 1; cursor: default; }
+#asv-real .asv-calendar-day[data-other=&quot;true&quot;] { color: var(--kit-dark-350); }
+#asv-real .asv-calendar-day:not(:disabled):hover { background: var(--kit-white); color: var(--kit-accent-main); border-color: var(--kit-accent-main); }
+#asv-real .asv-calendar-day.is-in-range,
+#asv-real .asv-calendar-day.is-in-range:hover { border-radius: 4px; background: var(--kit-accent-300); color: var(--kit-accent-main); }
+#asv-real .asv-calendar-day[aria-pressed=&quot;true&quot;],
+#asv-real .asv-calendar-day[aria-pressed=&quot;true&quot;]:hover { background: var(--kit-accent-main); color: var(--kit-white); font-weight: 400; }
+#asv-real .asv-calendar-day.is-range-preview { border-color: var(--kit-accent-main); }
+#asv-real .asv-calendar-day[aria-current=&quot;date&quot;] { box-shadow: none; font-weight: 500; }
+#asv-real .asv-calendar-day[aria-current=&quot;date&quot;]::before { content: &quot;&quot;; position: absolute; bottom: 3px; left: 7px; right: 7px; height: 2px; border-radius: 8px; background: var(--kit-accent-main); }
+#asv-real .asv-calendar-day[aria-current=&quot;date&quot;][aria-pressed=&quot;true&quot;]::before { background: var(--kit-white); }
+#asv-real .asv-calendar-day.has-upcoming-conflicts::after { display: none; }
+#asv-real #asv-calendar-popup button:focus-visible { outline: 2px solid var(--kit-accent-main); outline-offset: -2px; }
+#asv-real .asv-calendar-selection { min-height: 32px; margin: 0 16px 12px; font-size: 11px; line-height: 16px; }
 #asv-real .asv-detail-close,
 #asv-real .asv-conflict-popover-close { border-radius: 4px; }
 #asv-real .asv-detail-close:hover,
@@ -4990,6 +5039,26 @@ html, body, button, input, select, textarea, code, pre,
   #asv-real .asv-queue-panel { position: static; width: calc(100% + 32px); margin: 20px -16px -18px; }
 }
 
+/* Archive extension shares the original time origin and lane geometry. */
+#asv-real .asv-overview.has-history { min-width: 0; }
+#asv-real .asv-timeline-scroll { overflow-anchor: none; }
+#asv-real .asv-history-surface { position: absolute; top: 0; bottom: 0; right: 100%; width: var(--kit-history-width, 0px); background: var(--asv-history); pointer-events: none; }
+#asv-real .asv-lane::after,
+#asv-real .asv-queue-lane::after { content: &quot;&quot;; position: absolute; top: 0; bottom: -1px; right: 100%; width: var(--kit-history-width, 0px); border-bottom: 1px solid var(--asv-rule); pointer-events: none; }
+#asv-real .asv-lane.is-frequent-lane::after { top: -12px; background: var(--kit-white); border-bottom-style: dashed; }
+#asv-real .asv-node-boundary::before { content: &quot;&quot;; position: absolute; right: 100%; top: 0; width: var(--kit-history-width, 0px); height: 1px; background: inherit; }
+#asv-real .asv-history-day { position: absolute; top: 0; height: var(--asv-timeline-height, 640px); border-left: 1px solid var(--asv-rule); pointer-events: none; }
+#asv-real .asv-history-day::after { content: &quot;&quot;; position: absolute; top: 42px; bottom: 0; left: 0; right: 0; background-image: linear-gradient(to right, var(--asv-rule) 1px, transparent 1px); background-size: var(--kit-history-grid-step, 8.333%) 100%; opacity: .45; }
+#asv-real .asv-history-date { position: absolute; top: 2px; left: 6px; white-space: nowrap; color: var(--kit-dark-600); font-size: 11px; line-height: 14px; }
+#asv-real .asv-history-ticks { position: absolute; inset: 0 0 auto; height: 42px; border-bottom: 1px solid var(--asv-rule); }
+#asv-real .asv-history-tick { position: absolute; top: 22px; transform: translateX(-50%); color: var(--kit-dark-500); font-size: 11px; line-height: 14px; }
+#asv-real .asv-history-loader { position: absolute; z-index: 35; inset: 0; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--kit-white) 65%, transparent); pointer-events: auto; cursor: progress; }
+#asv-real .asv-history-loader[hidden] { display: none; }
+#asv-real .asv-history-spinner { position: relative; flex: 0 0 32px; width: 32px; height: 32px; animation: kit-history-spin .75s linear infinite; }
+#asv-real .asv-history-spinner img { position: absolute; left: 50%; top: 50%; max-width: none; transform: translate(-50%, -50%) scale(.8); }
+@keyframes kit-history-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { #asv-real .asv-history-spinner { animation: none; } }
+
 &lt;/style&gt;
 
 &lt;section id=&quot;asv-real&quot; aria-label=&quot;История и прогноз запусков триггеров с 16 сентября по 18 сентября, 18:00&quot;&gt;
@@ -4998,7 +5067,7 @@ html, body, button, input, select, textarea, code, pre,
       &lt;div class=&quot;asv-date-control&quot;&gt;
         &lt;button class=&quot;asv-toolbar-button asv-date-arrow&quot; type=&quot;button&quot; data-date-prev aria-label=&quot;На сутки назад&quot;&gt;&lt;svg class=&quot;asv-toolbar-icon&quot; viewBox=&quot;0 0 20 20&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;m12 5-5 5 5 5&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;
         &lt;button class=&quot;asv-toolbar-button asv-date-arrow&quot; type=&quot;button&quot; data-date-next aria-label=&quot;На сутки вперёд&quot;&gt;&lt;svg class=&quot;asv-toolbar-icon&quot; viewBox=&quot;0 0 20 20&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;m8 5 5 5-5 5&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;
-        &lt;button class=&quot;asv-toolbar-button asv-date-label&quot; type=&quot;button&quot; data-date-label aria-haspopup=&quot;dialog&quot; aria-controls=&quot;asv-calendar-popup&quot; aria-expanded=&quot;false&quot;&gt;&lt;svg class=&quot;asv-toolbar-icon&quot; viewBox=&quot;0 0 20 20&quot; aria-hidden=&quot;true&quot;&gt;&lt;rect x=&quot;3&quot; y=&quot;4&quot; width=&quot;14&quot; height=&quot;13&quot; rx=&quot;2&quot;/&gt;&lt;path d=&quot;M6 2v4M14 2v4M3 8h14&quot;/&gt;&lt;/svg&gt;&lt;span data-date-value&gt;18 сен 2026&lt;/span&gt;&lt;/button&gt;
+        &lt;button class=&quot;asv-toolbar-button asv-date-label&quot; type=&quot;button&quot; data-date-label aria-haspopup=&quot;dialog&quot; aria-controls=&quot;asv-calendar-popup&quot; aria-expanded=&quot;false&quot;&gt;&lt;svg class=&quot;asv-toolbar-icon&quot; viewBox=&quot;0 0 20 20&quot; aria-hidden=&quot;true&quot;&gt;&lt;rect x=&quot;3&quot; y=&quot;4&quot; width=&quot;14&quot; height=&quot;13&quot; rx=&quot;2&quot;/&gt;&lt;path d=&quot;M6 2v4M14 2v4M3 8h14&quot;/&gt;&lt;/svg&gt;&lt;span data-date-value&gt;18 сен 2026&lt;/span&gt;&lt;/button&gt;&lt;button class=&quot;asv-date-clear&quot; type=&quot;button&quot; data-date-clear aria-label=&quot;Сбросить выбранный период&quot; title=&quot;Сбросить период&quot; hidden&gt;&lt;svg class=&quot;asv-close-icon&quot; viewBox=&quot;0 0 16 16&quot; aria-hidden=&quot;true&quot; focusable=&quot;false&quot;&gt;&lt;path d=&quot;M4 4l8 8M12 4l-8 8&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;
       &lt;/div&gt;
     &lt;/div&gt;
     &lt;div class=&quot;asv-toolbar-right&quot;&gt;
@@ -5010,14 +5079,11 @@ html, body, button, input, select, textarea, code, pre,
       &lt;button class=&quot;asv-toolbar-button asv-conflicts-toggle&quot; type=&quot;button&quot; data-upcoming-toggle aria-haspopup=&quot;dialog&quot; aria-controls=&quot;asv-upcoming-popup&quot; aria-expanded=&quot;false&quot;&gt;&lt;span&gt;Конфликты&lt;/span&gt;&lt;span class=&quot;asv-conflicts-count&quot;&gt;&lt;span class=&quot;kit-icon-slot is-12&quot; aria-hidden=&quot;true&quot;&gt;&lt;span class=&quot;kit-icon-wrap&quot;&gt;&lt;img class=&quot;kit-icon-asset&quot; src=&quot;data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJ6YXAiPgo8cGF0aCBpZD0iSWNvbiIgZD0iTTEzIDJMNC4wOTM0NiAxMi42ODc5QzMuNzQ0NjUgMTMuMTA2NCAzLjU3MDI0IDEzLjMxNTcgMy41Njc1OCAxMy40OTI1QzMuNTY1MjYgMTMuNjQ2MSAzLjYzMzczIDEzLjc5MjMgMy43NTMyNiAxMy44ODg5QzMuODkwNzUgMTQgNC4xNjMxOCAxNCA0LjcwODAzIDE0SDEyTDExIDIyTDE5LjkwNjUgMTEuMzEyMUMyMC4yNTU0IDEwLjg5MzYgMjAuNDI5OCAxMC42ODQzIDIwLjQzMjQgMTAuNTA3NUMyMC40MzQ3IDEwLjM1MzkgMjAuMzY2MyAxMC4yMDc3IDIwLjI0NjcgMTAuMTExMUMyMC4xMDkzIDEwIDE5LjgzNjggMTAgMTkuMjkyIDEwSDEyTDEzIDJaIiBmaWxsPSJ3aGl0ZSIvPgo8L2c+Cjwvc3ZnPgo=&quot; alt=&quot;&quot; draggable=&quot;false&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span data-upcoming-count&gt;3&lt;/span&gt;&lt;/span&gt;&lt;svg class=&quot;asv-toolbar-icon&quot; viewBox=&quot;0 0 20 20&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;m5 7 5 5 5-5&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;
     &lt;/div&gt;
     &lt;section id=&quot;asv-calendar-popup&quot; class=&quot;asv-toolbar-popup&quot; role=&quot;dialog&quot; aria-label=&quot;Выбор даты или диапазона&quot; hidden&gt;
-      &lt;h2 class=&quot;asv-popup-heading&quot;&gt;Период на таймлайне&lt;/h2&gt;
-      &lt;p class=&quot;asv-popup-description&quot;&gt;Данные доступны за 16–18 сентября 2026.&lt;/p&gt;
+      &lt;div class=&quot;asv-calendar-heading&quot;&gt;&lt;h2 class=&quot;asv-popup-heading&quot;&gt;Период на таймлайне&lt;/h2&gt;&lt;/div&gt;
+      &lt;p class=&quot;asv-popup-description&quot;&gt;Доступно: 16–18 сентября 2026.&lt;/p&gt;
       &lt;div class=&quot;asv-calendar-modes&quot; role=&quot;group&quot; aria-label=&quot;Режим выбора&quot;&gt;&lt;button class=&quot;asv-calendar-mode&quot; type=&quot;button&quot; data-calendar-mode=&quot;single&quot; aria-pressed=&quot;true&quot;&gt;Одна дата&lt;/button&gt;&lt;button class=&quot;asv-calendar-mode&quot; type=&quot;button&quot; data-calendar-mode=&quot;range&quot; aria-pressed=&quot;false&quot;&gt;Диапазон&lt;/button&gt;&lt;/div&gt;
-      &lt;div class=&quot;asv-calendar-month&quot;&gt;Сентябрь 2026&lt;/div&gt;
-      &lt;div class=&quot;asv-calendar-weekdays&quot; aria-hidden=&quot;true&quot;&gt;&lt;span&gt;Пн&lt;/span&gt;&lt;span&gt;Вт&lt;/span&gt;&lt;span&gt;Ср&lt;/span&gt;&lt;span&gt;Чт&lt;/span&gt;&lt;span&gt;Пт&lt;/span&gt;&lt;span&gt;Сб&lt;/span&gt;&lt;span&gt;Вс&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;asv-calendar-grid&quot; data-calendar-grid role=&quot;group&quot; aria-label=&quot;Даты сентября 2026&quot;&gt;&lt;/div&gt;
+      &lt;div class=&quot;asv-calendar-panels&quot; data-calendar-panels&gt;&lt;/div&gt;
       &lt;div class=&quot;asv-calendar-selection&quot; data-calendar-selection aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
-      &lt;div class=&quot;asv-calendar-footer&quot;&gt;&lt;button class=&quot;asv-toolbar-button&quot; type=&quot;button&quot; data-calendar-cancel&gt;Отмена&lt;/button&gt;&lt;button class=&quot;asv-toolbar-button&quot; type=&quot;button&quot; data-calendar-reset aria-label=&quot;Сбросить период к текущей дате&quot; hidden&gt;&lt;svg class=&quot;asv-toolbar-icon&quot; viewBox=&quot;0 0 20 20&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;M4 8a6 6 0 1 1-.2 5M4 8V3M4 8h5&quot;/&gt;&lt;/svg&gt;&lt;span&gt;Сброс&lt;/span&gt;&lt;/button&gt;&lt;button class=&quot;asv-toolbar-button is-primary&quot; type=&quot;button&quot; data-calendar-apply&gt;Применить&lt;/button&gt;&lt;/div&gt;
     &lt;/section&gt;
     &lt;section id=&quot;asv-upcoming-popup&quot; class=&quot;asv-toolbar-popup asv-upcoming-popup&quot; role=&quot;dialog&quot; aria-label=&quot;Предстоящие конфликты&quot; hidden&gt;
       &lt;div class=&quot;asv-upcoming-head&quot;&gt;&lt;h2 class=&quot;asv-popup-heading&quot;&gt;Предстоящие конфликты&lt;/h2&gt;&lt;p class=&quot;asv-popup-description&quot;&gt;После 18 сентября, 03:00 · по всем нодам&lt;/p&gt;&lt;/div&gt;
@@ -5049,8 +5115,7 @@ html, body, button, input, select, textarea, code, pre,
           &lt;span class=&quot;asv-queue-control-state&quot; aria-hidden=&quot;true&quot;&gt;Включена&lt;/span&gt;
         &lt;/button&gt;
         &lt;div class=&quot;asv-queue-control-meta&quot;&gt;
-          &lt;span class=&quot;asv-queue-count&quot;&gt;7 задач&lt;/span&gt;
-          &lt;span class=&quot;kit-queue-time&quot;&gt;&lt;span class=&quot;kit-queue-hourglass&quot; aria-hidden=&quot;true&quot;&gt;&lt;img src=&quot;data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEyIiBoZWlnaHQ9IjEyIiB2aWV3Qm94PSIwIDAgMTIgMTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJob3VyZ2xhc3MtMDEiPgo8cGF0aCBpZD0iSWNvbiIgZD0iTTYgNkwzLjg2MzU2IDQuMjE5NjNDMy41NDYxMyAzLjk1NTExIDMuMzg3NDIgMy44MjI4NSAzLjI3MzMyIDMuNjYwNzJDMy4xNzIyMiAzLjUxNzA3IDMuMDk3MTQgMy4zNTY3NyAzLjA1MTUxIDMuMTg3MTRDMyAyLjk5NTY5IDMgMi43ODkxIDMgMi4zNzU5VjFNNiA2TDguMTM2NDQgNC4yMTk2M0M4LjQ1Mzg3IDMuOTU1MTEgOC42MTI1OCAzLjgyMjg1IDguNzI2NjggMy42NjA3MkM4LjgyNzc4IDMuNTE3MDcgOC45MDI4NiAzLjM1Njc3IDguOTQ4NDkgMy4xODcxNEM5IDIuOTk1NjkgOSAyLjc4OTEgOSAyLjM3NTlWMU02IDZMMy44NjM1NiA3Ljc4MDM3QzMuNTQ2MTMgOC4wNDQ4OSAzLjM4NzQyIDguMTc3MTUgMy4yNzMzMiA4LjMzOTI4QzMuMTcyMjIgOC40ODI5MyAzLjA5NzE0IDguNjQzMjMgMy4wNTE1MSA4LjgxMjg2QzMgOS4wMDQzMSAzIDkuMjEwOSAzIDkuNjI0MVYxMU02IDZMOC4xMzY0NCA3Ljc4MDM3QzguNDUzODcgOC4wNDQ4OSA4LjYxMjU4IDguMTc3MTUgOC43MjY2OCA4LjMzOTI4QzguODI3NzggOC40ODI5MyA4LjkwMjg2IDguNjQzMjMgOC45NDg0OSA4LjgxMjg2QzkgOS4wMDQzMSA5IDkuMjEwOSA5IDkuNjI0MVYxMU0yIDFIMTBNMiAxMUgxMCIgc3Ryb2tlPSIjNzY3ODdDIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPC9zdmc+Cg==&quot; alt=&quot;&quot; draggable=&quot;false&quot;&gt;&lt;/span&gt;&lt;span class=&quot;asv-queue-remaining&quot;&gt;Время: неизвестно&lt;/span&gt;&lt;/span&gt;
+          &lt;span class=&quot;asv-queue-count&quot;&gt;7 задач по очереди&lt;/span&gt;
         &lt;/div&gt;
       &lt;/div&gt;
     &lt;/aside&gt;
@@ -5158,7 +5223,6 @@ html, body, button, input, select, textarea, code, pre,
   const kitQueueHeight = 84;
   const queueControlState = root.querySelector(&quot;.asv-queue-control-state&quot;);
   const queueCount = root.querySelector(&quot;.asv-queue-count&quot;);
-  const queueRemaining = root.querySelector(&quot;.asv-queue-remaining&quot;);
   let frequentLayerVisible = true;
   let activeFrequentTriggerName = null;
   let activeFrequentNodeIp = null;
@@ -5187,6 +5251,29 @@ html, body, button, input, select, textarea, code, pre,
   const timelineHours = 66;
   const day = timelineHours * 60 * 60;
   const currentTime = daySeconds * 2 + 3 * 60 * 60;
+  // Original dates remain the coordinate origin; earlier history uses negative seconds.
+  const kitHistoryState = { days: 0, loading: false, ready: false, width: 0 };
+  const kitHistoryOffset = () =&gt; kitHistoryState.days * daySeconds / day * axis.clientWidth;
+  const kitHistoryDate = index =&gt; new Date(Date.UTC(2026, 8, 16 + index));
+  const kitHistoryDateText = index =&gt; {
+    const date = kitHistoryDate(index);
+    const month = [&#x27;янв&#x27;, &#x27;фев&#x27;, &#x27;мар&#x27;, &#x27;апр&#x27;, &#x27;май&#x27;, &#x27;июн&#x27;, &#x27;июл&#x27;, &#x27;авг&#x27;, &#x27;сен&#x27;, &#x27;окт&#x27;, &#x27;ноя&#x27;, &#x27;дек&#x27;][date.getUTCMonth()];
+    return date.getUTCDate() + &#x27; &#x27; + month + &#x27; &#x27; + date.getUTCFullYear();
+  };
+  const kitHistoryPeriodText = (start, end) =&gt; {
+    if (start === end) return kitHistoryDateText(start);
+    const a = kitHistoryDate(start), b = kitHistoryDate(end);
+    return a.getUTCMonth() === b.getUTCMonth() &amp;&amp; a.getUTCFullYear() === b.getUTCFullYear()
+      ? a.getUTCDate() + &#x27;–&#x27; + kitHistoryDateText(end)
+      : kitHistoryDateText(start) + &#x27; — &#x27; + kitHistoryDateText(end);
+  };
+  const kitSyncHistoryExtent = () =&gt; {
+    overview.classList.toggle(&#x27;has-history&#x27;, kitHistoryState.days &gt; 0);
+    overview.style.marginLeft = kitHistoryOffset() + &#x27;px&#x27;;
+    overview.style.setProperty(&#x27;--kit-history-width&#x27;, kitHistoryOffset() + &#x27;px&#x27;);
+    kitHistoryState.width = axis.clientWidth;
+  };
+
   const statusClass = value =&gt; &quot;asv-&quot; + value.toLowerCase();
   const zoomLevels = [1 / 3, .5, .75, 1, 1.25, 1.5, 2, 3, 4, 6, 8];
   const defaultZoomFactor = 1.25;
@@ -5731,7 +5818,7 @@ html, body, button, input, select, textarea, code, pre,
     const clampedIndex = Math.max(0, Math.min(zoomLevels.length - 1, nextIndex));
     const viewportWidth = timelineScroll.clientWidth;
     const oldWidth = overview.getBoundingClientRect().width;
-    const centerRatio = oldWidth &gt; 0 ? (timelineScroll.scrollLeft + viewportWidth / 2) / oldWidth : .5;
+    const centerRatio = oldWidth &gt; 0 ? (timelineScroll.scrollLeft - kitHistoryOffset() + viewportWidth / 2) / oldWidth : .5;
     zoomIndex = clampedIndex;
     const zoom = zoomLevels[zoomIndex];
     overview.style.width = (timelineDays * zoom * 100) + &quot;%&quot;;
@@ -5741,7 +5828,8 @@ html, body, button, input, select, textarea, code, pre,
     zoomIn.disabled = zoomIndex === zoomLevels.length - 1;
     requestAnimationFrame(() =&gt; {
       const newWidth = overview.getBoundingClientRect().width;
-      timelineScroll.scrollLeft = Math.max(0, centerRatio * newWidth - viewportWidth / 2);
+      kitSyncHistoryExtent();
+      timelineScroll.scrollLeft = Math.max(0, kitHistoryOffset() + centerRatio * newWidth - viewportWidth / 2);
       layoutDayLabels();
       layoutInlineTaskLabels();
       repositionExpandedCaptions();
@@ -5763,11 +5851,11 @@ html, body, button, input, select, textarea, code, pre,
   setZoom(zoomIndex);
   requestAnimationFrame(() =&gt; {
     const width = overview.getBoundingClientRect().width;
-    timelineScroll.scrollLeft = width * 2 / timelineDays;
+    timelineScroll.scrollLeft = kitHistoryOffset() + width * 2 / timelineDays;
   });
 
   const formatClock = seconds =&gt; {
-    const safe = Math.max(0, Math.round(seconds));
+    const safe = ((Math.round(seconds) % daySeconds) + daySeconds) % daySeconds;
     const h = Math.floor(safe / 3600) % 24;
     const m = Math.floor((safe % 3600) / 60);
     const s = safe % 60;
@@ -5775,7 +5863,7 @@ html, body, button, input, select, textarea, code, pre,
   };
 
   const formatClockPrecise = seconds =&gt; {
-    const raw = Math.max(0, seconds);
+    const raw = ((seconds % daySeconds) + daySeconds) % daySeconds;
     let whole = Math.floor(raw);
     let milliseconds = Math.round((raw - whole) * 1000);
     if (milliseconds === 1000) {
@@ -5968,14 +6056,19 @@ html, body, button, input, select, textarea, code, pre,
   };
   const runDurationText = run =&gt; {
     const level = runForecastLevel(run);
-    if (level === &quot;question&quot;) return unknownExecutionTime;
+    if (level === &quot;question&quot;) {
+      if (!run.isTrigger) return unknownExecutionTime;
+      const visualRun = getRunDisplay(run);
+      const estimatedSeconds = Math.max(0, visualRun.end - visualRun.start);
+      return &quot;Больше &quot; + formatForecastDuration(estimatedSeconds);
+    }
     const futureRun = run.status === &quot;PREDICTED&quot; || run.start &gt;= currentTime;
     const formatter = futureRun ? formatForecastDuration : formatDuration;
     return (level === &quot;low&quot; ? &quot;≈ &quot; : &quot;&quot;) + formatter(run.end - run.start);
   };
   const runTimeText = run =&gt; {
     const level = runForecastLevel(run);
-    if (level === &quot;question&quot;) return unknownExecutionTime;
+    if (level === &quot;question&quot;) return runDurationText(run);
     if (level === &quot;low&quot;) return &quot;Начало &quot; + formatClockPrecise(run.start) + &quot; · &quot; + runDurationText(run);
     return formatClockPrecise(run.start) + &quot;–&quot; + formatClockPrecise(run.end) + &quot; · &quot; + runDurationText(run);
   };
@@ -6078,11 +6171,11 @@ html, body, button, input, select, textarea, code, pre,
     const timelineBox = timelineScroll.getBoundingClientRect();
     const rootBox = root.getBoundingClientRect();
     const segmentBox = segment.getBoundingClientRect();
-    const viewportLeft = timelineScroll.scrollLeft + 8;
+    const viewportLeft = timelineScroll.scrollLeft - kitHistoryOffset() + 8;
     const sidebarOpen = detail.classList.contains(&quot;is-open&quot;);
     const sidebarWidth = sidebarOpen ? detail.getBoundingClientRect().width : 0;
     const visibleRight = Math.min(timelineBox.right, rootBox.right - sidebarWidth);
-    const viewportRight = timelineScroll.scrollLeft + visibleRight - timelineBox.left - 8;
+    const viewportRight = timelineScroll.scrollLeft - kitHistoryOffset() + visibleRight - timelineBox.left - 8;
     const availableWidth = Math.max(0, viewportRight - viewportLeft);
     mainTaskTooltip.style.maxWidth = sidebarOpen ? availableWidth + &quot;px&quot; : &quot;&quot;;
     const tooltipBox = mainTaskTooltip.getBoundingClientRect();
@@ -6090,7 +6183,7 @@ html, body, button, input, select, textarea, code, pre,
     const left = Math.max(viewportLeft, Math.min(anchorLeft, viewportRight - tooltipBox.width));
     let top = segmentBox.bottom - overviewBox.top - 3;
     if (top + tooltipBox.height &gt; overview.clientHeight - 8) top = segmentBox.top - overviewBox.top - tooltipBox.height + 3;
-    mainTaskTooltip.style.left = Math.max(8, left) + &quot;px&quot;;
+    mainTaskTooltip.style.left = Math.max(8 - kitHistoryOffset(), left) + &quot;px&quot;;
     mainTaskTooltip.style.top = Math.max(8, top) + &quot;px&quot;;
   };
 
@@ -6280,7 +6373,7 @@ html, body, button, input, select, textarea, code, pre,
   function layoutDayLabels() {
     const axisWidth = axis.clientWidth;
     if (!axisWidth) return;
-    const visibleLeft = Math.max(0, timelineScroll.scrollLeft - axis.offsetLeft);
+    const visibleLeft = Math.max(0, timelineScroll.scrollLeft - kitHistoryOffset() - axis.offsetLeft);
     stickyDayLabels.forEach(dayLabel =&gt; {
       const start = dayLabel.start * axisWidth;
       const end = dayLabel.end * axisWidth;
@@ -6389,7 +6482,7 @@ html, body, button, input, select, textarea, code, pre,
   axis.appendChild(axisHoverRange);
   const showAxisHoverRange = run =&gt; {
     const visualRun = getRunDisplay(run);
-    const rangeStart = Math.max(0, Math.min(day, visualRun.start));
+    const rangeStart = Math.max(-kitHistoryState.days * daySeconds, Math.min(day, visualRun.start));
     const rangeEnd = Math.max(rangeStart, Math.min(day, visualRun.end));
     axisHoverRange.style.left = (rangeStart / day * 100) + &quot;%&quot;;
     axisHoverRange.style.width = ((rangeEnd - rangeStart) / day * 100) + &quot;%&quot;;
@@ -6467,7 +6560,7 @@ html, body, button, input, select, textarea, code, pre,
       const caption = document.createElement(&quot;span&quot;);
       caption.className = &quot;asv-trigger-caption text-small&quot;;
       caption.innerHTML = &#x27;&lt;span class=&quot;asv-trigger-caption-title&quot;&gt;&lt;span class=&quot;asv-trigger-caption-prefix&quot; aria-hidden=&quot;true&quot;&gt;&lt;span class=&quot;kit-icon-slot is-14&quot;&gt;&lt;span class=&quot;kit-icon-wrap&quot;&gt;&lt;span class=&quot;kit-trigger-icon&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;asv-trigger-caption-name&quot;&gt;&#x27; + run.name + &#x27;&lt;/span&gt;&lt;/span&gt;&#x27; +
-        &#x27;&lt;span class=&quot;asv-trigger-caption-time text-small&quot;&gt;&#x27; + (runForecastLevel(run) === &quot;question&quot; ? &quot;время неизвестно&quot; : runDurationText(run)) + &#x27;&lt;/span&gt;&#x27;;
+        &#x27;&lt;span class=&quot;asv-trigger-caption-time text-small&quot;&gt;&#x27; + runDurationText(run) + &#x27;&lt;/span&gt;&#x27;;
       const captionStem = document.createElement(&quot;span&quot;);
       captionStem.className = &quot;asv-trigger-caption-stem&quot;;
       captionStem.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
@@ -6618,20 +6711,14 @@ html, body, button, input, select, textarea, code, pre,
   };
   layoutQueueTasks();
 
-  const queueRemainingSeconds = Math.max(0, queueTasks[queueTasks.length - 1].end - currentTime);
-  queueCount.textContent = taskCountLabel(queueTasks.length);
-  const queueForecastLevel = runForecastLevel(queueDisplayRun);
-  const queueRemainingText = queueForecastLevel === &quot;question&quot;
-    ? &quot;Время: неизвестно&quot;
-    : &quot;Осталось &quot; + (queueForecastLevel === &quot;low&quot; ? &quot;≈ &quot; : &quot;&quot;) + formatForecastDuration(queueRemainingSeconds);
-  queueRemaining.textContent = queueRemainingText;
+  queueCount.textContent = taskCountLabel(queueTasks.length) + &quot; по очереди&quot;;
 
   let queueEnabled = true;
   const setQueueEnabled = enabled =&gt; {
     queueEnabled = enabled;
     queueControl.classList.toggle(&quot;is-enabled&quot;, enabled);
     queueControl.setAttribute(&quot;aria-checked&quot;, String(enabled));
-    queueControl.setAttribute(&quot;aria-label&quot;, &quot;Очередь задач. &quot; + taskCountLabel(queueTasks.length) + &quot;. &quot; + queueRemainingText + &quot;. Сейчас &quot; + (enabled ? &quot;включена&quot; : &quot;выключена&quot;));
+    queueControl.setAttribute(&quot;aria-label&quot;, &quot;Очередь задач. &quot; + taskCountLabel(queueTasks.length) + &quot; по очереди. Сейчас &quot; + (enabled ? &quot;включена&quot; : &quot;выключена&quot;));
     queueControlState.textContent = enabled ? &quot;Включена&quot; : &quot;Выключена&quot;;
     queueLane.classList.toggle(&quot;is-disabled&quot;, !enabled);
     queuePanel.classList.toggle(&quot;is-paused&quot;, !enabled);
@@ -6728,7 +6815,7 @@ html, body, button, input, select, textarea, code, pre,
       const caption = document.createElement(&quot;span&quot;);
       caption.className = &quot;asv-trigger-caption text-small&quot;;
       caption.innerHTML = &#x27;&lt;span class=&quot;asv-trigger-caption-title&quot;&gt;&lt;span class=&quot;asv-trigger-caption-prefix&quot; aria-hidden=&quot;true&quot;&gt;&lt;span class=&quot;kit-icon-slot is-14&quot;&gt;&lt;span class=&quot;kit-icon-wrap&quot;&gt;&lt;span class=&quot;kit-trigger-icon&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;asv-trigger-caption-name&quot;&gt;&#x27; + run.name + &#x27;&lt;/span&gt;&lt;/span&gt;&#x27; +
-        &#x27;&lt;span class=&quot;asv-trigger-caption-time text-small&quot;&gt;&#x27; + (runForecastLevel(run) === &quot;question&quot; ? &quot;время неизвестно&quot; : runDurationText(run)) + &#x27;&lt;/span&gt;&#x27;;
+        &#x27;&lt;span class=&quot;asv-trigger-caption-time text-small&quot;&gt;&#x27; + runDurationText(run) + &#x27;&lt;/span&gt;&#x27;;
       const captionStem = document.createElement(&quot;span&quot;);
       captionStem.className = &quot;asv-trigger-caption-stem&quot;;
       captionStem.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
@@ -6991,7 +7078,7 @@ html, body, button, input, select, textarea, code, pre,
   // Keep sub-second executions distinguishable from genuine zero durations.
   function kitFrequentRunDurationText(run) {
     const level = runForecastLevel(run);
-    if (level === &quot;question&quot;) return unknownExecutionTime;
+    if (level === &quot;question&quot;) return runDurationText(run);
     const seconds = Math.max(0, run.end - run.start);
     if (seconds === 0) return (level === &quot;low&quot; ? &quot;≈ &quot; : &quot;&quot;) + &quot;0 сек&quot;;
     if (seconds &lt; 1) return (level === &quot;low&quot; ? &quot;≈ &quot; : &quot;&quot;) + &quot;&lt; 1 сек&quot;;
@@ -7000,7 +7087,7 @@ html, body, button, input, select, textarea, code, pre,
 
   function kitFrequentRunTimeText(run) {
     const level = runForecastLevel(run);
-    if (level === &quot;question&quot;) return unknownExecutionTime;
+    if (level === &quot;question&quot;) return runDurationText(run);
     const duration = kitFrequentRunDurationText(run);
     if (level === &quot;low&quot;) return &quot;Начало &quot; + formatClock(run.start) + &quot; · &quot; + duration;
     return formatClock(run.start) + &quot;–&quot; + formatClock(run.end) + &quot; · &quot; + duration;
@@ -7267,7 +7354,9 @@ html, body, button, input, select, textarea, code, pre,
       const name = label.getAttribute(&quot;data-full-task-name&quot;) || &quot;&quot;;
       label.textContent = name;
       const style = window.getComputedStyle(label);
-      const horizontalPadding = (Number.parseFloat(style.paddingLeft) || 0) + (Number.parseFloat(style.paddingRight) || 0);
+      const labelPadding = width &lt; 36 ? 2 : 6;
+      const horizontalPadding = labelPadding * 2;
+      label.style.setProperty(&quot;--asv-label-padding&quot;, labelPadding + &quot;px&quot;);
       const segmentStyle = window.getComputedStyle(segment);
       const horizontalBorder = (Number.parseFloat(segmentStyle.borderLeftWidth) || 0) + (Number.parseFloat(segmentStyle.borderRightWidth) || 0);
       const availableWidth = Math.max(0, width - horizontalPadding - horizontalBorder);
@@ -7277,8 +7366,11 @@ html, body, button, input, select, textarea, code, pre,
         ? inlineTaskMeasureContext.measureText(text).width
         : Array.from(text).length * 6;
       const firstCharacter = Array.from(name)[0] || &quot;&quot;;
-      label.hidden = !firstCharacter || availableWidth &lt; measureText(firstCharacter);
-      label.style.setProperty(&quot;--asv-label-fade&quot;, Math.min(8, Math.max(1, availableWidth * .45)) + &quot;px&quot;);
+      const firstCharacterWidth = measureText(firstCharacter);
+      label.hidden = !firstCharacter || availableWidth &lt; firstCharacterWidth;
+      // Keep at least the first glyph completely opaque, even in a short cell.
+      const fadeWidth = Math.max(0, Math.min(8, availableWidth * .45, availableWidth - firstCharacterWidth));
+      label.style.setProperty(&quot;--asv-label-fade&quot;, fadeWidth + &quot;px&quot;);
       label.classList.toggle(&quot;is-truncated&quot;, !label.hidden &amp;&amp; measureText(name) &gt; availableWidth);
     });
   };
@@ -7592,7 +7684,7 @@ html, body, button, input, select, textarea, code, pre,
     const right = Math.min(window.innerWidth, viewport.right - 22, sidebarEdge) - 12;
     const width = Math.max(0, right - left);
     collapsedSummaryLines.forEach(line =&gt; {
-      line.style.left = (timelineScroll.scrollLeft + left - viewport.left) + &quot;px&quot;;
+      line.style.left = (timelineScroll.scrollLeft - kitHistoryOffset() + left - viewport.left) + &quot;px&quot;;
       line.style.width = width + &quot;px&quot;;
       line.classList.toggle(&quot;is-compact&quot;, width &lt; 520);
     });
@@ -8147,11 +8239,7 @@ html, body, button, input, select, textarea, code, pre,
   const dateLabel = toolbar.querySelector(&#x27;[data-date-label]&#x27;);
   const dateValue = dateLabel.querySelector(&#x27;[data-date-value]&#x27;);
   const calendarPopup = toolbar.querySelector(&#x27;#asv-calendar-popup&#x27;);
-  const calendarGrid = toolbar.querySelector(&#x27;[data-calendar-grid]&#x27;);
   const calendarSelection = toolbar.querySelector(&#x27;[data-calendar-selection]&#x27;);
-  const calendarApply = toolbar.querySelector(&#x27;[data-calendar-apply]&#x27;);
-  const calendarReset = toolbar.querySelector(&#x27;[data-calendar-reset]&#x27;);
-  const calendarCancel = toolbar.querySelector(&#x27;[data-calendar-cancel]&#x27;);
   const calendarModes = [...toolbar.querySelectorAll(&#x27;[data-calendar-mode]&#x27;)];
   const upcomingToggle = toolbar.querySelector(&#x27;[data-upcoming-toggle]&#x27;);
   const upcomingPopup = toolbar.querySelector(&#x27;#asv-upcoming-popup&#x27;);
@@ -8162,17 +8250,19 @@ html, body, button, input, select, textarea, code, pre,
   const defaultDateIndex = Math.floor(currentTime / daySeconds);
   let selectedDates = [defaultDateIndex, defaultDateIndex];
   let calendarMode = &#x27;single&#x27;;
+  let appliedCalendarMode = &#x27;single&#x27;;
+  let hasDateSelection = false;
+  const dateClear = toolbar.querySelector(&#x27;[data-date-clear]&#x27;);
   let draftStart = defaultDateIndex;
   let draftEnd = defaultDateIndex;
   let openToolbarPopup = null;
   let toolbarPopupTrigger = null;
 
-  const datePeriodText = (start, end) =&gt; start === end
-    ? (16 + start) + &#x27; сен 2026&#x27;
-    : (16 + start) + &#x27;–&#x27; + (16 + end) + &#x27; сен 2026&#x27;;
+  const datePeriodText = kitHistoryPeriodText;
   const renderDateControls = () =&gt; {
     dateValue.textContent = datePeriodText(...selectedDates);
-    datePrev.disabled = selectedDates[0] === 0;
+    dateClear.hidden = !hasDateSelection;
+    datePrev.disabled = selectedDates[0] &lt;= -kitHistoryState.days;
     dateNext.disabled = selectedDates[1] === 2;
     dateLabel.setAttribute(&#x27;aria-label&#x27;, &#x27;Выбран период: &#x27; + dateValue.textContent + &#x27;. Открыть календарь&#x27;);
   };
@@ -8187,6 +8277,7 @@ html, body, button, input, select, textarea, code, pre,
   const closeToolbarPopups = (restoreFocus = false) =&gt; {
     const trigger = toolbarPopupTrigger;
     calendarPopup.hidden = true;
+    dateClear.hidden = !hasDateSelection;
     upcomingPopup.hidden = true;
     [dateLabel, upcomingToggle].forEach(button =&gt; button.setAttribute(&#x27;aria-expanded&#x27;, &#x27;false&#x27;));
     openToolbarPopup = null;
@@ -8217,6 +8308,7 @@ html, body, button, input, select, textarea, code, pre,
     const width = timelineScroll.clientWidth * day / span + 22;
     const zoom = width / Math.max(1, timelineScroll.clientWidth) / timelineDays;
     overview.style.width = width + &#x27;px&#x27;;
+    kitSyncHistoryExtent();
     zoomIndex = zoomLevels.reduce((best, value, index) =&gt; Math.abs(value - zoom) &lt; Math.abs(zoomLevels[best] - zoom) ? index : best, 0);
     zoomReset.textContent = Math.round(zoom / defaultZoomFactor * 100) + &#x27;%&#x27;;
     zoomReset.setAttribute(&#x27;aria-label&#x27;, &#x27;Текущий масштаб &#x27; + Math.round(zoom / defaultZoomFactor * 100) + &#x27; процентов. Сбросить масштаб до 100 процентов&#x27;);
@@ -8224,7 +8316,7 @@ html, body, button, input, select, textarea, code, pre,
     zoomIn.disabled = zoom &gt;= zoomLevels[zoomLevels.length - 1];
     renderDateControls();
     requestAnimationFrame(() =&gt; {
-      timelineScroll.scrollLeft = start / day * axis.clientWidth;
+      timelineScroll.scrollLeft = kitHistoryOffset() + start / day * axis.clientWidth;
       layoutDayLabels();
       layoutInlineTaskLabels();
       layoutTriggerCaptions();
@@ -8234,56 +8326,200 @@ html, body, button, input, select, textarea, code, pre,
   const shiftDateWindow = direction =&gt; {
     const start = selectedDates[0] + direction;
     const end = selectedDates[1] + direction;
-    if (start &lt; 0 || end &gt; 2) return;
+    if (start &lt; -kitHistoryState.days || end &gt; 2) return;
     selectedDates = [start, end];
+    hasDateSelection = true;
     closeToolbarPopups();
     fitDateWindow();
   };
   datePrev.addEventListener(&#x27;click&#x27;, () =&gt; shiftDateWindow(-1));
   dateNext.addEventListener(&#x27;click&#x27;, () =&gt; shiftDateWindow(1));
 
-  const renderCalendar = () =&gt; {
-    calendarGrid.replaceChildren();
-    calendarModes.forEach(button =&gt; button.setAttribute(&#x27;aria-pressed&#x27;, String(button.dataset.calendarMode === calendarMode)));
-    const monthOffset = (new Date(Date.UTC(2026, 8, 1)).getUTCDay() + 6) % 7;
-    for (let cell = 0; cell &lt; 35; cell++) {
-      const date = cell - monthOffset + 1;
-      const button = document.createElement(&#x27;button&#x27;);
-      button.type = &#x27;button&#x27;;
-      button.className = &#x27;asv-calendar-day&#x27;;
-      button.textContent = date &gt;= 1 &amp;&amp; date &lt;= 30 ? String(date) : &#x27;&#x27;;
-      const index = date - 16;
-      button.disabled = index &lt; 0 || index &gt; 2;
-      button.setAttribute(&#x27;aria-label&#x27;, date &gt;= 1 &amp;&amp; date &lt;= 30 ? date + &#x27; сентября 2026&#x27; : &#x27;Нет даты&#x27;);
-      if (!button.disabled) {
-        button.dataset.dateIndex = index;
-        const endpoint = index === draftStart || index === draftEnd;
-        button.setAttribute(&#x27;aria-pressed&#x27;, String(endpoint));
-        button.classList.toggle(&#x27;is-in-range&#x27;, draftEnd !== null &amp;&amp; index &gt; draftStart &amp;&amp; index &lt; draftEnd);
-        if (index === defaultDateIndex) button.setAttribute(&#x27;aria-current&#x27;, &#x27;date&#x27;);
-        button.classList.toggle(&#x27;has-upcoming-conflicts&#x27;, upcomingConflicts.some(conflict =&gt; Math.floor(conflict.at / daySeconds) === index));
-        button.addEventListener(&#x27;click&#x27;, () =&gt; {
-          if (calendarMode === &#x27;single&#x27;) draftStart = draftEnd = index;
-          else if (draftStart === null || draftEnd !== null) { draftStart = index; draftEnd = null; }
-          else { draftEnd = Math.max(draftStart, index); draftStart = Math.min(draftStart, index); }
-          renderCalendar();
-          calendarGrid.querySelector(&#x27;[data-date-index=&quot;&#x27; + index + &#x27;&quot;]&#x27;)?.focus({ preventScroll: true });
-        });
-      }
-      calendarGrid.appendChild(button);
-    }
-    calendarApply.disabled = draftEnd === null;
-    const hasNonDefaultDate = [...selectedDates, draftStart, draftEnd].some(index =&gt; index !== null &amp;&amp; index !== defaultDateIndex);
-    calendarReset.hidden = !hasNonDefaultDate;
-    calendarCancel.hidden = hasNonDefaultDate;
-    calendarSelection.textContent = draftStart === null ? &#x27;Выберите начало диапазона.&#x27; : draftEnd === null
-      ? &#x27;Начало: &#x27; + datePeriodText(draftStart, draftStart) + &#x27;. Выберите конец диапазона.&#x27;
-      : datePeriodText(draftStart, draftEnd) + (draftStart === draftEnd ? &#x27; · один день&#x27; : &#x27; · &#x27; + (draftEnd - draftStart + 1) + &#x27; дня&#x27;);
+  // CalendarPanel from the showcase, bounded by the dates loaded in this timeline.
+  const calendarPanels = toolbar.querySelector(&#x27;[data-calendar-panels]&#x27;);
+  const kitCalendarIcons = { previous: &#x27;data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjUuOSIgaGVpZ2h0PSIxMC40IiB2aWV3Qm94PSIwIDAgNS45IDEwLjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGlkPSJJY29uIiBkPSJNNS4yIDkuN0wwLjcgNS4yTDUuMiAwLjciIHN0cm9rZT0iIzM2MzkzRSIgc3Ryb2tlLXdpZHRoPSIxLjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K&#x27;, next: &#x27;data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjUuOSIgaGVpZ2h0PSIxMC40IiB2aWV3Qm94PSIwIDAgNS45IDEwLjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGlkPSJJY29uIiBkPSJNMC43IDkuN0w1LjIgNS4yTDAuNyAwLjciIHN0cm9rZT0iIzM2MzkzRSIgc3Ryb2tlLXdpZHRoPSIxLjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K&#x27; };
+  const kitCalendarMonths = [&#x27;Январь&#x27;, &#x27;Февраль&#x27;, &#x27;Март&#x27;, &#x27;Апрель&#x27;, &#x27;Май&#x27;, &#x27;Июнь&#x27;, &#x27;Июль&#x27;, &#x27;Август&#x27;, &#x27;Сентябрь&#x27;, &#x27;Октябрь&#x27;, &#x27;Ноябрь&#x27;, &#x27;Декабрь&#x27;];
+  const kitCalendarMonthNames = [&#x27;января&#x27;, &#x27;февраля&#x27;, &#x27;марта&#x27;, &#x27;апреля&#x27;, &#x27;мая&#x27;, &#x27;июня&#x27;, &#x27;июля&#x27;, &#x27;августа&#x27;, &#x27;сентября&#x27;, &#x27;октября&#x27;, &#x27;ноября&#x27;, &#x27;декабря&#x27;];
+  let calendarPreview = null;
+  let calendarView = new Date(Date.UTC(2026, 8, 1));
+  let calendarPage = &#x27;day&#x27;;
+  let renderedCalendarCount = 1;
+  const calendarPanelCount = () =&gt; calendarMode === &#x27;range&#x27; &amp;&amp; calendarPage === &#x27;day&#x27; &amp;&amp; window.innerWidth &gt;= 560 ? 2 : 1;
+  const calendarButton = (label, action, className = &#x27;asv-calendar-nav&#x27;) =&gt; {
+    const button = document.createElement(&#x27;button&#x27;);
+    button.type = &#x27;button&#x27;;
+    button.className = className;
+    button.textContent = label;
+    button.addEventListener(&#x27;click&#x27;, action);
+    return button;
   };
+  const focusCalendarDate = index =&gt; calendarPanels.querySelector(&#x27;[data-date-index=&quot;&#x27; + index + &#x27;&quot;]&#x27;)?.focus({ preventScroll: true });
+  const paintKitCalendarRange = () =&gt; {
+    const pending = calendarMode === &#x27;range&#x27; &amp;&amp; draftStart !== null &amp;&amp; draftEnd === null;
+    const end = pending ? calendarPreview : draftEnd;
+    const low = draftStart !== null &amp;&amp; end !== null ? Math.min(draftStart, end) : null;
+    const high = draftStart !== null &amp;&amp; end !== null ? Math.max(draftStart, end) : null;
+    calendarPanels.querySelectorAll(&#x27;.asv-calendar-day&#x27;).forEach(button =&gt; {
+      if (button.disabled || button.dataset.dateIndex === undefined) return;
+      const index = Number(button.dataset.dateIndex);
+      const startEdge = index === draftStart;
+      const endEdge = index === draftEnd;
+      const candidate = pending &amp;&amp; index === calendarPreview &amp;&amp; !startEdge;
+      const between = low !== null &amp;&amp; index &gt; low &amp;&amp; index &lt; high;
+      button.classList.toggle(&#x27;is-in-range&#x27;, calendarMode === &#x27;range&#x27; &amp;&amp; (between || candidate));
+      button.classList.toggle(&#x27;is-range-preview&#x27;, candidate);
+      button.setAttribute(&#x27;aria-pressed&#x27;, String(startEdge || endEdge));
+      button.setAttribute(&#x27;aria-label&#x27;, kitHistoryDateText(index) +
+        (calendarMode !== &#x27;range&#x27; ? &#x27;&#x27; : startEdge &amp;&amp; endEdge ? &#x27;, начало A и конец B диапазона&#x27; :
+          startEdge ? &#x27;, начало диапазона A&#x27; : endEdge ? &#x27;, конец диапазона B&#x27; :
+          between || candidate ? pending ? &#x27;, предварительный диапазон&#x27; : &#x27;, в выбранном диапазоне&#x27; : &#x27;&#x27;));
+    });
+  };
+  const commitCalendarSelection = () =&gt; {
+    if (draftStart === null || draftEnd === null) return;
+    selectedDates = [draftStart, draftEnd];
+    appliedCalendarMode = calendarMode;
+    hasDateSelection = true;
+    closeToolbarPopups(true);
+    fitDateWindow();
+  };
+  const moveCalendarPage = direction =&gt; {
+    const next = new Date(calendarView);
+    if (calendarPage === &#x27;day&#x27;) next.setUTCMonth(next.getUTCMonth() + direction);
+    else next.setUTCFullYear(next.getUTCFullYear() + direction * (calendarPage === &#x27;year&#x27; ? 16 : 1));
+    const latestMonth = calendarPanelCount() === 2 ? 10 : 11;
+    if (next.getUTCFullYear() &lt; 1900 || next.getUTCFullYear() &gt; 2099 || (next.getUTCFullYear() === 2099 &amp;&amp; next.getUTCMonth() &gt; latestMonth)) return;
+    calendarView = next;
+    renderCalendar();
+    calendarPanels.querySelector(&#x27;[data-calendar-nav=&quot;&#x27; + (direction &lt; 0 ? &#x27;previous&#x27; : &#x27;next&#x27;) + &#x27;&quot;]&#x27;)?.focus({ preventScroll: true });
+  };
+  const renderCalendar = () =&gt; {
+    calendarPreview = null;
+    calendarPanels.replaceChildren();
+    calendarPopup.querySelector(&#x27;.asv-popup-description&#x27;).textContent = &#x27;Доступно: &#x27; + kitHistoryPeriodText(-kitHistoryState.days, 2) + &#x27;.&#x27;;
+    const count = calendarPanelCount();
+    renderedCalendarCount = count;
+    if (count === 2 &amp;&amp; calendarView.getUTCFullYear() === 2099 &amp;&amp; calendarView.getUTCMonth() === 11) calendarView.setUTCMonth(10);
+    calendarPopup.classList.toggle(&#x27;is-two-months&#x27;, count === 2);
+    calendarPanels.dataset.months = String(count);
+    calendarModes.forEach(button =&gt; button.setAttribute(&#x27;aria-pressed&#x27;, String(button.dataset.calendarMode === calendarMode)));
+    const views = Array.from({ length: count }, (_, i) =&gt; new Date(Date.UTC(calendarView.getUTCFullYear(), calendarView.getUTCMonth() + i, 1)));
+    const rowsFor = view =&gt; Math.ceil(((view.getUTCDay() + 6) % 7 + new Date(Date.UTC(view.getUTCFullYear(), view.getUTCMonth() + 1, 0)).getUTCDate()) / 7);
+    const rows = Math.max(...views.map(rowsFor));
+    views.forEach(view =&gt; {
+      const year = view.getUTCFullYear(), month = view.getUTCMonth();
+      const panel = document.createElement(&#x27;div&#x27;);
+      panel.className = &#x27;asv-calendar-panel&#x27;;
+      const header = document.createElement(&#x27;div&#x27;);
+      header.className = &#x27;asv-calendar-header&#x27;;
+      const titles = document.createElement(&#x27;div&#x27;);
+      titles.className = &#x27;asv-calendar-month&#x27;;
+      const yearStart = Math.floor(year / 16) * 16;
+      if (calendarPage === &#x27;year&#x27;) titles.textContent = yearStart + &#x27; — &#x27; + (yearStart + 15);
+      else [&#x27;month&#x27;, &#x27;year&#x27;].forEach(mode =&gt; {
+        const button = calendarButton(mode === &#x27;month&#x27; ? kitCalendarMonths[month] : String(year), () =&gt; {
+          calendarView = new Date(view);
+          calendarPage = mode;
+          renderCalendar();
+          calendarPanels.querySelector(&#x27;.asv-calendar-choice&#x27;)?.focus({ preventScroll: true });
+        });
+        button.dataset.calendarView = mode;
+        button.setAttribute(&#x27;aria-label&#x27;, mode === &#x27;month&#x27; ? &#x27;Выбрать месяц&#x27; : &#x27;Выбрать год&#x27;);
+        titles.appendChild(button);
+      });
+      const arrows = [&#x27;previous&#x27;, &#x27;next&#x27;].map((name, index) =&gt; {
+        const direction = index ? 1 : -1;
+        const button = calendarButton(&#x27;&#x27;, () =&gt; moveCalendarPage(direction), &#x27;asv-calendar-nav asv-calendar-arrow&#x27;);
+        button.dataset.calendarNav = name;
+        button.setAttribute(&#x27;aria-label&#x27;, (index ? &#x27;Следующий&#x27; : &#x27;Предыдущий&#x27;) + (calendarPage === &#x27;day&#x27; ? &#x27; месяц&#x27; : calendarPage === &#x27;year&#x27; ? &#x27; период&#x27; : &#x27; год&#x27;));
+        const target = new Date(calendarView);
+        if (calendarPage === &#x27;day&#x27;) target.setUTCMonth(target.getUTCMonth() + direction);
+        else target.setUTCFullYear(target.getUTCFullYear() + direction * (calendarPage === &#x27;year&#x27; ? 16 : 1));
+        button.disabled = target.getUTCFullYear() &lt; 1900 || target.getUTCFullYear() &gt; 2099 || (count === 2 &amp;&amp; target.getUTCFullYear() === 2099 &amp;&amp; target.getUTCMonth() &gt; 10);
+        const image = document.createElement(&#x27;img&#x27;);
+        image.src = kitCalendarIcons[name]; image.alt = &#x27;&#x27;;
+        image.setAttribute(&#x27;aria-hidden&#x27;, &#x27;true&#x27;);
+        button.appendChild(image);
+        return button;
+      });
+      header.append(arrows[0], titles, arrows[1]);
+      panel.appendChild(header);
+      if (calendarPage === &#x27;day&#x27;) {
+        const weekdays = document.createElement(&#x27;div&#x27;);
+        weekdays.className = &#x27;asv-calendar-weekdays&#x27;; weekdays.setAttribute(&#x27;aria-hidden&#x27;, &#x27;true&#x27;);
+        [&#x27;пн&#x27;, &#x27;вт&#x27;, &#x27;ср&#x27;, &#x27;чт&#x27;, &#x27;пт&#x27;, &#x27;сб&#x27;, &#x27;вс&#x27;].forEach(label =&gt; { const day = document.createElement(&#x27;span&#x27;); day.textContent = label; weekdays.appendChild(day); });
+        const grid = document.createElement(&#x27;div&#x27;); grid.className = &#x27;asv-calendar-grid&#x27;;
+        grid.setAttribute(&#x27;role&#x27;, &#x27;group&#x27;); grid.setAttribute(&#x27;aria-label&#x27;, kitCalendarMonths[month] + &#x27; &#x27; + year);
+        const offset = (view.getUTCDay() + 6) % 7;
+        for (let cell = 0; cell &lt; rows * 7; cell++) {
+          const day = new Date(Date.UTC(year, month, cell - offset + 1));
+          const ownMonth = day.getUTCMonth() === month;
+          const index = (day.getTime() - Date.UTC(2026, 8, 16)) / 86400000;
+          const button = document.createElement(&#x27;button&#x27;);
+          button.type = &#x27;button&#x27;; button.className = &#x27;asv-calendar-day&#x27;; button.textContent = String(day.getUTCDate());
+          button.disabled = !ownMonth || index &lt; -kitHistoryState.days || index &gt; 2;
+          button.dataset.weekend = String(day.getUTCDay() === 0 || day.getUTCDay() === 6);
+          button.dataset.other = String(!ownMonth);
+          button.setAttribute(&#x27;aria-label&#x27;, day.getUTCDate() + &#x27; &#x27; + kitCalendarMonthNames[day.getUTCMonth()] + &#x27; &#x27; + day.getUTCFullYear() + (button.disabled ? &#x27;, нет данных&#x27; : &#x27;&#x27;));
+          if (!button.disabled) {
+            button.dataset.dateIndex = index;
+            if (index === defaultDateIndex) button.setAttribute(&#x27;aria-current&#x27;, &#x27;date&#x27;);
+            button.addEventListener(&#x27;click&#x27;, () =&gt; {
+              if (calendarMode === &#x27;single&#x27;) draftStart = draftEnd = index;
+              else if (draftStart === null || draftEnd !== null) { draftStart = index; draftEnd = null; }
+              else { draftEnd = Math.max(draftStart, index); draftStart = Math.min(draftStart, index); }
+              if (draftEnd !== null) commitCalendarSelection();
+              else { renderCalendar(); focusCalendarDate(index); }
+            });
+            const preview = () =&gt; {
+              if (calendarMode !== &#x27;range&#x27; || draftStart === null || draftEnd !== null) return;
+              calendarPreview = index; paintKitCalendarRange();
+            };
+            button.addEventListener(&#x27;mouseenter&#x27;, preview); button.addEventListener(&#x27;focus&#x27;, preview);
+            button.addEventListener(&#x27;keydown&#x27;, event =&gt; {
+              const offsets = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 };
+              if (!(event.key in offsets) &amp;&amp; event.key !== &#x27;Home&#x27; &amp;&amp; event.key !== &#x27;End&#x27;) return;
+              event.preventDefault(); event.stopPropagation();
+              const available = [...calendarPanels.querySelectorAll(&#x27;[data-date-index]&#x27;)].map(day =&gt; Number(day.dataset.dateIndex));
+              focusCalendarDate(event.key === &#x27;Home&#x27; ? Math.min(...available) : event.key === &#x27;End&#x27; ? Math.max(...available) : index + offsets[event.key]);
+            });
+          }
+          grid.appendChild(button);
+        }
+        panel.append(weekdays, grid);
+      } else {
+        const choices = document.createElement(&#x27;div&#x27;); choices.className = &#x27;asv-calendar-choices&#x27;;
+        for (let i = 0; i &lt; (calendarPage === &#x27;month&#x27; ? 12 : 16); i++) {
+          const value = calendarPage === &#x27;month&#x27; ? i : yearStart + i;
+          const monthChoice = calendarPage === &#x27;month&#x27;;
+          const button = calendarButton(monthChoice ? kitCalendarMonths[i].slice(0, 3).toLowerCase() : String(value), () =&gt; {
+            if (monthChoice) { calendarView.setUTCMonth(value); calendarPage = &#x27;day&#x27;; }
+            else { calendarView.setUTCFullYear(value); calendarPage = &#x27;month&#x27;; }
+            renderCalendar();
+            (calendarPanels.querySelector(&#x27;[data-date-index=&quot;&#x27; + (draftStart ?? defaultDateIndex) + &#x27;&quot;]&#x27;) || calendarPanels.querySelector(&#x27;.asv-calendar-nav&#x27;))?.focus({ preventScroll: true });
+          }, &#x27;asv-calendar-day asv-calendar-choice&#x27;);
+          button.dataset.calendarChoice = String(value);
+          button.disabled = !monthChoice &amp;&amp; (value &lt; 1900 || value &gt; 2099);
+          button.setAttribute(&#x27;aria-label&#x27;, monthChoice ? kitCalendarMonths[i] + &#x27; &#x27; + year : String(value));
+          choices.appendChild(button);
+        }
+        panel.appendChild(choices);
+      }
+      calendarPanels.appendChild(panel);
+    });
+    paintKitCalendarRange();
+    dateClear.hidden = !hasDateSelection &amp;&amp; !(calendarMode === &#x27;range&#x27; &amp;&amp; draftStart !== null &amp;&amp; draftEnd === null);
+    calendarSelection.textContent = draftStart === null ? calendarMode === &#x27;single&#x27; ? &#x27;Выберите дату.&#x27; : &#x27;Выберите начало диапазона A.&#x27;
+      : draftEnd === null ? &#x27;A: &#x27; + datePeriodText(draftStart, draftStart) + &#x27;. Выберите конец B.&#x27;
+      : datePeriodText(draftStart, draftEnd) + (draftStart === draftEnd ? &#x27; · один день&#x27; : &#x27; · &#x27; + (draftEnd - draftStart + 1) + &#x27; дня&#x27;);
+    positionToolbarPopup();
+  };
+  calendarPanels.addEventListener(&#x27;mouseleave&#x27;, () =&gt; { calendarPreview = null; paintKitCalendarRange(); });
   const openCalendar = trigger =&gt; {
     if (openToolbarPopup !== calendarPopup) {
       [draftStart, draftEnd] = selectedDates;
-      calendarMode = draftStart === draftEnd ? &#x27;single&#x27; : &#x27;range&#x27;;
+      calendarMode = appliedCalendarMode;
+      calendarPage = &#x27;day&#x27;; calendarView = kitHistoryDate(selectedDates[0]); calendarView.setUTCDate(1);
       renderCalendar();
     }
     openToolbarPanel(calendarPopup, trigger);
@@ -8291,36 +8527,29 @@ html, body, button, input, select, textarea, code, pre,
   dateLabel.addEventListener(&#x27;click&#x27;, () =&gt; openCalendar(dateLabel));
   calendarModes.forEach(button =&gt; button.addEventListener(&#x27;click&#x27;, () =&gt; {
     calendarMode = button.dataset.calendarMode;
-    if (calendarMode === &#x27;single&#x27;) {
-      draftStart = draftStart ?? selectedDates[0];
-      draftEnd = draftStart;
-    } else draftStart = draftEnd = null;
+    if (calendarMode === &#x27;single&#x27;) { draftStart = draftStart ?? selectedDates[0]; draftEnd = draftStart; }
+    else draftStart = draftEnd = null;
+    calendarPage = &#x27;day&#x27;;
     renderCalendar();
   }));
-  calendarApply.addEventListener(&#x27;click&#x27;, () =&gt; {
-    if (draftEnd === null) return;
-    selectedDates = [draftStart, draftEnd];
-    closeToolbarPopups(true);
-    fitDateWindow();
-  });
-  calendarCancel.addEventListener(&#x27;click&#x27;, () =&gt; closeToolbarPopups(true));
-  calendarReset.addEventListener(&#x27;click&#x27;, () =&gt; {
+  dateClear.addEventListener(&#x27;click&#x27;, event =&gt; {
+    event.stopPropagation();
+    hasDateSelection = false;
     selectedDates = [defaultDateIndex, defaultDateIndex];
     draftStart = draftEnd = defaultDateIndex;
-    calendarMode = &#x27;single&#x27;;
-    renderCalendar();
-    renderDateControls();
-    closeToolbarPopups(true);
-    closeConflict(false);
-    setZoom(defaultZoomIndex);
+    calendarMode = appliedCalendarMode = &#x27;single&#x27;;
+    closeToolbarPopups(); renderDateControls(); closeConflict(false); setZoom(defaultZoomIndex);
     requestAnimationFrame(() =&gt; {
-      timelineScroll.scrollLeft = defaultDateIndex * daySeconds / day * axis.clientWidth;
-      layoutDayLabels();
-      layoutInlineTaskLabels();
-      layoutTriggerCaptions();
-      layoutConflictLines();
+      kitSyncHistoryExtent();
+      timelineScroll.scrollLeft = kitHistoryOffset() + defaultDateIndex * daySeconds / day * axis.clientWidth;
+      layoutDayLabels(); layoutInlineTaskLabels(); layoutTriggerCaptions(); layoutConflictLines();
     });
+    dateLabel.focus({ preventScroll: true });
   });
+  window.addEventListener(&#x27;resize&#x27;, () =&gt; {
+    if (openToolbarPopup === calendarPopup &amp;&amp; renderedCalendarCount !== calendarPanelCount()) renderCalendar();
+  }, { passive: true });
+
   const activateUpcomingConflict = conflict =&gt; {
     const target = conflictNavigationTargets.get(conflict.id);
     if (!target) return;
@@ -8336,7 +8565,7 @@ html, body, button, input, select, textarea, code, pre,
     selectedDates = [Math.floor(conflict.at / daySeconds), Math.floor(conflict.at / daySeconds)];
     renderDateControls();
     requestAnimationFrame(() =&gt; {
-      timelineScroll.scrollLeft = Math.max(0, conflict.at / day * axis.clientWidth - timelineScroll.clientWidth * .3);
+      timelineScroll.scrollLeft = Math.max(0, kitHistoryOffset() + conflict.at / day * axis.clientWidth - timelineScroll.clientWidth * .3);
       layoutTriggerCaptions();
       layoutConflictLines();
       openConflict(conflict, target.bolt, target.setHighlight);
@@ -8562,6 +8791,246 @@ html, body, button, input, select, textarea, code, pre,
   });
   updateStickyScrollbar();
   if (window.parent !== window) window.parent.postMessage({ type: &#x27;asv-horizontal-scroll-ready&#x27; }, &#x27;*&#x27;);
+
+  // Deterministic local pages simulate an archive, without a server or network request.
+  const kitHistoryMaxDays = 2;
+  const kitHistoryPages = new Map();
+  const kitHistoryTemplates = allRuns.filter(run =&gt; !run.isFrequent &amp;&amp; run.start &gt;= 0 &amp;&amp; run.start &lt; daySeconds)
+    .map(run =&gt; ({ run, lane: buttons.get(run.id)?.parentElement })).filter(item =&gt; item.lane);
+  const kitHistoryFrequentTemplates = [...new Map(allRuns.filter(run =&gt; run.isFrequent &amp;&amp; run.start &gt;= 0 &amp;&amp; run.end &lt; currentTime)
+    .map(run =&gt; [run.nodeIp + &#x27;:&#x27; + run.name, run])).values()];
+  const kitHistoryLoader = document.createElement(&#x27;div&#x27;);
+  kitHistoryLoader.className = &#x27;asv-history-loader&#x27;;
+  kitHistoryLoader.hidden = true;
+  kitHistoryLoader.setAttribute(&#x27;role&#x27;, &#x27;status&#x27;);
+  kitHistoryLoader.setAttribute(&#x27;aria-label&#x27;, &#x27;Загрузка истории&#x27;);
+  const kitHistorySpinner = document.createElement(&#x27;img&#x27;);
+  kitHistorySpinner.src = &#x27;data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiB2aWV3Qm94PSIwIDAgNDAgNDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJOZXdTcGlubmVyIj4KPHBhdGggaWQ9Imljb24iIG9wYWNpdHk9IjAuMyIgZD0iTTM3IDIwQzM3IDIyLjIzMjUgMzYuNTYwMyAyNC40NDMxIDM1LjcwNiAyNi41MDU2QzM0Ljg1MTYgMjguNTY4MiAzMy41OTk0IDMwLjQ0MjIgMzIuMDIwOCAzMi4wMjA4QzMwLjQ0MjIgMzMuNTk5NCAyOC41NjgyIDM0Ljg1MTYgMjYuNTA1NiAzNS43MDZDMjQuNDQzMSAzNi41NjAzIDIyLjIzMjUgMzcgMjAgMzdDMTcuNzY3NSAzNyAxNS41NTY5IDM2LjU2MDMgMTMuNDk0NCAzNS43MDZDMTEuNDMxOCAzNC44NTE2IDkuNTU3NzggMzMuNTk5NCA3Ljk3OTE4IDMyLjAyMDhDNi40MDA1OSAzMC40NDIyIDUuMTQ4MzggMjguNTY4MSA0LjI5NDA1IDI2LjUwNTZDMy40Mzk3MiAyNC40NDMxIDMgMjIuMjMyNSAzIDIwQzMgMTcuNzY3NSAzLjQzOTcyIDE1LjU1NjkgNC4yOTQwNSAxMy40OTQ0QzUuMTQ4MzggMTEuNDMxOCA2LjQwMDU5IDkuNTU3NzggNy45NzkxOSA3Ljk3OTE4QzkuNTU3NzkgNi40MDA1OCAxMS40MzE5IDUuMTQ4MzcgMTMuNDk0NCA0LjI5NDA1QzE1LjU1NjkgMy40Mzk3MiAxNy43Njc1IDMgMjAgM0MyMi4yMzI1IDMgMjQuNDQzMSAzLjQzOTcyIDI2LjUwNTYgNC4yOTQwNUMyOC41NjgyIDUuMTQ4MzggMzAuNDQyMiA2LjQwMDU5IDMyLjAyMDggNy45NzkxOUMzMy41OTk0IDkuNTU3NzkgMzQuODUxNiAxMS40MzE5IDM1LjcwNiAxMy40OTQ0QzM2LjU2MDMgMTUuNTU2OSAzNyAxNy43Njc1IDM3IDIwTDM3IDIwWiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZT0iIzBFN0Q4RiIvPgo8cGF0aCBpZD0iaWNvbl8yIiBkPSJNMjAgM0MyMi4yMzI1IDMgMjQuNDQzMSAzLjQzOTcyIDI2LjUwNTYgNC4yOTQwNUMyOC41NjgyIDUuMTQ4MzggMzAuNDQyMiA2LjQwMDU5IDMyLjAyMDggNy45NzkxOUMzMy41OTk0IDkuNTU3NzggMzQuODUxNiAxMS40MzE4IDM1LjcwNiAxMy40OTQ0QzM2LjU2MDMgMTUuNTU2OSAzNyAxNy43Njc1IDM3IDIwIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlPSIjMEU3RDhGIi8+CjwvZz4KPC9zdmc+Cg==&#x27;;
+  kitHistorySpinner.alt = &#x27;&#x27;; kitHistorySpinner.setAttribute(&#x27;aria-hidden&#x27;, &#x27;true&#x27;);
+  const kitHistorySpinnerSlot = document.createElement(&#x27;span&#x27;);
+  kitHistorySpinnerSlot.className = &#x27;asv-history-spinner&#x27;;
+  kitHistorySpinnerSlot.appendChild(kitHistorySpinner);
+  kitHistoryLoader.appendChild(kitHistorySpinnerSlot);
+  timelineScroll.parentElement.appendChild(kitHistoryLoader);
+  const kitHistorySurface = document.createElement(&#x27;div&#x27;);
+  kitHistorySurface.className = &#x27;asv-history-surface&#x27;;
+  kitHistorySurface.setAttribute(&#x27;aria-hidden&#x27;, &#x27;true&#x27;);
+  overview.prepend(kitHistorySurface);
+  let kitHistoryFrame = 0, kitHistoryLastScroll = timelineScroll.scrollLeft;
+  let kitHistoryTimer = null, kitHistoryRenderWidth = 0;
+
+  const kitCloneHistoryRun = (template, index, sequence, start, factor = 1) =&gt; {
+    const id = &#x27;archive:&#x27; + index + &#x27;:&#x27; + sequence;
+    const tasks = template.tasks.map((task, taskIndex) =&gt; ({
+      id: index * 10000000 - sequence * 100 - taskIndex,
+      task: task.task, status: &#x27;FINISHED&#x27;,
+      start: start + (task.start - template.start) * factor,
+      end: start + (task.end - template.start) * factor
+    }));
+    return { id, name: template.name, nodeIp: template.nodeIp, isTrigger: template.isTrigger,
+      isFrequent: Boolean(template.isFrequent), status: &#x27;FINISHED&#x27;, firstId: index * 10000 - sequence,
+      start, end: start + (template.end - template.start) * factor, tasks, kitHistoryDay: index };
+  };
+  // Plan both archive days together against the fixed original timeline. A run
+  // crossing midnight reserves its track in the next page before it is loaded.
+  let kitHistoryPlan = null;
+  const kitPlanHistoryLanes = () =&gt; {
+    if (kitHistoryPlan) return kitHistoryPlan;
+    const pools = new Map(), occupied = new Map();
+    const reserve = (lane, run) =&gt; {
+      if (!occupied.has(lane)) occupied.set(lane, []);
+      occupied.get(lane).push({ start: run.start, end: Math.max(run.end, run.start + 60) });
+    };
+    allRuns.filter(run =&gt; !run.isFrequent &amp;&amp; run.kitHistoryDay === undefined).forEach(run =&gt; {
+      const lane = buttons.get(run.id)?.parentElement;
+      if (!lane) return;
+      if (!pools.has(run.nodeIp)) pools.set(run.nodeIp, []);
+      if (!pools.get(run.nodeIp).includes(lane)) pools.get(run.nodeIp).push(lane);
+      reserve(lane, getRunDisplay(run));
+    });
+    const entries = [];
+    for (let index = -kitHistoryMaxDays; index &lt; 0; index++) {
+      kitHistoryTemplates.forEach(({ run: template, lane }, sequence) =&gt; {
+        const seed = stringHash(index + &#x27;:&#x27; + template.id);
+        const run = kitCloneHistoryRun(template, index, sequence + 1,
+          index * daySeconds + template.start, .88 + (seed % 11) / 100);
+        entries.push({ run, preferred: lane });
+      });
+    }
+    entries.sort((a, b) =&gt; a.run.start - b.run.start || a.run.firstId - b.run.firstId);
+    kitHistoryPlan = new Map();
+    entries.forEach(({ run, preferred }) =&gt; {
+      const end = Math.max(run.end, run.start + 60);
+      const candidates = [preferred, ...pools.get(run.nodeIp).filter(lane =&gt; lane !== preferred)];
+      const lane = candidates.find(candidate =&gt; (occupied.get(candidate) || [])
+        .every(other =&gt; end &lt;= other.start || run.start &gt;= other.end));
+      if (!lane) throw new Error(&#x27;No free archive track for &#x27; + run.id);
+      reserve(lane, run);
+      if (!kitHistoryPlan.has(run.kitHistoryDay)) kitHistoryPlan.set(run.kitHistoryDay, []);
+      kitHistoryPlan.get(run.kitHistoryDay).push({ run, lane });
+    });
+    return kitHistoryPlan;
+  };
+  const kitRenderHistoryRun = (run, lane, page) =&gt; {
+    const button = document.createElement(&#x27;button&#x27;);
+    button.type = &#x27;button&#x27;;
+    button.className = &#x27;asv-run is-trigger is-history-run&#x27;;
+    button.style.left = run.start / day * 100 + &#x27;%&#x27;;
+    button.style.width = Math.max(0, run.end - run.start) / day * 100 + &#x27;%&#x27;;
+    button.setAttribute(&#x27;aria-pressed&#x27;, &#x27;false&#x27;);
+    button.setAttribute(&#x27;aria-label&#x27;, run.name + &#x27;, &#x27; + kitHistoryDateText(run.kitHistoryDay) + &#x27;, &#x27; + runDurationText(run));
+    const caption = document.createElement(&#x27;span&#x27;);
+    caption.className = &#x27;asv-trigger-caption text-small&#x27;;
+    const title = document.createElement(&#x27;span&#x27;); title.className = &#x27;asv-trigger-caption-title&#x27;;
+    title.innerHTML = &#x27;&lt;span class=&quot;asv-trigger-caption-prefix&quot; aria-hidden=&quot;true&quot;&gt;&lt;span class=&quot;kit-icon-slot is-14&quot;&gt;&lt;span class=&quot;kit-icon-wrap&quot;&gt;&lt;span class=&quot;kit-trigger-icon&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&#x27;;
+    const name = document.createElement(&#x27;span&#x27;); name.className = &#x27;asv-trigger-caption-name&#x27;; name.textContent = run.name;
+    title.appendChild(name); caption.appendChild(title);
+    const stem = document.createElement(&#x27;span&#x27;); stem.className = &#x27;asv-trigger-caption-stem&#x27;;
+    button.append(stem, caption);
+    const segments = document.createElement(&#x27;span&#x27;); segments.className = &#x27;asv-segments&#x27;;
+    run.tasks.forEach(task =&gt; {
+      const segment = document.createElement(&#x27;span&#x27;); segment.className = &#x27;asv-segment asv-finished is-past&#x27;;
+      segment.setAttribute(&#x27;data-task-id&#x27;, String(task.id));
+      positionTaskSegment(segment, task, run); appendInlineTaskName(segment, task);
+      mainTaskSegments.set(task.id, segment);
+      segment.addEventListener(&#x27;click&#x27;, event =&gt; {
+        event.stopPropagation();
+        if (selectedRun?.id !== run.id) selectRun(run);
+        activeTaskLinker?.selectLinkedTask(task.id, true);
+        showMainTaskTooltip(segment, task, run);
+      });
+      segment.addEventListener(&#x27;mouseenter&#x27;, () =&gt; showMainTaskTooltip(segment, task, run));
+      segment.addEventListener(&#x27;mouseleave&#x27;, hideMainTaskTooltip);
+      segments.appendChild(segment);
+    });
+    button.appendChild(segments);
+    button.addEventListener(&#x27;click&#x27;, () =&gt; selectRun(run));
+    bindTopLevelRange(button, run);
+    caption.addEventListener(&#x27;mouseenter&#x27;, () =&gt; positionExpandedCaption(caption));
+    button.addEventListener(&#x27;focus&#x27;, () =&gt; positionExpandedCaption(caption));
+    buttons.set(run.id, button); triggerButtons.push(button);
+    lane.appendChild(button); page.elements.push(button); page.runs.push(run); allRuns.push(run);
+  };
+  const kitRenderHistoryFrequent = (run, lane, page, idle) =&gt; {
+    const item = document.createElement(&#x27;div&#x27;); item.className = &#x27;asv-frequency-item&#x27; + (idle ? &#x27; is-idle-item&#x27; : &#x27;&#x27;);
+    item.style.left = run.start / day * 100 + &#x27;%&#x27;;
+    const mark = document.createElement(idle ? &#x27;span&#x27; : &#x27;button&#x27;);
+    mark.className = &#x27;asv-frequency-mark is-single &#x27; + (idle ? &#x27;is-idle&#x27; : &#x27;is-past&#x27;);
+    mark.style.left = &#x27;0px&#x27;;
+    mark.style.setProperty(&#x27;--asv-frequency-duration&#x27;, Math.max(2, (run.end - run.start) / day * lane.clientWidth) + &#x27;px&#x27;);
+    if (idle) item.setAttribute(&#x27;aria-hidden&#x27;, &#x27;true&#x27;);
+    else {
+      mark.type = &#x27;button&#x27;; mark.setAttribute(&#x27;aria-label&#x27;, run.name + &#x27;, &#x27; + kitHistoryDateText(run.kitHistoryDay) + &#x27;, &#x27; + runTimeText(run));
+      mark.title = run.name + &#x27; · &#x27; + runTimeText(run);
+      mark.classList.toggle(&#x27;is-frequent-list-match&#x27;, activeFrequentTriggerName === run.name &amp;&amp; activeFrequentNodeIp === run.nodeIp);
+      mark.addEventListener(&#x27;click&#x27;, event =&gt; { event.stopPropagation(); selectRun(run); });
+      buttons.set(run.id, mark); frequentGroups.set(run.id, mark);
+      frequentBars.push({ mark, lane, run }); allRuns.push(run); page.runs.push(run);
+    }
+    item.appendChild(mark); lane.appendChild(item); page.elements.push(item);
+  };
+  const kitCreateHistoryPage = index =&gt; {
+    const page = { elements: [], runs: [], ticks: null, tickStep: 0 };
+    kitPlanHistoryLanes().get(index).forEach(({ run, lane }) =&gt; {
+      kitRenderHistoryRun(run, lane, page);
+    });
+    kitHistoryFrequentTemplates.forEach((template, group) =&gt; {
+      const lane = frequentLaneByNode.get(template.nodeIp);
+      if (!lane) return;
+      for (let slot = 0; slot &lt; 96; slot++) {
+        const seed = stringHash(index + &#x27;:&#x27; + group + &#x27;:&#x27; + slot);
+        if (seed % 7 === 0) continue;
+        const run = kitCloneHistoryRun(template, index, 100 + group * 100 + slot,
+          index * daySeconds + slot * 900 + (seed % 180),
+          Math.min(1, (15 + seed % 90) / Math.max(1, template.end - template.start)));
+        kitRenderHistoryFrequent(run, lane, page, seed % 3 === 0);
+      }
+    });
+    const dayBox = document.createElement(&#x27;div&#x27;); dayBox.className = &#x27;asv-history-day&#x27;;
+    dayBox.style.left = index * daySeconds / day * 100 + &#x27;%&#x27;;
+    dayBox.style.width = daySeconds / day * 100 + &#x27;%&#x27;;
+    const label = document.createElement(&#x27;span&#x27;); label.className = &#x27;asv-history-date text-small&#x27;;
+    label.textContent = kitHistoryDate(index).toLocaleDateString(&#x27;ru-RU&#x27;, { day: &#x27;numeric&#x27;, month: &#x27;long&#x27;, timeZone: &#x27;UTC&#x27; });
+    const ticks = document.createElement(&#x27;div&#x27;); ticks.className = &#x27;asv-history-ticks&#x27;;
+    dayBox.append(label, ticks); axis.appendChild(dayBox);
+    page.elements.push(dayBox); page.ticks = ticks; page.label = label; page.dayBox = dayBox;
+    kitHistoryPages.set(index, page);
+  };
+  const kitRenderHistoryWindow = () =&gt; {
+    kitHistoryFrame = 0;
+    if (!kitHistoryState.days || axis.clientWidth &lt;= 0) return;
+    const pixelsPerDay = axis.clientWidth * daySeconds / day;
+    const left = timelineScroll.scrollLeft - kitHistoryOffset();
+    let changed = kitHistoryRenderWidth !== axis.clientWidth;
+    kitHistoryRenderWidth = axis.clientWidth;
+    // Only two extra days are allowed. Build each once, avoiding DOM churn on scrolling.
+    for (let index = -1; index &gt;= -kitHistoryState.days; index--) {
+      if (!kitHistoryPages.has(index)) { kitCreateHistoryPage(index); changed = true; }
+    }
+    kitHistoryPages.forEach((page, index) =&gt; {
+      const step = timeScaleStepsMinutes.find(value =&gt; axis.clientWidth * value / (day / 60) &gt;= timeScaleMinSpacing) || 1440;
+      if (page.tickStep !== step) {
+        page.tickStep = step; page.ticks.replaceChildren();
+        for (let minute = 0; minute &lt; 1440; minute += step) {
+          const tick = document.createElement(&#x27;span&#x27;); tick.className = &#x27;asv-history-tick text-small&#x27;;
+          tick.style.left = minute / 1440 * 100 + &#x27;%&#x27;;
+          tick.textContent = formatClockShort(minute * 60); page.ticks.appendChild(tick);
+        }
+        page.dayBox.style.setProperty(&#x27;--kit-history-grid-step&#x27;, step / 1440 * 100 + &#x27;%&#x27;);
+      }
+      page.label.style.left = Math.max(6, Math.min(left - index * pixelsPerDay + 6, pixelsPerDay - page.label.offsetWidth - 6)) + &#x27;px&#x27;;
+    });
+    if (changed) layoutInlineTaskLabels();
+    scheduleStickyScrollbar();
+  };
+  const kitScheduleHistoryRender = () =&gt; {
+    if (!kitHistoryFrame) kitHistoryFrame = requestAnimationFrame(kitRenderHistoryWindow);
+  };
+  const kitLoadOlderHistory = () =&gt; {
+    if (!kitHistoryState.ready || kitHistoryState.loading || kitHistoryState.days &gt;= kitHistoryMaxDays) return;
+    kitHistoryState.loading = true;
+    kitHistoryLoader.hidden = false;
+    timelineScroll.setAttribute(&#x27;aria-busy&#x27;, &#x27;true&#x27;);
+    kitHistoryTimer = setTimeout(() =&gt; {
+      const previousOffset = kitHistoryOffset();
+      const previousScroll = timelineScroll.scrollLeft;
+      kitHistoryState.days = Math.min(kitHistoryMaxDays, kitHistoryState.days + 1);
+      kitSyncHistoryExtent();
+      // Prepending moves the origin, so move scrollLeft by exactly the same distance.
+      timelineScroll.scrollLeft = previousScroll + kitHistoryOffset() - previousOffset;
+      kitHistoryLastScroll = timelineScroll.scrollLeft;
+      overview.setAttribute(&#x27;aria-label&#x27;, &#x27;История и прогноз запусков: &#x27; + kitHistoryPeriodText(-kitHistoryState.days, 2));
+      renderDateControls();
+      if (!calendarPopup.hidden) renderCalendar();
+      kitRenderHistoryWindow(); layoutDayLabels(); layoutTriggerCaptions(); layoutConflictLines();
+      kitHistoryState.loading = false; kitHistoryLoader.hidden = true;
+      timelineScroll.setAttribute(&#x27;aria-busy&#x27;, &#x27;false&#x27;);
+      kitHistoryTimer = null;
+    }, 420);
+  };
+  timelineScroll.addEventListener(&#x27;scroll&#x27;, () =&gt; {
+    const current = timelineScroll.scrollLeft;
+    if (current &lt; kitHistoryLastScroll &amp;&amp; current &lt;= 160) kitLoadOlderHistory();
+    kitHistoryLastScroll = current;
+    kitScheduleHistoryRender();
+  }, { passive: true });
+  timelineScroll.addEventListener(&#x27;wheel&#x27;, event =&gt; {
+    if (timelineScroll.scrollLeft &lt;= 160 &amp;&amp; (event.deltaX &lt; 0 || (event.shiftKey &amp;&amp; event.deltaY &lt; 0))) kitLoadOlderHistory();
+  }, { passive: true });
+  const kitHistoryResize = new ResizeObserver(() =&gt; {
+    const width = axis.clientWidth, previous = kitHistoryState.width;
+    if (width &gt; 0 &amp;&amp; previous &gt; 0 &amp;&amp; width !== previous) {
+      const center = (timelineScroll.scrollLeft + timelineScroll.clientWidth / 2) / previous;
+      kitSyncHistoryExtent();
+      timelineScroll.scrollLeft = Math.max(0, center * width - timelineScroll.clientWidth / 2);
+    }
+    kitScheduleHistoryRender();
+  });
+  kitHistoryResize.observe(axis);
+  requestAnimationFrame(() =&gt; {
+    kitSyncHistoryExtent(); kitHistoryState.ready = true; kitHistoryLastScroll = timelineScroll.scrollLeft;
+  });
+  window.addEventListener(&#x27;pagehide&#x27;, () =&gt; { clearTimeout(kitHistoryTimer); kitHistoryResize.disconnect(); }, { once: true });
 
 })();
 &lt;/script&gt;
