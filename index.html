@@ -4640,7 +4640,7 @@ html, body, button, input, select, textarea, code, pre,
 #asv-real .kit-queue-hourglass { display: grid; flex: 0 0 16px; width: 16px; height: 16px; padding: 2px; border-radius: 3px; background: #36393e14; }
 #asv-real .kit-queue-hourglass img { display: block; max-width: none; }
 #asv-real .asv-queue-lane { height: 84px; }
-#asv-real .asv-queue-task { top: 29px; }
+#asv-real .asv-queue-task { top: 29px; min-width: 1px; }
 #asv-real .asv-node-panel.is-secondary-node,
 #asv-real .asv-node-panel.is-third-node { border-top-color: var(--kit-dark-350); }
 #asv-real .asv-node-boundary { background: var(--kit-dark-350); }
@@ -5059,8 +5059,10 @@ html, body, button, input, select, textarea, code, pre,
 @keyframes kit-history-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { #asv-real .asv-history-spinner { animation: none; } }
 
-/* Repeated queue samples keep their time widths, including at overview zoom. */
-#asv-real .asv-queue-task.is-repeated-queue-task { min-width: 0; }
+
+/* Clip partial repeated trains at the loaded time range, while retaining full task data. */
+#asv-real .asv-queue-repeated-layer { position: absolute; top: 0; bottom: 0; left: calc(0px - var(--kit-history-width, 0px)); right: 0; overflow: hidden; pointer-events: none; }
+#asv-real .asv-queue-repeated-layer &gt; .asv-queue-task { pointer-events: auto; }
 
 &lt;/style&gt;
 
@@ -6111,6 +6113,9 @@ html, body, button, input, select, textarea, code, pre,
   };
   const queueDisplayRun = { start: queueTasks[0].start, end: queueTasks[queueTasks.length - 1].end, isTrigger: false, tasks: queueTasks };
   const queueDisplay = getRunDisplay(queueDisplayRun);
+  const kitQueueDuration = queueDisplay.end - queueDisplay.start;
+  const kitQueuePeriod = kitQueueDuration + 3 * 60 * 60;
+  const kitQueueRows = 1;
 
   const taskConfigurationProfile = task =&gt; {
     const name = task.task.toLowerCase();
@@ -6659,6 +6664,9 @@ html, body, button, input, select, textarea, code, pre,
   const queueTaskGap = 2;
   const queueTaskButtons = [];
   const kitQueueEntries = [];
+  const kitQueueRepeatedLayer = document.createElement(&quot;div&quot;);
+  kitQueueRepeatedLayer.className = &quot;asv-queue-repeated-layer&quot;;
+  queueLane.appendChild(kitQueueRepeatedLayer);
   const kitRenderQueueTask = (sourceTask, index, visualTask, batchId = null) =&gt; {
     const task = { ...sourceTask, trigger: null, isQueueTask: true };
     const queueRun = {
@@ -6698,7 +6706,7 @@ html, body, button, input, select, textarea, code, pre,
     queueTaskButtons.push(item);
     kitQueueEntries.push({ button: item, task: visualTask, run: queueRun, batchId });
     if (batchId !== null) item.classList.add(&quot;is-repeated-queue-task&quot;);
-    queueLane.appendChild(item);
+    (batchId === null ? queueLane : kitQueueRepeatedLayer).appendChild(item);
     return { button: item, run: queueRun };
   };
   queueTasks.forEach((task, index) =&gt; kitRenderQueueTask(task, index, queueDisplay.tasks[index]));
@@ -6706,49 +6714,45 @@ html, body, button, input, select, textarea, code, pre,
   const layoutQueueTasks = () =&gt; {
     const scale = queueLane.clientWidth / day;
     if (!scale) return;
-    let left = Math.max(0, queueDisplay.tasks[0].start * scale);
-    queueTaskButtons.slice(0, queueTasks.length).forEach((button, index) =&gt; {
-      const task = queueDisplay.tasks[index];
-      const width = Math.max(5, Math.max(0, task.end - task.start) * scale - queueTaskGap);
-      button.style.left = left + &quot;px&quot;;
-      button.style.width = width + &quot;px&quot;;
-      // Use the same gap for every pair, including minimum-width tasks.
-      left += width + queueTaskGap;
+    const batches = new Map();
+    kitQueueEntries.forEach(entry =&gt; {
+      if (!batches.has(entry.batchId)) batches.set(entry.batchId, []);
+      batches.get(entry.batchId).push(entry);
     });
-    kitQueueEntries.filter(entry =&gt; entry.batchId !== null).forEach(({ button, task }) =&gt; {
-      const span = Math.max(0, task.end - task.start) * scale;
-      button.style.left = task.start * scale + &quot;px&quot;;
-      button.style.width = Math.max(0, span - Math.min(queueTaskGap, span * .15)) + &quot;px&quot;;
+    batches.forEach(entries =&gt; {
+      const offset = entries[0].batchId === null ? 0 : kitHistoryOffset();
+      entries.forEach(({ button, task }) =&gt; {
+        const span = Math.max(0, task.end - task.start) * scale;
+        const gap = Math.min(queueTaskGap, span * .15);
+        button.style.left = task.start * scale + offset + &quot;px&quot;;
+        button.style.width = Math.max(1, span - gap) + &quot;px&quot;;
+        button.style.top = &quot;29px&quot;;
+      });
     });
   };
   layoutQueueTasks();
-  // Repeat the seven-task sequence every three hours outside the original chain.
-  // New demo batches fit within their slot; the source chain is never rescaled.
-  const kitQueuePeriod = 3 * 60 * 60;
+  // Copy the displayed seven-task train without scaling any of its durations.
+  // Unknown tasks retain the same 20-minute reserve as the source queue.
   const kitQueueBatchIds = new Set();
   const kitBuildQueueBatches = (from, to) =&gt; {
     const batches = [];
-    const sourceStart = queueDisplay.start, sourceEnd = queueDisplay.end;
-    for (let slot = Math.ceil(from / kitQueuePeriod); slot * kitQueuePeriod &lt; to; slot++) {
-      const start = slot * kitQueuePeriod;
-      if (start &gt;= sourceStart &amp;&amp; start &lt; sourceEnd) continue;
-      const limit = Math.min(to, start + kitQueuePeriod, start &lt; sourceStart ? sourceStart : Infinity);
-      if (limit - start &lt; 60 * 60) continue;
-      const predicted = start &gt;= currentTime;
-      const minutes = predicted ? [18, 20, 18, 30, 25, 20, 20] : [18, 20, 18, 30, 25, 16, 14];
-      const variation = 1 + ((slot % 3 + 3) % 3) * .04;
-      const factor = Math.min(variation, (limit - start) / (minutes.reduce((a, b) =&gt; a + b, 0) * 60));
-      let cursor = start;
-      const tasks = queueTasks.map((template, index) =&gt; {
-        // Keep the standard 20-minute visual reserve for unknown future tasks.
-        const duration = predicted &amp;&amp; index &gt;= 5 ? 20 * 60 : Math.round(minutes[index] * 60 * factor);
-        const task = { id: 900000000 + slot * 10 + index, task: template.task,
-          status: predicted ? &#x27;PREDICTED&#x27; : &#x27;FINISHED&#x27;, start: cursor, end: cursor + duration };
-        if (predicted) task.forecastConfidence = index &gt;= 5 ? &#x27;question&#x27; : index === 4 ? &#x27;low&#x27; : &#x27;high&#x27;;
-        cursor = task.end;
+    const sourceStart = queueDisplay.start;
+    const first = Math.floor((from - sourceStart - kitQueueDuration) / kitQueuePeriod) + 1;
+    const last = Math.ceil((to - sourceStart) / kitQueuePeriod) - 1;
+    for (let slot = first; slot &lt;= last; slot++) {
+      if (slot === 0) continue;
+      const shift = slot * kitQueuePeriod;
+      const tasks = queueDisplay.tasks.map((template, index) =&gt; {
+        const source = queueTasks[index];
+        const start = template.start + shift, end = template.end + shift;
+        const task = { id: 900000000 + slot * 10 + index, task: source.task,
+          status: end &lt;= currentTime ? &#x27;FINISHED&#x27; : &#x27;PREDICTED&#x27;, start, end };
+        if (source.plannedEnd !== undefined) task.plannedEnd = source.plannedEnd + shift;
+        if (task.status === &#x27;PREDICTED&#x27;) task.forecastConfidence = source.forecastConfidence || &#x27;high&#x27;;
         return task;
       });
-      batches.push({ id: &#x27;queue-batch:&#x27; + slot, start, end: cursor, tasks });
+      batches.push({ id: &#x27;queue-batch:&#x27; + slot, start: sourceStart + shift,
+        end: queueDisplay.end + shift, tasks });
     }
     return batches;
   };
