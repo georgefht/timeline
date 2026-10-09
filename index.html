@@ -5054,7 +5054,7 @@ html, body, button, input, select, textarea, code, pre,
 #asv-real .asv-history-tick { position: absolute; top: 22px; transform: translateX(-50%); color: var(--kit-dark-500); font-size: 11px; line-height: 14px; }
 #asv-real .asv-history-loader { position: absolute; z-index: 35; inset: 0; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--kit-white) 65%, transparent); pointer-events: auto; cursor: progress; }
 #asv-real .asv-history-loader[hidden] { display: none; }
-#asv-real .asv-history-spinner { position: relative; flex: 0 0 32px; width: 32px; height: 32px; animation: kit-history-spin .75s linear infinite; }
+#asv-real .asv-history-spinner { position: absolute; top: 35%; left: 50%; margin: -16px 0 0 -16px; width: 32px; height: 32px; animation: kit-history-spin .75s linear infinite; }
 #asv-real .asv-history-spinner img { position: absolute; left: 50%; top: 50%; max-width: none; transform: translate(-50%, -50%) scale(.8); }
 @keyframes kit-history-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { #asv-real .asv-history-spinner { animation: none; } }
