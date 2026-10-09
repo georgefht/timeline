@@ -5059,6 +5059,9 @@ html, body, button, input, select, textarea, code, pre,
 @keyframes kit-history-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { #asv-real .asv-history-spinner { animation: none; } }
 
+/* Repeated queue samples keep their time widths, including at overview zoom. */
+#asv-real .asv-queue-task.is-repeated-queue-task { min-width: 0; }
+
 &lt;/style&gt;
 
 &lt;section id=&quot;asv-real&quot; aria-label=&quot;История и прогноз запусков триггеров с 16 сентября по 18 сентября, 18:00&quot;&gt;
@@ -6655,7 +6658,8 @@ html, body, button, input, select, textarea, code, pre,
 
   const queueTaskGap = 2;
   const queueTaskButtons = [];
-  queueTasks.forEach((sourceTask, index) =&gt; {
+  const kitQueueEntries = [];
+  const kitRenderQueueTask = (sourceTask, index, visualTask, batchId = null) =&gt; {
     const task = { ...sourceTask, trigger: null, isQueueTask: true };
     const queueRun = {
       id: &quot;queue-task-&quot; + task.id,
@@ -6668,7 +6672,6 @@ html, body, button, input, select, textarea, code, pre,
       end: task.end,
       tasks: [task]
     };
-    const visualTask = queueDisplay.tasks.find(item =&gt; item.id === task.id);
     runDisplays.set(queueRun, { ...queueRun, start: visualTask.start, end: visualTask.end, tasks: [visualTask] });
     const item = document.createElement(&quot;button&quot;);
     const currentTask = task.start &lt;= currentTime &amp;&amp; task.end &gt; currentTime;
@@ -6693,14 +6696,18 @@ html, body, button, input, select, textarea, code, pre,
     buttons.set(queueRun.id, item);
     mainTaskSegments.set(task.id, item);
     queueTaskButtons.push(item);
+    kitQueueEntries.push({ button: item, task: visualTask, run: queueRun, batchId });
+    if (batchId !== null) item.classList.add(&quot;is-repeated-queue-task&quot;);
     queueLane.appendChild(item);
-  });
+    return { button: item, run: queueRun };
+  };
+  queueTasks.forEach((task, index) =&gt; kitRenderQueueTask(task, index, queueDisplay.tasks[index]));
 
   const layoutQueueTasks = () =&gt; {
     const scale = queueLane.clientWidth / day;
     if (!scale) return;
     let left = Math.max(0, queueDisplay.tasks[0].start * scale);
-    queueTaskButtons.forEach((button, index) =&gt; {
+    queueTaskButtons.slice(0, queueTasks.length).forEach((button, index) =&gt; {
       const task = queueDisplay.tasks[index];
       const width = Math.max(5, Math.max(0, task.end - task.start) * scale - queueTaskGap);
       button.style.left = left + &quot;px&quot;;
@@ -6708,8 +6715,53 @@ html, body, button, input, select, textarea, code, pre,
       // Use the same gap for every pair, including minimum-width tasks.
       left += width + queueTaskGap;
     });
+    kitQueueEntries.filter(entry =&gt; entry.batchId !== null).forEach(({ button, task }) =&gt; {
+      const span = Math.max(0, task.end - task.start) * scale;
+      button.style.left = task.start * scale + &quot;px&quot;;
+      button.style.width = Math.max(0, span - Math.min(queueTaskGap, span * .15)) + &quot;px&quot;;
+    });
   };
   layoutQueueTasks();
+  // Repeat the seven-task sequence every three hours outside the original chain.
+  // New demo batches fit within their slot; the source chain is never rescaled.
+  const kitQueuePeriod = 3 * 60 * 60;
+  const kitQueueBatchIds = new Set();
+  const kitBuildQueueBatches = (from, to) =&gt; {
+    const batches = [];
+    const sourceStart = queueDisplay.start, sourceEnd = queueDisplay.end;
+    for (let slot = Math.ceil(from / kitQueuePeriod); slot * kitQueuePeriod &lt; to; slot++) {
+      const start = slot * kitQueuePeriod;
+      if (start &gt;= sourceStart &amp;&amp; start &lt; sourceEnd) continue;
+      const limit = Math.min(to, start + kitQueuePeriod, start &lt; sourceStart ? sourceStart : Infinity);
+      if (limit - start &lt; 60 * 60) continue;
+      const predicted = start &gt;= currentTime;
+      const minutes = predicted ? [18, 20, 18, 30, 25, 20, 20] : [18, 20, 18, 30, 25, 16, 14];
+      const variation = 1 + ((slot % 3 + 3) % 3) * .04;
+      const factor = Math.min(variation, (limit - start) / (minutes.reduce((a, b) =&gt; a + b, 0) * 60));
+      let cursor = start;
+      const tasks = queueTasks.map((template, index) =&gt; {
+        // Keep the standard 20-minute visual reserve for unknown future tasks.
+        const duration = predicted &amp;&amp; index &gt;= 5 ? 20 * 60 : Math.round(minutes[index] * 60 * factor);
+        const task = { id: 900000000 + slot * 10 + index, task: template.task,
+          status: predicted ? &#x27;PREDICTED&#x27; : &#x27;FINISHED&#x27;, start: cursor, end: cursor + duration };
+        if (predicted) task.forecastConfidence = index &gt;= 5 ? &#x27;question&#x27; : index === 4 ? &#x27;low&#x27; : &#x27;high&#x27;;
+        cursor = task.end;
+        return task;
+      });
+      batches.push({ id: &#x27;queue-batch:&#x27; + slot, start, end: cursor, tasks });
+    }
+    return batches;
+  };
+  const kitAppendQueuePeriod = (from, to) =&gt; {
+    kitBuildQueueBatches(from, to).forEach(batch =&gt; {
+      if (kitQueueBatchIds.has(batch.id)) return;
+      kitQueueBatchIds.add(batch.id);
+      batch.tasks.forEach((task, index) =&gt; kitRenderQueueTask(task, index, task, batch.id));
+    });
+  };
+  kitAppendQueuePeriod(0, day);
+  layoutQueueTasks();
+
 
   queueCount.textContent = taskCountLabel(queueTasks.length) + &quot; по очереди&quot;;
 
@@ -8954,6 +9006,8 @@ html, body, button, input, select, textarea, code, pre,
     const ticks = document.createElement(&#x27;div&#x27;); ticks.className = &#x27;asv-history-ticks&#x27;;
     dayBox.append(label, ticks); axis.appendChild(dayBox);
     page.elements.push(dayBox); page.ticks = ticks; page.label = label; page.dayBox = dayBox;
+    kitAppendQueuePeriod(index * daySeconds, (index + 1) * daySeconds);
+    layoutQueueTasks();
     kitHistoryPages.set(index, page);
   };
   const kitRenderHistoryWindow = () =&gt; {
